@@ -304,6 +304,59 @@ describe('a known birth moment', () => {
   })
 })
 
+// ═══ Changing one field at a time ══════════════════════════════════════════
+// The core interaction is "change the moment, watch the characters change", so
+// each field is moved on its own and the *scope* of the change is asserted —
+// not merely that something changed.
+
+describe('changing one field at a time', () => {
+  const base = at(1990, 6, 15, 14, 30)
+
+  it('a change of year advances the year pillar by one step in both cycles', () => {
+    const before = calculateChart(base)
+    const after = calculateChart(at(1991, 6, 15, 14, 30))
+    expect(before.pillars[0].stem.index).toBe(6) // 庚
+    expect(after.pillars[0].stem.index).toBe(mod(6 + 1, 10)) // 辛
+    expect(after.pillars[0].branch.index).toBe(mod(before.pillars[0].branch.index + 1, 12))
+    expect(yearPillar(at(1991, 6, 15, 14, 30))).toBe('辛未')
+  })
+
+  it('a change of year leaves the day pillar governed by the day count, not the year', () => {
+    // 1990-06-15 → 1991-06-15 is 365 days, and 365 mod 60 = 5.
+    const before = calculateChart(base).derivation.daySexagenaryIndex
+    const after = calculateChart(at(1991, 6, 15, 14, 30)).derivation.daySexagenaryIndex
+    expect(after).toBe(mod(before + 5, 60))
+  })
+
+  it('a change of day moves the day and hour pillars, holding year and month', () => {
+    const before = calculateChart(base)
+    const after = calculateChart(at(1990, 6, 16, 14, 30))
+    expect(after.pillars[0]).toEqual(before.pillars[0]) // year holds
+    expect(after.pillars[1]).toEqual(before.pillars[1]) // month holds
+    expect(after.pillars[2]).not.toEqual(before.pillars[2]) // day moves
+    // The hour *branch* is unchanged (still 未) but its stem follows the new day.
+    expect(after.pillars[3].branch.hanzi).toBe(before.pillars[3].branch.hanzi)
+    expect(after.pillars[3].stem.hanzi).not.toBe(before.pillars[3].stem.hanzi)
+  })
+
+  it('a change of hour within a day moves only the hour pillar', () => {
+    const before = calculateChart(base)
+    const after = calculateChart(at(1990, 6, 15, 4, 30))
+    for (const i of [0, 1, 2] as const) {
+      expect(after.pillars[i]).toEqual(before.pillars[i])
+    }
+    expect(after.pillars[3]).not.toEqual(before.pillars[3])
+  })
+
+  it('a change of minute alone does not move any pillar', () => {
+    // Minutes only matter within ~15 minutes of a solar term; inside a
+    // double-hour they must be inert, or the display would flicker while typing.
+    expect(calculateChart(at(1990, 6, 15, 14, 0)).pillars).toEqual(
+      calculateChart(at(1990, 6, 15, 14, 59)).pillars,
+    )
+  })
+})
+
 // ═══ Structural invariants: always four pillars, always eight characters ════
 
 describe('chart shape', () => {
