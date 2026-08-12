@@ -9,11 +9,14 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "check": "pnpm typecheck && pnpm build"
+    "test": "vitest run",
+    "check": "pnpm typecheck && pnpm test && pnpm build"
   },
   "devDependencies": {
+    "jsdom": "^30.0.1",
     "typescript": "^5.9.3",
-    "vite": "^7.1.9"
+    "vite": "^7.1.9",
+    "vitest": "^4.1.10"
   },
   "packageManager": "pnpm@11.9.0"
 }

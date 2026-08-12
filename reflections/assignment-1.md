@@ -39,3 +39,27 @@ not from prose beside it.
 
 Whether that is the real breakthrough, or whether it arrives somewhere I haven't anticipated,
 gets written here when it happens.
+
+## First check against a working build (Phase 1)
+
+Partly held, and it sharpened.
+
+The "continuous control" instinct turned out to be right in a specific, testable way rather than a
+vague one. Two decisions made it real. First, **no submit button**: the chart recomputes on every
+`input` event, including keyboard arrow-key nudges, so the chart reads as a *function* of the
+moment instead of a result the page hands back. Second, **no empty initial state**: the page opens
+already showing a known moment, so the first thing a visitor sees is the finished encoding, and
+their first interaction is a *change* to something that already makes sense — not filling in a
+blank.
+
+What I hadn't anticipated is that the strongest explanatory element is not the eight characters at
+all. It is the small derivation list underneath them — solar longitude, which Bazi year the moment
+belongs to, which solar month, which position out of sixty. Those lines are what turn the output
+from an oracle into a derivation. Watching "1989" appear for a birth dated January 1990, with the
+reason given (before 立春), teaches more about how the system works than the characters do. The
+next phase should probably invest there: make the boundary crossings *visible in motion*, not just
+stated in text.
+
+One risk this surfaced: the mechanism is now much better verified than it is designed. That is the
+right order — the plain version already tells the truth, so the visual language can be built on
+top of something I trust rather than around something I hope is correct.

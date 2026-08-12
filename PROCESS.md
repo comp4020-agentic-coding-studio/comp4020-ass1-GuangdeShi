@@ -65,4 +65,36 @@ it. A red check that tells the truth is the point of having it.
 
 ---
 
+## Moment 3 — Two sources disagreed about a day pillar, and my code agreed with one of them
+
+**What we assumed.** The rules would be checkable: look up the day pillar for a known date,
+assert it in a test, move on. The day pillar is pure arithmetic on a day count, so it should be
+the least controversial of the four.
+
+**What went wrong.** For 1990-06-15 one source gave 己酉 and another gave 辛亥. My implementation
+produced 辛亥. The tempting move was obvious and wrong: my formula matched a published source, so
+I could have cited that source and shipped. But *agreeing with my own output* is not verification
+— it is circularity with a footnote, and the assignment's accuracy rule is explicitly "do not
+silently fake the calculation."
+
+**What we changed.** I built an oracle that shares no code with the implementation. Three
+independently sourced anchor dates (1949-10-01 = 甲子, 2019-01-27 = 甲子, 2000-03-01 = 戊午 / #55)
+plus plain elapsed-day arithmetic must predict the same cycle position for any probe date. All
+three converge on index 47 = 辛亥; 己酉 is off by twelve and cannot be reconciled with any anchor.
+That oracle is now a permanent test block using `Date.UTC` differences, so it would still catch a
+regression in the Julian-day formula it was built to audit.
+
+The same rule then settled a second disagreement rather than hiding it. Sources split on the
+yin/yang of 子, 巳, 午 and 亥 — positional parity says one thing, the polarity of the branch's main
+hidden stem says the other. There is no neutral fact to look up, so `sexagenary.ts` stores both
+inputs, the chart displays only the uncontested element, and `calculate.ts` names the fork in its
+conventions block. Six such forks are now labelled there: timezone, year boundary, month
+boundary, day boundary, branch polarity, and solar-term precision.
+
+**How we verified.** 77 tests pass, and the disputed date is asserted by name — the test is
+called *"settles the disputed date: 1990-06-15 is 辛亥, not 己酉"*, so the reasoning is readable
+from the test list rather than buried in a commit message.
+
+---
+
 *Further moments are added as they occur, not reconstructed at the end.*

@@ -1,9 +1,36 @@
 /*
- * Scaffold styles only.
+ * Phase 1 styles.
  *
- * Phase 1 replaces this with the real design foundation: tokens, base layer,
- * and per-section component stylesheets.
+ * Deliberately restrained: black ground, warm off-white type, one cinnabar accent.
+ * This is not the finished visual design — it is enough typography and structure
+ * for the transformation to be legible while the mechanism is what's being judged.
+ *
+ * Two rules that are not negotiable later either:
+ *  - Element colour is never the only encoding. Every coloured cell also names its
+ *    element in text, so the chart survives greyscale and colour blindness.
+ *  - Focus outlines are styled, never removed.
  */
+
+:root {
+  --ink: #14110e;
+  --paper: #f2ece1;
+  --muted: #a19686;
+  --dim: #6f665a;
+  --rule: #2c2721;
+  --cinnabar: #c8452f;
+
+  /* Five Element hues — desaturated so they read as annotation, not decoration. */
+  --wood: #6f9a6a;
+  --fire: #c8452f;
+  --earth: #b08a4a;
+  --metal: #a9a49c;
+  --water: #5f86a8;
+
+  --serif: "Iowan Old Style", Palatino, "Songti SC", Georgia, serif;
+  --sans: ui-sans-serif, -apple-system, "Helvetica Neue", sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --han: "Songti SC", "Source Han Serif SC", "Noto Serif CJK SC", serif;
+}
 
 *,
 *::before,
@@ -13,49 +40,400 @@
 
 body {
   margin: 0;
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 2rem;
-  background: #14110e;
-  color: #f2ece1;
-  font-family: "Iowan Old Style", Palatino, Georgia, serif;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--serif);
   line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
 }
 
-.scaffold {
-  max-width: 42ch;
-  text-align: center;
+main {
+  max-width: 62rem;
+  /* Fluid gutters rather than a breakpoint: the layout has no width at which it
+     snaps, so dragging the window during interaction never jumps. */
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 5rem) clamp(1.25rem, 5vw, 3rem) 4rem;
 }
 
-.scaffold__label {
-  margin: 0 0 1.5rem;
-  font-family: ui-sans-serif, -apple-system, sans-serif;
+/* ── Focus and skip link ─────────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid var(--cinnabar);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 10;
+  padding: 0.6rem 1rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: top 120ms ease-out;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── Intro ───────────────────────────────────────────────────────────────── */
+
+.intro {
+  max-width: 34rem;
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+
+.intro__kicker {
+  margin: 0 0 1.25rem;
+  font-family: var(--sans);
   font-size: 0.75rem;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #8d8375;
+  color: var(--muted);
 }
 
-.scaffold__title {
-  margin: 0 0 1rem;
-  font-size: clamp(1.75rem, 5vw, 2.5rem);
+.intro__title {
+  margin: 0 0 1.25rem;
+  font-size: clamp(1.75rem, 4.5vw, 2.75rem);
   font-weight: 400;
-  letter-spacing: 0.01em;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
-.scaffold__note {
-  margin: 0 0 2rem;
-  color: #b5aa9a;
-}
-
-.scaffold__status {
+.intro__lede {
   margin: 0;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 0.8125rem;
-  color: #8d8375;
+  color: var(--muted);
+  font-size: clamp(1rem, 1.6vw, 1.0625rem);
 }
 
-.scaffold__status[data-ok="true"] {
-  color: #c8452f;
+/* ── The moment form ─────────────────────────────────────────────────────── */
+
+.moment fieldset {
+  margin: 0;
+  padding: 1.5rem 0 0;
+  border: 0;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2.5rem;
+  align-items: flex-end;
+}
+
+.moment legend {
+  padding: 0;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.moment__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.moment__field label {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.moment input {
+  min-height: 2.75rem; /* comfortable touch target on a phone */
+  padding: 0.4rem 0.6rem;
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 1rem;
+}
+
+.moment input:hover {
+  border-color: var(--dim);
+}
+
+.moment__note {
+  flex-basis: 100%;
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--dim);
+}
+
+/* ── The eight characters, large ─────────────────────────────────────────── */
+
+.eight-chars {
+  margin: clamp(2.5rem, 7vw, 4rem) 0 clamp(2rem, 5vw, 3rem);
+  font-family: var(--han);
+  font-size: clamp(2.5rem, 11vw, 5.5rem);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+}
+
+.eight-chars__row + .eight-chars__row {
+  color: var(--muted);
+}
+
+/* ── The chart table ─────────────────────────────────────────────────────── */
+
+.chart-region:focus {
+  outline: none;
+}
+
+/* The table can be wider than a phone; let it scroll itself rather than the page. */
+.chart {
+  display: block;
+  overflow-x: auto;
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.chart__caption {
+  margin-bottom: 1rem;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--dim);
+  text-align: left;
+}
+
+.chart th,
+.chart td {
+  padding: 0.85rem 1rem;
+  border-top: 1px solid var(--rule);
+  vertical-align: top;
+  font-weight: 400;
+}
+
+.chart thead td {
+  border-top: 0;
+}
+
+.chart th[scope="col"] {
+  border-top: 0;
+  padding-bottom: 0.5rem;
+}
+
+.chart th[scope="row"] {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.pillar-label__hanzi,
+.row-label__hanzi {
+  display: block;
+  font-family: var(--han);
+  font-size: 1rem;
+}
+
+.pillar-label__english,
+.row-label__english {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.cell__hanzi {
+  display: block;
+  font-family: var(--han);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  line-height: 1.1;
+}
+
+.cell__pinyin {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.cell__element {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  /* The element is stated in words; the colour only reinforces it. */
+  color: var(--element, var(--paper));
+}
+
+.cell__meta {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: var(--dim);
+}
+
+/* One rule per element, used by both the table cells and the tally. */
+[data-element="wood"] { --element: var(--wood); }
+[data-element="fire"] { --element: var(--fire); }
+[data-element="earth"] { --element: var(--earth); }
+[data-element="metal"] { --element: var(--metal); }
+[data-element="water"] { --element: var(--water); }
+
+.chart td[data-element] .cell__hanzi {
+  border-left: 2px solid var(--element);
+  padding-left: 0.5rem;
+  /* The bar is a second, non-colour cue: position and presence, not just hue. */
+}
+
+/* ── Element tally and derivation ────────────────────────────────────────── */
+
+.tally-section,
+.derivation {
+  margin-top: clamp(2.5rem, 6vw, 3.5rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+.tally-section h2,
+.derivation h2 {
+  margin: 0 0 1.25rem;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.tally {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tally li {
+  padding-top: 0.6rem;
+  border-top: 2px solid var(--element, var(--rule));
+}
+
+/* Zero is a meaningful reading in Bazi — a missing element. Say so quietly
+   rather than hiding it. */
+.tally li[data-count="0"] {
+  border-top-color: var(--rule);
+  color: var(--dim);
+}
+
+.tally__hanzi {
+  font-family: var(--han);
+  font-size: 1.25rem;
+}
+
+.tally__english {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.tally li[data-count="0"] .tally__english {
+  color: var(--dim);
+}
+
+.tally__count {
+  display: block;
+  margin-top: 0.25rem;
+  font-family: var(--mono);
+  font-size: 1.25rem;
+}
+
+.tally__of {
+  font-size: 0.8125rem;
+  color: var(--dim);
+}
+
+.derivation dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: minmax(9rem, 14rem) 1fr;
+  gap: 0.6rem 1.5rem;
+}
+
+.derivation dt {
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.derivation dd {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--paper);
+}
+
+.derivation em {
+  color: var(--cinnabar);
+  font-style: normal;
+}
+
+/* On a narrow screen the two-column definition list stacks. */
+@media (max-width: 34rem) {
+  .derivation dl {
+    grid-template-columns: 1fr;
+    gap: 0.2rem 0;
+  }
+
+  .derivation dd {
+    margin-bottom: 0.9rem;
+  }
+}
+
+/* ── Placeholder and colophon ────────────────────────────────────────────── */
+
+.placeholder {
+  margin: clamp(2.5rem, 7vw, 4rem) 0;
+  color: var(--muted);
+  font-size: 1.125rem;
+}
+
+.colophon {
+  margin-top: clamp(3rem, 8vw, 5rem);
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  color: var(--dim);
+  max-width: 44rem;
+}
+
+.colophon code {
+  font-family: var(--mono);
+  font-size: 0.9em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

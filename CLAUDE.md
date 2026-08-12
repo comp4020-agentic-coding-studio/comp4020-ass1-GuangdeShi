@@ -113,9 +113,25 @@ framework would add weight without adding clarity.
 pnpm install     # esbuild's postinstall is allowed via pnpm-workspace.yaml
 pnpm dev         # local dev server
 pnpm typecheck   # tsc --noEmit
+pnpm test        # vitest run
 pnpm build       # produce dist/
-pnpm check       # typecheck && build — run before every commit
+pnpm check       # typecheck && test && build — run before every commit
 ```
+
+### Layers
+
+```
+src/bazi/types.ts        the shape of a chart
+src/data/sexagenary.ts   verified lookup tables (stems, branches, elements)
+src/bazi/solar.ts        solar longitude, Julian day, 立春
+src/bazi/calculate.ts    the transformation — pure, no DOM
+src/bazi/moment.ts       input strings → BirthMoment — pure, no DOM
+src/components/*.ts      markup generation
+src/main.ts              wiring only; no logic a test would want to reach
+```
+
+Anything a test would want to assert belongs above `main.ts`. If a rule ends up in `main.ts` or
+in a component, move it down.
 
 ### Tooling notes
 
@@ -128,6 +144,24 @@ pnpm check       # typecheck && build — run before every commit
 - Beware DOM globals when naming variables — `status`, `name`, `length`, `top`, `closed` and
   friends already exist on `window`, and TypeScript reports the collision as a confusing
   redeclaration error rather than a shadowing warning.
+- `@types/node` is deliberately absent, so `node:fs` and friends do not typecheck. To read a file
+  in a test, use Vite's own `import x from '../file.html?raw'` — it is typed by `vite/client` and
+  reads the same file the build ships.
+- `src/interaction.test.ts` runs under jsdom (`@vitest-environment jsdom` docblock) and loads the
+  real `index.html`, so a renamed id or a deleted input fails a test rather than only failing in
+  a browser.
+
+## Verifying Bazi rules
+
+Bazi has genuine forks where schools disagree, and published sources contradict each other. Two
+standing rules, both earned (PROCESS.md, moment 3):
+
+- **Never accept a source because it agrees with the code.** Verify against an oracle that shares
+  no code with the implementation — the day pillar is checked by elapsed-day arithmetic from three
+  independently sourced anchors, not by re-running the Julian-day formula.
+- **Never silently resolve a disagreement.** Where sources genuinely conflict, store both inputs,
+  display only what is uncontested, and name the fork in the conventions block at the top of
+  `calculate.ts`. Six forks are labelled there; keep that list current.
 
 ## Working method
 

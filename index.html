@@ -3,23 +3,77 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bazi — COMP8020 Assignment 1</title>
+    <title>Eight Characters — how a birth moment becomes 八字</title>
     <meta
       name="description"
-      content="An interactive experimental website about Bazi (八字), the Four Pillars of Destiny."
+      content="An interactive explainer: how a birth date and time are encoded into the eight Chinese characters of Bazi (八字), the Four Pillars of Destiny."
     />
     <link rel="stylesheet" href="./src/styles/main.css" />
   </head>
   <body>
-    <main id="main" class="scaffold">
-      <p class="scaffold__label">COMP8020 · Assignment 1</p>
-      <h1 class="scaffold__title">Project scaffold ready</h1>
-      <p class="scaffold__note">
-        Vite + TypeScript are wired up and the dev server is serving this file. Phase 1 — the
-        Bazi landing experience — replaces this page.
-      </p>
-      <p class="scaffold__status" data-scaffold-status>Checking TypeScript entry point…</p>
+    <a class="skip-link" href="#chart">Skip to the eight characters</a>
+
+    <main id="main">
+      <header class="intro">
+        <p class="intro__kicker">八字 · Bāzì · Four Pillars of Destiny</p>
+        <h1 class="intro__title">A moment of birth can be written as eight characters.</h1>
+        <p class="intro__lede">
+          Chinese calendrical tradition encodes a single instant as four pairs of characters —
+          one pair each for the year, month, day and hour. Change the moment below and watch
+          the eight characters change with it.
+        </p>
+      </header>
+
+      <!--
+        A real <form> with real <label>s: keyboard reachable, works with autofill, and the
+        native date and time pickers already handle locale and mobile input for us. There is
+        no submit step — the chart updates as the inputs change.
+      -->
+      <form class="moment" id="moment-form" novalidate>
+        <fieldset>
+          <legend>The moment</legend>
+
+          <div class="moment__field">
+            <label for="birth-date">Birth date</label>
+            <input type="date" id="birth-date" name="birth-date" min="1900-01-01" max="2100-12-31" />
+          </div>
+
+          <div class="moment__field">
+            <label for="birth-time">Birth time</label>
+            <input type="time" id="birth-time" name="birth-time" />
+          </div>
+
+          <p class="moment__note">
+            Times are read as China Standard Time (UTC+8), the meridian Chinese almanacs are
+            calculated for.
+          </p>
+        </fieldset>
+      </form>
+
+      <!--
+        aria-live="polite" so a keyboard or screen-reader user is told the chart changed
+        without having to go looking for it. The visible chart is rebuilt inside #chart; the
+        one-line summary in #chart-summary is what actually gets announced.
+      -->
+      <section id="chart" class="chart-region" aria-labelledby="chart-heading" tabindex="-1">
+        <h2 id="chart-heading" class="visually-hidden">The eight characters for this moment</h2>
+        <div id="chart-output"></div>
+      </section>
+      <p id="chart-summary" class="visually-hidden" aria-live="polite" aria-atomic="true"></p>
+
+      <footer class="colophon">
+        <p>
+          Phase 1: the transformation itself, with its conventions on show. Calculation rules,
+          assumptions and known limits are documented in the source —
+          <code>src/bazi/calculate.ts</code>.
+        </p>
+        <p>
+          This is an explainer of a cultural and calendrical system, not a fortune-telling
+          service. Nothing here predicts anything.
+        </p>
+      </footer>
     </main>
+
     <script type="module" src="./src/main.ts"></script>
   </body>
 </html>
