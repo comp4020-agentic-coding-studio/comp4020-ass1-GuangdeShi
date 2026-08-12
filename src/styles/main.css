@@ -1,0 +1,61 @@
+/*
+ * Scaffold styles only.
+ *
+ * Phase 1 replaces this with the real design foundation: tokens, base layer,
+ * and per-section component stylesheets.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background: #14110e;
+  color: #f2ece1;
+  font-family: "Iowan Old Style", Palatino, Georgia, serif;
+  line-height: 1.6;
+}
+
+.scaffold {
+  max-width: 42ch;
+  text-align: center;
+}
+
+.scaffold__label {
+  margin: 0 0 1.5rem;
+  font-family: ui-sans-serif, -apple-system, sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8d8375;
+}
+
+.scaffold__title {
+  margin: 0 0 1rem;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.scaffold__note {
+  margin: 0 0 2rem;
+  color: #b5aa9a;
+}
+
+.scaffold__status {
+  margin: 0;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.8125rem;
+  color: #8d8375;
+}
+
+.scaffold__status[data-ok="true"] {
+  color: #c8452f;
+}

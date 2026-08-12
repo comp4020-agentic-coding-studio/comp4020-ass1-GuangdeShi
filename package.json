@@ -1,0 +1,19 @@
+{
+  "name": "bazi-creative-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "COMP8020 Assignment 1 — an interactive experimental website about Bazi (八字 / Four Pillars of Destiny)",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "check": "pnpm typecheck && pnpm build"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
+  },
+  "packageManager": "pnpm@11.9.0"
+}
