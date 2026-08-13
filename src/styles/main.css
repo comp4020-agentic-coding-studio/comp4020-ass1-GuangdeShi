@@ -1,35 +1,45 @@
 /*
- * Phase 1 styles.
+ * Visual language — Phase 2.
  *
- * Deliberately restrained: black ground, warm off-white type, one cinnabar accent.
- * This is not the finished visual design — it is enough typography and structure
- * for the transformation to be legible while the mechanism is what's being judged.
+ * Ink on paper. A warm off-white ground, near-black type, one cinnabar accent used
+ * only where something has changed, and the Chinese characters treated as the
+ * largest objects on the page. The grid references an almanac page: hairline
+ * column rules and a ticked scale above the pillars, nothing more decorative than
+ * that.
  *
- * Two rules that are not negotiable later either:
- *  - Element colour is never the only encoding. Every coloured cell also names its
- *    element in text, so the chart survives greyscale and colour blindness.
- *  - Focus outlines are styled, never removed.
+ * Three rules that hold for every later phase too:
+ *  1. Element colour is never the only encoding — every coloured thing also names
+ *     its element in text.
+ *  2. Change feedback is never colour-and-motion only — the changed pillar also
+ *     gains a sentence saying what moved and why.
+ *  3. Focus outlines are styled, never removed.
  */
 
 :root {
-  --ink: #14110e;
-  --paper: #f2ece1;
-  --muted: #a19686;
-  --dim: #6f665a;
-  --rule: #2c2721;
-  --cinnabar: #c8452f;
+  --paper: #f4f1ea;
+  --paper-deep: #ece7db;
+  --ink: #17140f;
+  --ink-soft: #554e45;
+  --ink-faint: #8a8177;
+  --rule: #ddd6c8;
+  --rule-strong: #c6bda9;
+  --cinnabar: #b23a2b;
+  --cinnabar-wash: rgba(178, 58, 43, 0.06);
 
-  /* Five Element hues — desaturated so they read as annotation, not decoration. */
-  --wood: #6f9a6a;
-  --fire: #c8452f;
-  --earth: #b08a4a;
-  --metal: #a9a49c;
-  --water: #5f86a8;
+  /* Five Elements. Chosen for contrast on paper, not for saturation. */
+  --wood: #45703f;
+  --fire: #b23a2b;
+  --earth: #8a6420;
+  --metal: #5d6570;
+  --water: #35617f;
 
-  --serif: "Iowan Old Style", Palatino, "Songti SC", Georgia, serif;
-  --sans: ui-sans-serif, -apple-system, "Helvetica Neue", sans-serif;
+  --serif: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
+  --sans: ui-sans-serif, -apple-system, "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, monospace;
-  --han: "Songti SC", "Source Han Serif SC", "Noto Serif CJK SC", serif;
+  --han: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif CJK SC", serif;
+
+  --measure: 34rem;
+  --step: clamp(2.5rem, 7vw, 4.5rem);
 }
 
 *,
@@ -38,24 +48,28 @@
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  background: var(--ink);
-  color: var(--paper);
-  font-family: var(--serif);
-  line-height: 1.6;
+html {
   -webkit-text-size-adjust: 100%;
 }
 
-main {
-  max-width: 62rem;
-  /* Fluid gutters rather than a breakpoint: the layout has no width at which it
-     snaps, so dragging the window during interaction never jumps. */
-  margin: 0 auto;
-  padding: clamp(2rem, 6vw, 5rem) clamp(1.25rem, 5vw, 3rem) 4rem;
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
-/* ── Focus and skip link ─────────────────────────────────────────────────── */
+main {
+  max-width: 64rem;
+  /* Fluid gutters rather than breakpoints: there is no width at which the layout
+     snaps, so dragging the window during an interaction never jumps. */
+  margin: 0 auto;
+  padding: clamp(2.5rem, 7vw, 5.5rem) clamp(1.25rem, 5vw, 3.5rem) 5rem;
+}
+
+/* ── Focus, skip link, screen-reader text ────────────────────────────────── */
 
 :focus-visible {
   outline: 2px solid var(--cinnabar);
@@ -68,8 +82,8 @@ main {
   top: -4rem;
   z-index: 10;
   padding: 0.6rem 1rem;
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
   font-family: var(--sans);
   font-size: 0.875rem;
   text-decoration: none;
@@ -91,57 +105,118 @@ main {
   white-space: nowrap;
 }
 
-/* ── Intro ───────────────────────────────────────────────────────────────── */
+/* ── Shared editorial furniture ─────────────────────────────────────────── */
+
+.section {
+  margin-top: var(--step);
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--rule);
+}
+
+.section__heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0 0 0.75rem;
+  font-weight: 400;
+}
+
+.section__hanzi {
+  font-family: var(--han);
+  font-size: 1.375rem;
+  letter-spacing: 0.08em;
+}
+
+.section__english {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.section__legend {
+  max-width: var(--measure);
+  margin: 1rem 0 0;
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--ink-faint);
+}
+
+/* ── Introduction ───────────────────────────────────────────────────────── */
 
 .intro {
-  max-width: 34rem;
-  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+  /* Wide enough for the title's authored lines to survive at the largest step;
+     the lede keeps its own narrower measure. */
+  max-width: 44rem;
 }
 
 .intro__kicker {
-  margin: 0 0 1.25rem;
+  margin: 0 0 1.5rem;
   font-family: var(--sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.16em;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--ink-faint);
 }
 
 .intro__title {
-  margin: 0 0 1.25rem;
-  font-size: clamp(1.75rem, 4.5vw, 2.75rem);
+  margin: 0 0 1.5rem;
+  font-size: clamp(1.875rem, 5vw, 3.25rem);
   font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  text-wrap: balance;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  /* No text-wrap: balance — the breaks are authored in the markup, and balancing
+     fought them into "and eight / characters". */
 }
 
 .intro__lede {
+  max-width: var(--measure);
   margin: 0;
-  color: var(--muted);
-  font-size: clamp(1rem, 1.6vw, 1.0625rem);
+  color: var(--ink-soft);
+  font-size: clamp(1rem, 1.5vw, 1.0625rem);
 }
 
-/* ── The moment form ─────────────────────────────────────────────────────── */
+/* ── The birth moment ───────────────────────────────────────────────────── */
+
+.moment {
+  margin-top: var(--step);
+}
 
 .moment fieldset {
   margin: 0;
-  padding: 1.5rem 0 0;
+  padding: 1.75rem 0 0;
   border: 0;
   border-top: 1px solid var(--rule);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem 2.5rem;
-  align-items: flex-end;
 }
 
-.moment legend {
+.moment__legend {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
   padding: 0;
+}
+
+.moment__legend-hanzi {
+  font-family: var(--han);
+  font-size: 1.375rem;
+  letter-spacing: 0.08em;
+}
+
+.moment__legend-english {
   font-family: var(--sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.16em;
+  font-size: 0.6875rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--ink-faint);
+}
+
+.moment__fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 2.5rem;
+  margin-top: 1.25rem;
 }
 
 .moment__field {
@@ -152,282 +227,417 @@ main {
 
 .moment__field label {
   font-family: var(--sans);
-  font-size: 0.8125rem;
-  letter-spacing: 0.04em;
-  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
 }
 
 .moment input {
-  min-height: 2.75rem; /* comfortable touch target on a phone */
-  padding: 0.4rem 0.6rem;
+  min-height: 2.75rem; /* comfortable touch target */
+  padding: 0.35rem 0.65rem;
   background: transparent;
-  border: 1px solid var(--rule);
-  border-radius: 2px;
-  color: var(--paper);
+  border: 0;
+  border-bottom: 1px solid var(--rule-strong);
+  border-radius: 0;
+  color: var(--ink);
   font-family: var(--mono);
-  font-size: 1rem;
+  font-size: 1.0625rem;
 }
 
 .moment input:hover {
-  border-color: var(--dim);
+  border-bottom-color: var(--ink-soft);
 }
 
 .moment__note {
-  flex-basis: 100%;
-  margin: 0;
+  max-width: var(--measure);
+  margin: 1.25rem 0 0;
   font-family: var(--sans);
   font-size: 0.8125rem;
-  color: var(--dim);
+  color: var(--ink-faint);
 }
 
-/* ── The eight characters, large ─────────────────────────────────────────── */
+/* ── The Four Pillars: the main visual object ───────────────────────────── */
 
-.eight-chars {
-  margin: clamp(2.5rem, 7vw, 4rem) 0 clamp(2rem, 5vw, 3rem);
-  font-family: var(--han);
-  font-size: clamp(2.5rem, 11vw, 5.5rem);
-  line-height: 1.15;
-  letter-spacing: 0.02em;
+.pillars {
+  display: grid;
+  /* Four columns at every width. The 4 × 2 reading is the point, so it must not
+     reflow into a list on a phone — the characters shrink instead. */
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin: 1.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  position: relative;
 }
 
-.eight-chars__row + .eight-chars__row {
-  color: var(--muted);
+/* A ticked scale above the columns — an almanac reference, kept faint. */
+.pillars::before {
+  content: "";
+  position: absolute;
+  inset: -0.75rem 0 auto 0;
+  height: 6px;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--rule-strong) 0 1px,
+    transparent 1px 12.5%
+  );
+  opacity: 0.7;
 }
 
-/* ── The chart table ─────────────────────────────────────────────────────── */
-
-.chart-region:focus {
-  outline: none;
+.pillar {
+  position: relative;
+  padding: 1.5rem clamp(0.4rem, 1.5vw, 1.25rem) 1.25rem;
+  border-left: 1px solid var(--rule);
+  transition: background-color 260ms ease-out;
 }
 
-/* The table can be wider than a phone; let it scroll itself rather than the page. */
-.chart {
-  display: block;
-  overflow-x: auto;
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
+.pillar:first-child {
+  border-left: 0;
 }
 
-.chart__caption {
-  margin-bottom: 1rem;
-  font-family: var(--sans);
-  font-size: 0.8125rem;
-  color: var(--dim);
-  text-align: left;
-}
-
-.chart th,
-.chart td {
-  padding: 0.85rem 1rem;
-  border-top: 1px solid var(--rule);
-  vertical-align: top;
+.pillar__head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin: 0 0 0.85rem;
   font-weight: 400;
 }
 
-.chart thead td {
-  border-top: 0;
-}
-
-.chart th[scope="col"] {
-  border-top: 0;
-  padding-bottom: 0.5rem;
-}
-
-.chart th[scope="row"] {
-  color: var(--muted);
-  white-space: nowrap;
-}
-
-.pillar-label__hanzi,
-.row-label__hanzi {
-  display: block;
+.pillar__label-hanzi {
   font-family: var(--han);
-  font-size: 1rem;
+  font-size: clamp(0.9375rem, 2vw, 1.125rem);
+  letter-spacing: 0.08em;
 }
 
-.pillar-label__english,
-.row-label__english {
-  display: block;
+.pillar__label-english {
   font-family: var(--sans);
-  font-size: 0.6875rem;
-  letter-spacing: 0.1em;
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--dim);
+  color: var(--ink-faint);
 }
 
-.cell__hanzi {
-  display: block;
-  font-family: var(--han);
-  font-size: clamp(1.75rem, 4vw, 2.25rem);
-  line-height: 1.1;
-}
-
-.cell__pinyin {
-  display: block;
-  font-family: var(--sans);
-  font-size: 0.8125rem;
-  color: var(--muted);
-}
-
-.cell__element {
-  display: block;
-  margin-top: 0.5rem;
+/* Which layer of the moment this column is derived from. */
+.pillar__source {
+  margin: 0 0 1.1rem;
+  min-height: 3.4rem;
   font-family: var(--sans);
   font-size: 0.75rem;
-  /* The element is stated in words; the colour only reinforces it. */
-  color: var(--element, var(--paper));
+  line-height: 1.4;
+  color: var(--ink-soft);
 }
 
-.cell__meta {
+.pillar__source-value {
   display: block;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
-  letter-spacing: 0.06em;
-  color: var(--dim);
 }
 
-/* One rule per element, used by both the table cells and the tally. */
+.pillar__source-note {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.6875rem;
+  color: var(--ink-faint);
+}
+
+.pillar__glyphs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.glyph {
+  display: block;
+  font-family: var(--han);
+  /* The largest thing on the page, at every viewport. */
+  font-size: clamp(2.25rem, 9vw, 4.25rem);
+  line-height: 1.05;
+  /* A thin element rule beside each character: a second, positional cue that does
+     not depend on seeing the colour. */
+  border-left: 3px solid var(--element, var(--rule-strong));
+  padding-left: 0.35rem;
+}
+
+.glyph__char {
+  display: block;
+  color: var(--ink);
+}
+
+.pillar__elements {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 1rem 0 0;
+}
+
+.element-chip {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  color: var(--element, var(--ink-soft));
+}
+
+/* One rule per element, shared by glyph rules, chips and the tally. */
 [data-element="wood"] { --element: var(--wood); }
 [data-element="fire"] { --element: var(--fire); }
 [data-element="earth"] { --element: var(--earth); }
 [data-element="metal"] { --element: var(--metal); }
 [data-element="water"] { --element: var(--water); }
 
-.chart td[data-element] .cell__hanzi {
-  border-left: 2px solid var(--element);
-  padding-left: 0.5rem;
-  /* The bar is a second, non-colour cue: position and presence, not just hue. */
+/* ── Change feedback ───────────────────────────────────────────────────── */
+
+/* A pillar whose own layer of time moved. */
+.pillar[data-changed="own"] {
+  background: var(--cinnabar-wash);
 }
 
-/* ── Element tally and derivation ────────────────────────────────────────── */
-
-.tally-section,
-.derivation {
-  margin-top: clamp(2.5rem, 6vw, 3.5rem);
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--rule);
+/* A pillar that moved only because the layer above it did. */
+.pillar[data-changed="inherited"] {
+  background: rgba(23, 20, 15, 0.035);
 }
 
-.tally-section h2,
-.derivation h2 {
-  margin: 0 0 1.25rem;
+.pillar[data-changed]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -0.75rem;
+  height: 2px;
+  background: var(--cinnabar);
+  animation: mark 260ms ease-out;
+}
+
+.pillar[data-changed="inherited"]::before {
+  background: var(--ink-faint);
+  /* Dashed, so "followed" reads differently from "moved" without relying on hue. */
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--ink-faint) 0 4px,
+    transparent 4px 8px
+  );
+}
+
+@keyframes mark {
+  from {
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  to {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+.pillar__change {
+  margin: 0.85rem 0 0;
   font-family: var(--sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-weight: 400;
-  color: var(--muted);
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  color: var(--cinnabar);
 }
+
+.pillar[data-changed="inherited"] .pillar__change {
+  color: var(--ink-soft);
+}
+
+/* ── Eight characters, as written ──────────────────────────────────────── */
+
+.bazi-string {
+  margin: 1.5rem 0 0;
+  font-family: var(--han);
+  /* The lower bound is set by the phone: all eight characters must sit on one
+     line, because "eight characters" is the thing being claimed. */
+  font-size: clamp(1.5rem, 6vw, 3rem);
+  letter-spacing: 0.06em;
+  line-height: 1.3;
+  /* Four pairs separated by spaces; the spaces are how a Bazi is quoted. */
+  word-spacing: 0.35em;
+  /* Han text may break between any two characters, which split 乙未 across two
+     lines on a phone. keep-all confines the breaks to the spaces between pairs. */
+  word-break: keep-all;
+}
+
+/* ── Five Elements ─────────────────────────────────────────────────────── */
 
 .tally {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
-  gap: 1rem;
-  margin: 0;
+  margin: 1.5rem 0 0;
   padding: 0;
   list-style: none;
+  max-width: 34rem;
 }
 
-.tally li {
-  padding-top: 0.6rem;
-  border-top: 2px solid var(--element, var(--rule));
-}
-
-/* Zero is a meaningful reading in Bazi — a missing element. Say so quietly
-   rather than hiding it. */
-.tally li[data-count="0"] {
-  border-top-color: var(--rule);
-  color: var(--dim);
+.tally__row {
+  display: grid;
+  grid-template-columns: 1.75rem 4.5rem 1fr 1.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--rule);
 }
 
 .tally__hanzi {
   font-family: var(--han);
-  font-size: 1.25rem;
+  font-size: 1.125rem;
 }
 
 .tally__english {
-  display: block;
   font-family: var(--sans);
   font-size: 0.75rem;
   letter-spacing: 0.06em;
-  color: var(--muted);
+  color: var(--ink-soft);
 }
 
-.tally li[data-count="0"] .tally__english {
-  color: var(--dim);
+.tally__bar {
+  display: block;
+  height: 3px;
+  background: var(--rule);
+}
+
+.tally__fill {
+  display: block;
+  height: 100%;
+  background: var(--element, var(--ink));
+  transform: scaleX(var(--fill, 0));
+  transform-origin: left;
+  transition: transform 300ms ease-out;
 }
 
 .tally__count {
-  display: block;
-  margin-top: 0.25rem;
   font-family: var(--mono);
-  font-size: 1.25rem;
+  font-size: 0.875rem;
+  text-align: right;
 }
 
-.tally__of {
+/* A missing element is a real reading in Bazi, so say it quietly rather than
+   hiding the row. */
+.tally__row[data-count="0"] .tally__english,
+.tally__row[data-count="0"] .tally__count {
+  color: var(--ink-faint);
+}
+
+.derivation {
+  margin: 1.5rem 0 0;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--ink-faint);
+}
+
+/* ── The 立春 boundary ─────────────────────────────────────────────────── */
+
+.boundary__claim {
+  max-width: var(--measure);
+  margin: 1rem 0 0;
+  color: var(--ink-soft);
+}
+
+.boundary__instant {
+  margin: 1rem 0 0;
+  font-family: var(--mono);
   font-size: 0.8125rem;
-  color: var(--dim);
+  color: var(--ink-faint);
 }
 
-.derivation dl {
-  margin: 0;
+.boundary__pair {
   display: grid;
-  grid-template-columns: minmax(9rem, 14rem) 1fr;
-  gap: 0.6rem 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 15rem));
+  gap: 1rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.derivation dt {
+.boundary__button {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 1rem 1.1rem 1.1rem;
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 180ms ease-out, border-color 180ms ease-out;
+}
+
+.boundary__button:hover {
+  background: var(--paper-deep);
+  border-color: var(--ink-soft);
+}
+
+.boundary__date {
   font-family: var(--sans);
-  font-size: 0.8125rem;
-  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
 }
 
-.derivation dd {
-  margin: 0;
-  font-size: 0.9375rem;
-  color: var(--paper);
+.boundary__pillar {
+  font-family: var(--han);
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  line-height: 1.1;
 }
 
-.derivation em {
-  color: var(--cinnabar);
-  font-style: normal;
+.boundary__side {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--ink-soft);
 }
 
-/* On a narrow screen the two-column definition list stacks. */
-@media (max-width: 34rem) {
-  .derivation dl {
-    grid-template-columns: 1fr;
-    gap: 0.2rem 0;
-  }
-
-  .derivation dd {
-    margin-bottom: 0.9rem;
-  }
-}
-
-/* ── Placeholder and colophon ────────────────────────────────────────────── */
+/* ── Placeholder and colophon ─────────────────────────────────────────── */
 
 .placeholder {
-  margin: clamp(2.5rem, 7vw, 4rem) 0;
-  color: var(--muted);
+  margin: var(--step) 0;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--rule);
+  color: var(--ink-soft);
   font-size: 1.125rem;
 }
 
 .colophon {
-  margin-top: clamp(3rem, 8vw, 5rem);
-  padding-top: 1.5rem;
+  margin-top: var(--step);
+  padding-top: 1.75rem;
   border-top: 1px solid var(--rule);
+  max-width: 42rem;
   font-family: var(--sans);
-  font-size: 0.8125rem;
-  color: var(--dim);
-  max-width: 44rem;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--ink-faint);
 }
 
 .colophon code {
   font-family: var(--mono);
-  font-size: 0.9em;
 }
+
+/* ── Narrow viewports ─────────────────────────────────────────────────── */
+
+@media (max-width: 34rem) {
+  /* The source and change notes are the first things to go: at this width the
+     four columns need the room, and both are also announced in the live region.
+     The change *marker* and background wash stay, so the feedback survives. */
+  .pillar__source-note {
+    display: none;
+  }
+
+  .pillar__source {
+    min-height: 2.4rem;
+  }
+
+  .pillar__change {
+    font-size: 0.625rem;
+  }
+
+  .tally__row {
+    grid-template-columns: 1.5rem 3.5rem 1fr 1.25rem;
+    gap: 0.5rem;
+  }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -435,5 +645,9 @@ main {
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
   }
+  /* The change feedback does not depend on the motion: the wash, the marker rule
+     and the sentence are all still applied, they just appear without a sweep. */
 }

@@ -1,24 +1,28 @@
 /**
- * Entry point: wire the two native inputs to the transformation.
+ * Entry point: wire the inputs to the transformation, and remember the last chart.
  *
- * Everything here is plumbing. The rules live in `bazi/calculate.ts`, the parsing
- * in `bazi/moment.ts`, the markup in `components/chart-view.ts` — this file only
- * connects them, so there is no logic here that a test would want to reach.
+ * The one piece of state in the whole page is `previous` — the chart that was on
+ * screen before this update. Without it there is no way to say *which* pillar
+ * moved, and "which pillar moved" is the entire explanatory claim of Phase 2.
+ *
+ * Everything else is plumbing. Rules live in `bazi/calculate.ts`, the
+ * explanations in `bazi/explain.ts`, parsing in `bazi/moment.ts`, markup in
+ * `components/`. There is no logic here that a test would want to reach.
  *
  * The stylesheet is linked from index.html rather than imported here, so the page
- * is styled before the module graph has loaded — it renders correctly on a slow
- * connection even while the script is still in flight.
+ * is styled before the module graph arrives — it reads correctly on a slow
+ * connection while the script is still in flight.
  *
- * There is no submit button by design: the point of the piece is that the chart is
- * a *function* of the moment, and a submit step would hide that behind an action.
- * `input` fires on every change to a native picker, including keyboard arrow-key
- * adjustments, which is exactly the "watch it transform" behaviour the brief asks
- * for.
+ * There is no submit button by design: the chart is a *function* of the moment,
+ * and a submit step would hide that behind an action.
  */
 
 import { calculateChart } from './bazi/calculate'
+import { announceChanges, describeChanges } from './bazi/explain'
 import { DEFAULT_MOMENT, parseMoment, toDateValue, toTimeValue } from './bazi/moment'
-import { chartSummary, renderChart, renderMessage } from './components/chart-view'
+import type { BaziChart, BirthMoment } from './bazi/types'
+import { createChartView } from './components/chart-view'
+import { createLiChunView } from './components/lichun-view'
 
 function required<T extends Element>(selector: string): T {
   const found = document.querySelector<T>(selector)
@@ -28,29 +32,47 @@ function required<T extends Element>(selector: string): T {
 
 const dateInput = required<HTMLInputElement>('#birth-date')
 const timeInput = required<HTMLInputElement>('#birth-time')
-const output = required<HTMLElement>('#chart-output')
 const summary = required<HTMLElement>('#chart-summary')
 
-/** Read both inputs, recompute, repaint. The whole interaction, in one function. */
+const chartView = createChartView(required<HTMLElement>('#chart-output'))
+const liChunView = createLiChunView(required<HTMLElement>('#boundary-output'), (moment) => {
+  // The boundary example sets the inputs and then goes through exactly the same
+  // path as typing — so the Year Pillar visibly moves, rather than the example
+  // asserting that it would.
+  apply(moment)
+})
+
+/** The chart currently on screen, if any. The only state on the page. */
+let previous: BaziChart | null = null
+
+/** Read both inputs, recompute, repaint what moved. The whole interaction. */
 function update(): void {
   const moment = parseMoment(dateInput.value, timeInput.value)
 
   if (!moment) {
-    renderMessage(output, 'Choose a birth date and time to see the eight characters.')
+    chartView.clear('Choose a birth date and time to see the eight characters.')
     summary.textContent = ''
+    previous = null
     return
   }
 
   const chart = calculateChart(moment)
-  renderChart(output, chart)
-  summary.textContent = chartSummary(chart)
+  const changes = previous ? describeChanges(previous, chart) : []
+
+  chartView.update(chart, changes)
+  liChunView.update(moment)
+  // Only announce actual movement; re-reading the whole chart on every keystroke
+  // would make the live region useless.
+  summary.textContent = previous ? announceChanges(chart, changes) : ''
+  previous = chart
 }
 
-// Start from a known moment rather than an empty form, so the page explains itself
-// before the visitor has touched anything — and so the default state is a fixed,
-// testable one rather than whatever today happens to be.
-dateInput.value = toDateValue(DEFAULT_MOMENT)
-timeInput.value = toTimeValue(DEFAULT_MOMENT)
+/** Put a moment into the inputs and run the transformation on it. */
+function apply(moment: BirthMoment): void {
+  dateInput.value = toDateValue(moment)
+  timeInput.value = toTimeValue(moment)
+  update()
+}
 
 for (const input of [dateInput, timeInput]) {
   input.addEventListener('input', update)
@@ -58,4 +80,7 @@ for (const input of [dateInput, timeInput]) {
   input.addEventListener('change', update)
 }
 
-update()
+// Open on a known moment rather than an empty form: the first thing a visitor
+// sees is a finished encoding, so their first interaction is a *change* to
+// something that already makes sense.
+apply(DEFAULT_MOMENT)

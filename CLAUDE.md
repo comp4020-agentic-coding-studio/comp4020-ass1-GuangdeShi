@@ -126,12 +126,40 @@ src/data/sexagenary.ts   verified lookup tables (stems, branches, elements)
 src/bazi/solar.ts        solar longitude, Julian day, 立春
 src/bazi/calculate.ts    the transformation — pure, no DOM
 src/bazi/moment.ts       input strings → BirthMoment — pure, no DOM
-src/components/*.ts      markup generation
+src/bazi/explain.ts      which pillar moved and why; per-pillar sources — pure, no DOM
+src/bazi/lichun.ts       the 立春 before/after comparison — pure, no DOM
+src/components/*.ts      view factories: build once, then update in place
 src/main.ts              wiring only; no logic a test would want to reach
 ```
 
 Anything a test would want to assert belongs above `main.ts`. If a rule ends up in `main.ts` or
-in a component, move it down.
+in a component, move it down. The explanatory text is part of that: *which pillar moved and why*
+is the central claim of the piece, so it lives in `explain.ts` where a test can assert it, never
+in the view.
+
+**Views are updated, not re-rendered.** `createChartView` builds its skeleton once and afterwards
+writes only text nodes and attributes. Re-assigning `innerHTML` on every keystroke would restart
+CSS transitions (so nothing could be emphasised *as changed*) and drop focus out of the region.
+
+### Checking the rendering
+
+Tests cannot see a layout, and this project has already shipped two defects that only a rendered
+page showed (a doubled verb in a change badge, and 乙未 breaking across two lines). Before calling
+a visual phase done, screenshot the built site at a desktop and a phone width:
+
+```sh
+pnpm build && pnpm preview --port 4183 &
+SHELL="$HOME/Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell"
+"$SHELL" --headless --hide-scrollbars --window-size=1280,3400 \
+  --screenshot=/tmp/desktop.png --virtual-time-budget=800 http://localhost:4183/
+"$SHELL" --headless --hide-scrollbars --window-size=320,1500 \
+  --screenshot=/tmp/phone.png --virtual-time-budget=800 http://localhost:4183/
+```
+
+To see an *interacted* state, copy `dist/index.html` to a throwaway `dist/__probe.html` with a
+trailing module script that sets an input and dispatches `input`, screenshot that, then delete it.
+`dist/` is generated, so nothing enters the repo. Keep the virtual-time budget below the emphasis
+timeout or the highlight will have expired before the shot.
 
 ### Tooling notes
 

@@ -63,3 +63,33 @@ stated in text.
 One risk this surfaced: the mechanism is now much better verified than it is designed. That is the
 right order — the plain version already tells the truth, so the visual language can be built on
 top of something I trust rather than around something I hope is correct.
+
+## The breakthrough (Phase 2)
+
+The interactive idea became clear at the moment a test failed for the right reason.
+
+I had assumed the interaction was a mapping: four parts of the moment, four columns, edit one and
+one column answers. The first change-detection test disagreed — moving the date by a single day
+moved *two* pillars, because the hour stem is derived from the day stem (五鼠遁). Then a year
+change disagreed in the opposite direction: I expected all four to move and the Hour Pillar stayed
+put, because across a common year the day stem advances five, and doubling five returns to the
+same stem modulo ten.
+
+That is the breakthrough, and it is not a visual one. **The naive model a visitor arrives with is
+wrong in a specific, demonstrable way, and the interaction is what exposes it.** Bazi is not four
+independent readings of a timestamp; it is four scales, unevenly coupled, turning over at four
+different kinds of boundary — 立春 for the year, a solar term for the month, 23:00 for the day, a
+double-hour for the hour. Nobody would believe that from a paragraph. Watching the Day Pillar move
+on its own while the Hour Pillar follows it, each saying which of the two happened, teaches it in
+one edit.
+
+So the design followed the finding rather than the reverse. Every changed pillar is labelled with
+*why*, and the reason distinguishes "its own layer moved" from "the layer above moved and this one
+followed" — in words, not only in colour. The 立春 example is deliberately two buttons that load a
+date into the same inputs, so it teaches through the main mechanism instead of becoming a second
+feature with its own chart.
+
+What Phase 1 got right, in hindsight, was the order: the mechanism was verified before it was
+designed, so the visual language could be built on something I trusted. What I would watch next is
+restraint — the derivation line and the source notes are close to the limit of how much text can
+sit under a set of characters before the characters stop being the object of attention.

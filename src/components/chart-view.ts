@@ -1,187 +1,270 @@
 /**
- * Renders a chart into the page.
+ * The Four Pillars view.
  *
- * Rendering only — every value shown here comes from `calculate.ts`. Keeping the
- * two apart is what lets the transformation be tested without a DOM.
+ * Built once, then updated in place. This matters more than it looks: rebuilding
+ * `innerHTML` on every keystroke would restart CSS transitions, so nothing could
+ * be *emphasised as changed*, and it would drop focus out of any control inside
+ * the region. So the skeleton is created on first update and afterwards only text
+ * nodes and attributes move.
  *
- * Phase 1 is deliberately plain: a semantic table, no decoration, no animation.
- * The visual language comes later, on top of a mechanism that already works.
+ * Rendering only. Every string shown here comes from `bazi/calculate.ts` or
+ * `bazi/explain.ts`.
  */
 
 import { eightCharacters, tallyElements } from '../bazi/calculate'
-import type { BaziChart } from '../bazi/types'
+import { pillarSources } from '../bazi/explain'
+import type { PillarChange } from '../bazi/explain'
+import type { BaziChart, ElementId } from '../bazi/types'
 import { ELEMENTS, element } from '../data/sexagenary'
 
-/** Build an element label such as "金 jīn · Metal". */
-function elementLabel(elementId: BaziChart['pillars'][number]['stem']['element']): string {
-  const e = element(elementId)
-  return `${e.hanzi} ${e.pinyin} · ${e.english}`
+/** How long a changed pillar stays emphasised. Long enough to look at, short
+ *  enough not to still be lit when the next change arrives. */
+const EMPHASIS_MS = 3200
+
+interface PillarRefs {
+  readonly root: HTMLElement
+  readonly sourceValue: HTMLElement
+  readonly sourceNote: HTMLElement
+  readonly stemChar: HTMLElement
+  readonly branchChar: HTMLElement
+  readonly stemGlyph: HTMLElement
+  readonly branchGlyph: HTMLElement
+  readonly stemElement: HTMLElement
+  readonly branchElement: HTMLElement
+  readonly change: HTMLElement
+}
+
+export interface ChartView {
+  update(chart: BaziChart, changes: readonly PillarChange[]): void
+  clear(message: string): void
+}
+
+function elementText(id: ElementId): string {
+  const e = element(id)
+  return `${e.hanzi} ${e.english}`
+}
+
+const q = <T extends HTMLElement>(scope: ParentNode, selector: string): T => {
+  const found = scope.querySelector<T>(selector)
+  if (!found) throw new Error(`chart-view: missing ${selector}`)
+  return found
 }
 
 /**
- * The Four Pillars as a table: one column per pillar, one row per layer.
+ * The whole chart as markup.
  *
- * A real `<table>` with `<th scope>` means a screen reader can say "Day Pillar,
- * Heavenly Stem, 辛" instead of reading eight loose characters. The 4 × 2 grid
- * the brief asks for *is* this table's two body rows.
+ * Written as one template rather than assembled node by node because the shape is
+ * fixed — only its contents ever change — and a single template is far easier to
+ * read against the design.
  */
-function renderPillars(chart: BaziChart): string {
-  const headers = chart.pillars
+function skeleton(chart: BaziChart): string {
+  const pillars = chart.pillars
     .map(
       (p) => `
-        <th scope="col">
-          <span class="pillar-label__hanzi">${p.labelHanzi}</span>
-          <span class="pillar-label__english">${p.labelEnglish}</span>
-        </th>`,
+      <li class="pillar" data-pillar="${p.id}">
+        <h3 class="pillar__head">
+          <span class="pillar__label-hanzi">${p.labelHanzi}</span>
+          <span class="pillar__label-english">${p.labelEnglish.replace(' Pillar', '')}</span>
+        </h3>
+
+        <p class="pillar__source">
+          <span class="pillar__source-value" data-source-value></span>
+          <span class="pillar__source-note" data-source-note></span>
+        </p>
+
+        <div class="pillar__glyphs">
+          <span class="glyph" data-stem-glyph>
+            <span class="visually-hidden">Heavenly Stem: </span>
+            <span class="glyph__char" data-stem-char></span>
+          </span>
+          <span class="glyph" data-branch-glyph>
+            <span class="visually-hidden">Earthly Branch: </span>
+            <span class="glyph__char" data-branch-char></span>
+          </span>
+        </div>
+
+        <p class="pillar__elements">
+          <span class="element-chip" data-stem-element></span>
+          <span class="element-chip" data-branch-element></span>
+        </p>
+
+        <p class="pillar__change" data-change hidden></p>
+      </li>`,
     )
     .join('')
 
-  const layer = (
-    kind: 'stem' | 'branch',
-    rowLabelHanzi: string,
-    rowLabelEnglish: string,
-  ): string => {
-    const cells = chart.pillars
-      .map((p) => {
-        const unit = kind === 'stem' ? p.stem : p.branch
-        const extra =
-          kind === 'stem'
-            ? `<span class="cell__meta">${p.stem.polarity === 'yang' ? '阳 yang' : '阴 yin'}</span>`
-            : `<span class="cell__meta">${p.branch.zodiacHanzi} ${p.branch.zodiacEnglish}</span>`
-        return `
-          <td data-element="${unit.element}">
-            <span class="cell__hanzi">${unit.hanzi}</span>
-            <span class="cell__pinyin">${unit.pinyin}</span>
-            <span class="cell__element">${elementLabel(unit.element)}</span>
-            ${extra}
-          </td>`
-      })
-      .join('')
-
-    return `
-      <tr>
-        <th scope="row">
-          <span class="row-label__hanzi">${rowLabelHanzi}</span>
-          <span class="row-label__english">${rowLabelEnglish}</span>
-        </th>
-        ${cells}
-      </tr>`
-  }
-
-  return `
-    <table class="chart">
-      <caption class="chart__caption">
-        Four Pillars — eight characters, read as four columns of two.
-      </caption>
-      <thead>
-        <tr>
-          <td></td>
-          ${headers}
-        </tr>
-      </thead>
-      <tbody>
-        ${layer('stem', '天干', 'Heavenly Stem')}
-        ${layer('branch', '地支', 'Earthly Branch')}
-      </tbody>
-    </table>`
-}
-
-/** The eight characters as a plain string, for the summary line. */
-function renderEightCharacters(chart: BaziChart): string {
-  const stems = chart.pillars.map((p) => p.stem.hanzi).join('　')
-  const branches = chart.pillars.map((p) => p.branch.hanzi).join('　')
-  return `
-    <div class="eight-chars" aria-hidden="true">
-      <div class="eight-chars__row">${stems}</div>
-      <div class="eight-chars__row">${branches}</div>
-    </div>`
-}
-
-/** The Five Element tally across all eight characters. */
-function renderElementTally(chart: BaziChart): string {
-  const tally = tallyElements(chart)
-  const items = ELEMENTS.map((e) => {
-    const count = tally[e.id]
-    return `
-      <li data-element="${e.id}" data-count="${count}">
+  const tally = ELEMENTS.map(
+    (e) => `
+      <li class="tally__row" data-element="${e.id}" data-count="0">
         <span class="tally__hanzi">${e.hanzi}</span>
         <span class="tally__english">${e.english}</span>
-        <span class="tally__count">${count}<span class="tally__of"> / 8</span></span>
-      </li>`
-  }).join('')
+        <span class="tally__bar"><span class="tally__fill" data-fill="${e.id}"></span></span>
+        <span class="tally__count" data-count-for="${e.id}">0</span>
+      </li>`,
+  ).join('')
 
   return `
-    <section class="tally-section" aria-labelledby="tally-heading">
-      <h2 id="tally-heading">五行 · Five Elements in these eight characters</h2>
-      <ul class="tally">${items}</ul>
+    <section class="section section--pillars" aria-labelledby="pillars-heading">
+      <h2 class="section__heading" id="pillars-heading">
+        <span class="section__hanzi">四柱</span>
+        <span class="section__english">Four Pillars</span>
+      </h2>
+      <p class="section__legend">
+        Each layer of the moment becomes one column: a Heavenly Stem above, an
+        Earthly Branch below.
+      </p>
+      <ol class="pillars">${pillars}</ol>
+    </section>
+
+    <section class="section section--bazi" aria-labelledby="bazi-heading">
+      <h2 class="section__heading" id="bazi-heading">
+        <span class="section__hanzi">八字</span>
+        <span class="section__english">Eight Characters</span>
+      </h2>
+      <p class="bazi-string" data-bazi-string></p>
+      <p class="section__legend">Four pairs, read across — this is the moment, written.</p>
+    </section>
+
+    <section class="section section--elements" aria-labelledby="elements-heading">
+      <h2 class="section__heading" id="elements-heading">
+        <span class="section__hanzi">五行</span>
+        <span class="section__english">Five Elements</span>
+      </h2>
+      <ul class="tally">${tally}</ul>
+      <p class="derivation" data-derivation></p>
     </section>`
 }
 
-/**
- * The intermediate steps, shown rather than hidden.
- *
- * This is the explanatory payload: it names *why* the year turned when it did and
- * which solar month the moment fell in, so the chart reads as a derivation rather
- * than an oracle.
- */
-function renderDerivation(chart: BaziChart): string {
-  const d = chart.derivation
-  const monthBranch = chart.pillars[1].branch
-  const rows: ReadonlyArray<readonly [string, string]> = [
-    [
-      'Solar longitude at birth',
-      `${d.solarLongitude.toFixed(2)}° — the Sun's apparent position, which is what fixes the month`,
-    ],
-    [
-      'Bazi year',
-      `${d.baziYear}${
-        d.beforeLiChun
-          ? ` — the birth falls <em>before</em> 立春, so it belongs to the previous solar year, not ${chart.moment.year}`
-          : ' — the birth falls after 立春 (Lìchūn), so the solar and Gregorian years agree'
-      }`,
-    ],
-    [
-      'Solar month',
-      `#${d.solarMonthIndex} of 12, the ${monthBranch.hanzi} month — set by solar term, not by the calendar month`,
-    ],
-    [
-      'Day count',
-      `Julian Day ${d.dayJulianDayNumber} → position ${d.daySexagenaryIndex + 1} of 60 in the cycle${
-        d.rolledToNextDay
-          ? ' — birth at or after 23:00, so the Bazi day has already rolled forward'
-          : ''
-      }`,
-    ],
-  ]
+export function createChartView(root: HTMLElement): ChartView {
+  let pillars: readonly PillarRefs[] | null = null
+  let baziString: HTMLElement | null = null
+  let tallyRoot: HTMLElement | null = null
+  let derivation: HTMLElement | null = null
+  const timers = new Map<string, number>()
 
-  return `
-    <section class="derivation" aria-labelledby="derivation-heading">
-      <h2 id="derivation-heading">How this moment was located</h2>
-      <dl>
-        ${rows.map(([term, detail]) => `<dt>${term}</dt><dd>${detail}</dd>`).join('')}
-      </dl>
-    </section>`
+  function build(chart: BaziChart): readonly PillarRefs[] {
+    root.innerHTML = skeleton(chart)
+    baziString = q(root, '[data-bazi-string]')
+    tallyRoot = q(root, '.tally')
+    derivation = q(root, '[data-derivation]')
+
+    return [...root.querySelectorAll<HTMLElement>('.pillar')].map((li) => ({
+      root: li,
+      sourceValue: q(li, '[data-source-value]'),
+      sourceNote: q(li, '[data-source-note]'),
+      stemChar: q(li, '[data-stem-char]'),
+      branchChar: q(li, '[data-branch-char]'),
+      stemGlyph: q(li, '[data-stem-glyph]'),
+      branchGlyph: q(li, '[data-branch-glyph]'),
+      stemElement: q(li, '[data-stem-element]'),
+      branchElement: q(li, '[data-branch-element]'),
+      change: q(li, '[data-change]'),
+    }))
+  }
+
+  /**
+   * Emphasise a pillar that just moved.
+   *
+   * The attribute is removed and re-applied so a repeated change to the same
+   * pillar restarts the transition rather than sitting there already lit.
+   */
+  function emphasise(refs: PillarRefs, change: PillarChange): void {
+    const key = change.id
+    const existing = timers.get(key)
+    if (existing !== undefined) window.clearTimeout(existing)
+
+    refs.root.removeAttribute('data-changed')
+    // Reading a layout property flushes the removal, so the transition restarts.
+    void refs.root.offsetWidth
+    refs.root.dataset.changed = change.inherited ? 'inherited' : 'own'
+
+    // The reason is printed as written, with no prefix: it already distinguishes
+    // the two cases in words rather than only in colour — an own change reads
+    // "crossed …" or "moved …", an inherited one reads "… followed it (五鼠遁)".
+    // An earlier version prefixed "moved · " and produced "moved · moved 1 day".
+    refs.change.textContent = change.reason
+    refs.change.hidden = false
+
+    timers.set(
+      key,
+      window.setTimeout(() => {
+        refs.root.removeAttribute('data-changed')
+        refs.change.hidden = true
+        refs.change.textContent = ''
+        timers.delete(key)
+      }, EMPHASIS_MS),
+    )
+  }
+
+  function update(chart: BaziChart, changes: readonly PillarChange[]): void {
+    if (!pillars) pillars = build(chart)
+
+    const sources = pillarSources(chart)
+
+    pillars.forEach((refs, index) => {
+      const pillar = chart.pillars[index]
+      const source = sources[index]
+      if (!pillar || !source) return
+
+      refs.sourceValue.textContent = source.value
+      refs.sourceNote.textContent = source.note
+      refs.stemChar.textContent = pillar.stem.hanzi
+      refs.branchChar.textContent = pillar.branch.hanzi
+      refs.stemGlyph.dataset.element = pillar.stem.element
+      refs.branchGlyph.dataset.element = pillar.branch.element
+      refs.stemElement.textContent = elementText(pillar.stem.element)
+      refs.stemElement.dataset.element = pillar.stem.element
+      refs.branchElement.textContent = elementText(pillar.branch.element)
+      refs.branchElement.dataset.element = pillar.branch.element
+
+      const change = changes.find((c) => c.position === index)
+      if (change) emphasise(refs, change)
+    })
+
+    if (baziString) {
+      baziString.textContent = chart.pillars
+        .map((p) => `${p.stem.hanzi}${p.branch.hanzi}`)
+        .join(' ')
+    }
+
+    if (tallyRoot) {
+      const tally = tallyElements(chart)
+      for (const e of ELEMENTS) {
+        const count = tally[e.id]
+        const row = tallyRoot.querySelector<HTMLElement>(`[data-element="${e.id}"]`)
+        const fill = tallyRoot.querySelector<HTMLElement>(`[data-fill="${e.id}"]`)
+        const value = tallyRoot.querySelector<HTMLElement>(`[data-count-for="${e.id}"]`)
+        if (row) row.dataset.count = String(count)
+        // Out of eight, so four characters of one element fills half the bar.
+        if (fill) fill.style.setProperty('--fill', String(count / 8))
+        if (value) value.textContent = String(count)
+      }
+    }
+
+    if (derivation) {
+      const d = chart.derivation
+      derivation.textContent =
+        `Solar longitude ${d.solarLongitude.toFixed(2)}° · ` +
+        `Julian Day ${d.dayJulianDayNumber} · ` +
+        `day ${d.daySexagenaryIndex + 1} of the 60-day cycle` +
+        `${d.beforeLiChun ? ' · before 立春' : ''}`
+    }
+  }
+
+  function clear(message: string): void {
+    for (const timer of timers.values()) window.clearTimeout(timer)
+    timers.clear()
+    pillars = null
+    baziString = null
+    tallyRoot = null
+    derivation = null
+    root.innerHTML = `<p class="placeholder">${message}</p>`
+  }
+
+  return { update, clear }
 }
 
-/** Render a full chart into a container element. */
-export function renderChart(container: HTMLElement, chart: BaziChart): void {
-  container.innerHTML = [
-    renderEightCharacters(chart),
-    renderPillars(chart),
-    renderElementTally(chart),
-    renderDerivation(chart),
-  ].join('')
-}
-
-/** Render a message when the inputs are not yet a usable moment. */
-export function renderMessage(container: HTMLElement, message: string): void {
-  container.innerHTML = `<p class="placeholder">${message}</p>`
-}
-
-/** A one-line summary for the live region, so the change is announced. */
-export function chartSummary(chart: BaziChart): string {
-  const pillars = chart.pillars
-    .map((p) => `${p.labelEnglish}: ${p.stem.hanzi}${p.branch.hanzi}`)
-    .join('. ')
-  return `${eightCharacters(chart).join(' ')}. ${pillars}.`
+/** The eight characters as plain text, for the document title and the summary. */
+export function baziText(chart: BaziChart): string {
+  return eightCharacters(chart).join('')
 }

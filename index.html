@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Eight Characters — how a birth moment becomes 八字</title>
+    <title>八字 — how a moment becomes eight characters</title>
     <meta
       name="description"
       content="An interactive explainer: how a birth date and time are encoded into the eight Chinese characters of Bazi (八字), the Four Pillars of Destiny."
@@ -11,65 +11,82 @@
     <link rel="stylesheet" href="./src/styles/main.css" />
   </head>
   <body>
-    <a class="skip-link" href="#chart">Skip to the eight characters</a>
+    <a class="skip-link" href="#moment-form">Skip to the birth moment</a>
 
     <main id="main">
       <header class="intro">
         <p class="intro__kicker">八字 · Bāzì · Four Pillars of Destiny</p>
-        <h1 class="intro__title">A moment of birth can be written as eight characters.</h1>
+        <!-- Explicit line breaks, because the phrase "eight characters" must not be
+             split across lines — it is the claim of the whole page. -->
+        <h1 class="intro__title">
+          A moment in time becomes<br />
+          four layers,<br />
+          and eight characters.
+        </h1>
         <p class="intro__lede">
-          Chinese calendrical tradition encodes a single instant as four pairs of characters —
-          one pair each for the year, month, day and hour. Change the moment below and watch
-          the eight characters change with it.
+          Chinese calendrical tradition reads a single instant on four scales at once —
+          year, month, day, hour. Each becomes a column of two characters. The four
+          scales do not turn over together, and that is the interesting part: change
+          the moment and watch which columns move.
         </p>
       </header>
 
       <!--
-        A real <form> with real <label>s: keyboard reachable, works with autofill, and the
-        native date and time pickers already handle locale and mobile input for us. There is
-        no submit step — the chart updates as the inputs change.
+        A real <form> with real <label>s: keyboard reachable, works with autofill,
+        and the native pickers already handle locale and phone input. There is no
+        submit step — the chart is recomputed as the inputs change.
       -->
       <form class="moment" id="moment-form" novalidate>
         <fieldset>
-          <legend>The moment</legend>
+          <legend class="moment__legend">
+            <span class="moment__legend-hanzi">生時</span>
+            <span class="moment__legend-english">The birth moment</span>
+          </legend>
 
-          <div class="moment__field">
-            <label for="birth-date">Birth date</label>
-            <input type="date" id="birth-date" name="birth-date" min="1900-01-01" max="2100-12-31" />
-          </div>
+          <div class="moment__fields">
+            <div class="moment__field">
+              <label for="birth-date">Date</label>
+              <input
+                type="date"
+                id="birth-date"
+                name="birth-date"
+                min="1900-01-01"
+                max="2100-12-31"
+              />
+            </div>
 
-          <div class="moment__field">
-            <label for="birth-time">Birth time</label>
-            <input type="time" id="birth-time" name="birth-time" />
+            <div class="moment__field">
+              <label for="birth-time">Time</label>
+              <input type="time" id="birth-time" name="birth-time" />
+            </div>
           </div>
 
           <p class="moment__note">
-            Times are read as China Standard Time (UTC+8), the meridian Chinese almanacs are
+            Read as China Standard Time (UTC+8), the meridian Chinese almanacs are
             calculated for.
           </p>
         </fieldset>
       </form>
 
       <!--
-        aria-live="polite" so a keyboard or screen-reader user is told the chart changed
-        without having to go looking for it. The visible chart is rebuilt inside #chart; the
-        one-line summary in #chart-summary is what actually gets announced.
+        aria-live="polite" announces which pillar moved and why, so the change
+        feedback is not carried by colour and motion alone.
       -->
-      <section id="chart" class="chart-region" aria-labelledby="chart-heading" tabindex="-1">
-        <h2 id="chart-heading" class="visually-hidden">The eight characters for this moment</h2>
-        <div id="chart-output"></div>
-      </section>
       <p id="chart-summary" class="visually-hidden" aria-live="polite" aria-atomic="true"></p>
+
+      <div id="chart-output"></div>
+      <div id="boundary-output"></div>
 
       <footer class="colophon">
         <p>
-          Phase 1: the transformation itself, with its conventions on show. Calculation rules,
-          assumptions and known limits are documented in the source —
-          <code>src/bazi/calculate.ts</code>.
+          An explainer of a calendrical system, not a fortune-telling service. Nothing
+          here predicts anything.
         </p>
         <p>
-          This is an explainer of a cultural and calendrical system, not a fortune-telling
-          service. Nothing here predicts anything.
+          Solar terms are computed from the Sun's apparent longitude to about ±15
+          minutes. Where schools of Bazi genuinely disagree — timezone, the day
+          boundary, branch polarity — the choice made is named in the source at
+          <code>src/bazi/calculate.ts</code> rather than hidden.
         </p>
       </footer>
     </main>
