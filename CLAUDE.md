@@ -10,14 +10,20 @@ suggestions: prefer fixing a rule here over re-prompting until something works.
 The brief: *build an interactive explainer of something you think more people should know or
 understand.*
 
-The topic is **Bazi (八字 / Four Pillars of Destiny)**. The one idea:
+The current concept is **Life Cost** (Prototype v1, branch `life-cost-v2`). The one idea:
 
-> **A moment of birth can be encoded into eight Chinese characters.**
+> **Every price tag hides an amount of your life.**
+>
+> Everything has two prices: money, and time.
 
-The site interactively explains how a birth year, month, day and hour become the Four Pillars
-and Eight Characters, and how those characters relate to the Five Elements.
+The visitor says how they are paid. The page derives what an hour of their life actually returns,
+then reprices a ladder of objects in that currency. The **MONEY ↔ TIME** toggle over unchanged
+objects *is* the explanation.
 
-It is an **interactive explainer, not an online fortune-telling service.**
+The first concept, an interactive BaZi explainer, is **Prototype v0** — preserved unrewritten on
+`bazi-prototype`. It was closed deliberately: it had an interaction, but the interaction did not
+explain anything (PROCESS.md, moment 1). That finding is why this concept is shaped the way it
+is, and it is why nothing about it may be deleted or rewritten.
 
 ## Where this project lives
 
@@ -30,90 +36,113 @@ This is an **independent** Assignment 1 project.
 - **Never** modify C1, C2, riff2, CBETA, or any previous course project.
 - **Never** reuse an existing git repository or an existing git remote.
 - **Never** push to a repository belonging to another deliverable or another student.
-- No remote is connected until the author explicitly approves one. (See PROCESS.md, moment 2 —
-  this rule exists because the rule was nearly broken.)
 
-One remote is now approved, and only this one:
+One remote is approved, and only this one:
 
 ```
 origin  https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi.git
 ```
 
-It is the course-provisioned Assignment 1 repository. `main` carries both histories — the course
-template and this prototype, joined with `--allow-unrelated-histories`. The prototype's original
-five commits are preserved unrewritten on `bazi-prototype` (Assignment 1 Prototype v0); **do not
-rewrite or delete either history.**
+It is the course-provisioned Assignment 1 repository. `main` carries two histories — the course
+template and Prototype v0 — joined with `--allow-unrelated-histories`. **Do not rewrite, squash,
+force-push or delete any of it.** `life-cost-v2` branches from that merge; the BaZi source files
+are absent from this branch's tree, which is a branch state, not a history edit.
 
 ## Scope rules
 
 ### In scope
 
-1. What Bazi is.
-2. What the Eight Characters represent.
-3. How Heavenly Stems, Earthly Branches and the Five Elements relate.
-4. A short, symbolic personality interpretation.
+1. What an hour of the visitor's life returns in money, and why it is less than their wage.
+2. What ordinary and extraordinary objects cost when the price is read in hours.
+3. The scale between the two ends of that ladder.
 
 ### Out of scope — do not build
 
-Full fortune telling · Zi Wei Dou Shu · annual fortune · ten-year luck cycles (大运) · marriage,
-wealth or career prediction · compatibility matching · bulk traditional astrology content.
+Budgeting · savings or investment projection · salary benchmarking or comparison to others ·
+e-commerce, carts, checkout, quantity selectors, filters, search, product detail pages ·
+"spend a billionaire's money" games · price feeds or any runtime fetching.
 
 ### The feature test
 
 Before adding anything, ask:
 
-> Does this make the transformation **birth moment → Eight Characters** easier or more
-> interesting to understand?
+> Does this directly help the visitor understand that **money represents exchanged human time**?
 
-If the answer is no, do not add it. Technical possibility is not a reason.
+If the answer is no, do not add it. Technical possibility is not a reason. One idea, one
+mechanic, carried all the way.
 
 ## The core interaction
 
-The visitor must actively do something that changes what they see:
-
-> The visitor changes their **birth date and time** and watches that moment transform into the
-> Four Pillars / Eight Characters and their Five Element representation.
+> The visitor toggles **MONEY ↔ TIME** and watches the same objects, in the same order, at the
+> same prices, become durations of their own life.
 
 Consequences of this being *the* interaction:
 
-- Interaction must do **explanatory work**. Not decorative animation, not a form followed by a
-  wall of generated text, not long static prose.
-- Changing an input must visibly change the explanatory system, and the change should be
-  legible as a *transformation* rather than a page swap.
-- The interaction must be specific enough to write an automated test against. Keep the state
-  transition in a pure, testable module, separate from rendering.
+- The toggle is a real radio group, so it is operable by keyboard without any custom key handling.
+- The rows are **built once and updated in place**. Rebuilding the list would make the flip read
+  as a new page arriving; changing only the price cell makes it read as the *same object* being
+  repriced, which is the explanatory moment.
+- Labels are MONEY and TIME. Never Buy/Sell — this is not a transaction.
+- Only a genuine mode flip animates. Editing the wage also repaints every duration, and marking
+  every keystroke as a transformation spends the effect until it means nothing.
 
 ## Hard constraints
 
 | Constraint | What it means here |
 | --- | --- |
-| **Static, client-side** | No backend, no server dependency, no runtime API calls. Must deploy to GitHub Pages as static files. |
+| **Static, client-side** | No backend, no runtime API calls, no live prices. Deploys to GitHub Pages as static files. |
 | **One idea** | One strong idea with a clear point of view. Resist feature accretion. |
-| **Desktop + phone** | Must work at both, and **survive resizing during interaction**. |
-| **Keyboard accessible** | Every control keyboard-reachable, visible focus states, semantic HTML, understandable without a mouse. The marker may navigate by keyboard. |
-| **Robust** | Usable on a slow connection. No unnecessarily heavy assets, no fragile interactions. |
+| **Desktop + phone** | Tested at 1920×1080 and 390×844, and **must survive resizing during use**. |
+| **Keyboard accessible** | Every control keyboard-reachable, visible focus, semantic HTML. |
+| **Robust** | Usable on a slow connection. No heavy assets, no fragile interactions. |
+
+### State survives resize, because there is no second copy of it
+
+The only state is *what the visitor typed* and *which radio is checked*, and both live in the DOM
+rather than in module variables. Nothing is re-created on a layout change, so there is nothing to
+lose when the window is dragged mid-interaction. Keep it that way: do not introduce a cached copy
+of a derived value, and do not rebuild anything on `resize`.
 
 ### Accessibility specifics
 
-- Use real semantic elements: `<button>`, `<input>`, `<label>`, `<fieldset>`. Do not put click
+- Real elements only: `<button>`, `<input>`, `<label>`, `<fieldset>`, `<select>`. No click
   handlers on `<div>`s.
-- Never remove focus outlines; style them so they are clearly visible on the dark ground.
-- Anything conveyed by colour (especially the Five Elements) must also be conveyed by text or
-  shape. Element colour alone is not an accessible encoding.
+- The mode radios are visually hidden, never `display: none` and never `disabled` — they are the
+  control, and the focus ring is drawn on their labels.
+- Never remove focus outlines.
+- Colour is never the only encoding: MONEY and TIME differ in typeface and weight as well as hue,
+  and the caption above the ladder says in words which currency is on screen.
 - Respect `prefers-reduced-motion` for every animation.
+
+## Honesty rules
+
+These are the rules the whole piece rests on. Breaking one makes the page a lie with a nice
+typeface.
+
+- **Label the model as a model.** The page states, in the page itself, that this is an
+  explanatory model and not an official economic or accounting measure.
+- **Show the arithmetic.** Both rates are displayed with the division that produced them. A
+  number the visitor cannot check is a number they have to take on faith.
+- **Never invent a rate.** If the input cannot produce an honest answer — no pay, no hours, a week
+  with more than 168 hours in it — `computeLifeRate` returns `null` and the page withholds the
+  reveal. A placeholder duration in the one place the page asks to be believed is the worst
+  possible defect.
+- **A placeholder may not claim to be checked.** Every product carries `provisional`; a
+  provisional price has no source URL and no checked date, and `products.test.ts` enforces it.
+- **Name the disagreement.** The brief's month is 4 weeks and its year is 52 — which do not
+  reconcile — so the same salary entered monthly and yearly gives slightly different rates. The
+  page says so rather than quietly picking 4.345.
 
 ## Design direction
 
-**Contemporary East Asian mysticism + editorial design + interactive data visualisation.**
+**Editorial print, not retail.** A price list that looks like a shop invites shopping.
 
-Prefer: strong typography · generous whitespace · black / warm off-white · restrained cinnabar
-red · subtle motion · Chinese characters as major visual objects · diagrams and spatial
-relationships that carry the explanation.
+Prefer: strong typography · generous whitespace · warm paper ground, near-black type, one accent
+that belongs to time · a table that the eye reads *down*, so the change of scale is visible before
+any number is read.
 
-Avoid: stereotypical commercial fortune-telling aesthetics · excessive gold · bright red
-backgrounds · cheap gradients · casino-like UI · crowded information panels.
-
-**The design supports the explanation rather than overpowering it.**
+Avoid: product cards · badges · cart or checkout affordances · stock photography grids · gradients
+· anything that makes an object look purchasable.
 
 ## Stack and commands
 
@@ -128,19 +157,18 @@ pnpm typecheck        # tsc --noEmit
 pnpm test             # vitest run
 pnpm build            # produce dist/
 pnpm check            # typecheck && build && oxlint && stylelint && vitest — before every commit
-pnpm check:evidence   # PROCESS.md citations resolve · reflection present · CLAUDE.md present
+pnpm check:evidence   # PROCESS.md commit citations resolve · reflection present · CLAUDE.md present
 ```
 
 ### Layers
 
 ```
-src/bazi/types.ts        the shape of a chart
-src/data/sexagenary.ts   verified lookup tables (stems, branches, elements)
-src/bazi/solar.ts        solar longitude, Julian day, 立春
-src/bazi/calculate.ts    the transformation — pure, no DOM
-src/bazi/moment.ts       input strings → BirthMoment — pure, no DOM
-src/bazi/explain.ts      which pillar moved and why; per-pillar sources — pure, no DOM
-src/bazi/lichun.ts       the 立春 before/after comparison — pure, no DOM
+src/life/types.ts        the shapes the explainer is built on
+src/life/income.ts       pay → paid and life-adjusted hourly rates — pure, no DOM
+src/life/duration.ts     money → hours → a duration a person can picture — pure, no DOM
+src/life/parse.ts        form strings → numbers the model can refuse — pure, no DOM
+src/data/products.json   the ladder: 20 objects, each with its price and its source
+src/data/products.ts     the dataset, sorted by price at import
 src/components/*.ts      view factories: build once, then update in place
 src/main.ts              wiring only; no logic a test would want to reach
 
@@ -149,39 +177,55 @@ scripts/                 the course evidence check; course infrastructure, do no
 ```
 
 `spec/` and `scripts/` came from the course template and are not this project's code. Own spec
-tests for a week's published brief go *alongside* `invariants.test.ts`, never inside it. The
-template's starter page (root `main.ts`, `styles.css`) and `spec/starter.test.ts` were deleted
-when the two histories merged: the starter page it described is gone, which is exactly the
-condition its own failure message says to delete it under.
+tests for a week's published brief go *alongside* `invariants.test.ts`, never inside it.
 
-Anything a test would want to assert belongs above `main.ts`. If a rule ends up in `main.ts` or
-in a component, move it down. The explanatory text is part of that: *which pillar moved and why*
-is the central claim of the piece, so it lives in `explain.ts` where a test can assert it, never
-in the view.
+Anything a test would want to assert belongs above `main.ts`. Rounding included: it is a
+**display** decision, so `income.ts` returns exact numbers and `duration.ts` decides what is
+printed — which means the arithmetic shown on the page is the arithmetic that ran.
 
-**Views are updated, not re-rendered.** `createChartView` builds its skeleton once and afterwards
-writes only text nodes and attributes. Re-assigning `innerHTML` on every keystroke would restart
-CSS transitions (so nothing could be emphasised *as changed*) and drop focus out of the region.
+**Views are updated, not re-rendered.** Both view factories build their skeleton once and
+afterwards write only text nodes and attributes.
+
+### Saying a duration
+
+`duration.ts` exists to keep one promise: **never print a number a person cannot picture.**
+"41,802 hours" is a number, not a scale. Two rules follow, both earned (PROCESS.md, moment 6):
+
+- **The ladder must have a top.** Every unit tier eventually meets a price that overflows it. The
+  private jet printed "1,420 working years" until `working lifetimes` (45 working years) was
+  added. If a new rung ever overflows the top again, add a unit — do not shrink the ladder.
+- **The units are the visitor's, not the calendar's.** A working day is a fifth of the hours
+  *they* said they work. Pricing a part-timer's laptop in 8-hour days is arithmetic about somebody
+  else.
+- The month tier stops at twelve, because a 4-week month and a 52-week year do not tile (52 ÷ 4 =
+  13) and "13 working months" reads as an error even when the arithmetic is right.
+
+`duration.test.ts` pins each boundary, each singular form, and a sweep asserting no printed value
+reaches four digits. `products.test.ts` asserts the whole ladder climbs through every unit at the
+brief's example rate.
 
 ### Checking the rendering
 
-Tests cannot see a layout, and this project has already shipped two defects that only a rendered
-page showed (a doubled verb in a change badge, and 乙未 breaking across two lines). Before calling
-a visual phase done, screenshot the built site at a desktop and a phone width:
+Tests cannot see a layout, and this project has already shipped defects that only a rendered page
+showed. Before calling a visual phase done, screenshot the built site at both marked widths:
 
 ```sh
 pnpm build && pnpm preview --port 4183 &
 SHELL="$HOME/Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell"
-"$SHELL" --headless --hide-scrollbars --window-size=1280,3400 \
-  --screenshot=/tmp/desktop.png --virtual-time-budget=800 http://localhost:4183/
-"$SHELL" --headless --hide-scrollbars --window-size=320,1500 \
-  --screenshot=/tmp/phone.png --virtual-time-budget=800 http://localhost:4183/
+"$SHELL" --headless --hide-scrollbars --window-size=1920,1080 \
+  --screenshot=/tmp/desktop.png --virtual-time-budget=900 http://localhost:4183/
+"$SHELL" --headless --hide-scrollbars --window-size=390,844 \
+  --screenshot=/tmp/phone.png --virtual-time-budget=900 http://localhost:4183/
 ```
 
 To see an *interacted* state, copy `dist/index.html` to a throwaway `dist/__probe.html` with a
-trailing module script that sets an input and dispatches `input`, screenshot that, then delete it.
-`dist/` is generated, so nothing enters the repo. Keep the virtual-time budget below the emphasis
-timeout or the highlight will have expired before the shot.
+trailing module script that checks `#mode-time` and dispatches `change`, screenshot that, then
+delete it. `dist/` is generated, so nothing enters the repo.
+
+Two traps in this technique: the shell screenshots from the top of the layout regardless of
+`scrollIntoView`, so to inspect the bottom of the ladder hide the sections above it in the probe;
+and a tall capture window inflates every `svh`, so judge the hero's height only in a 1080- or
+844-high window.
 
 ### Tooling notes
 
@@ -189,25 +233,24 @@ timeout or the highlight will have expired before the shot.
   esbuild's postinstall and then *every* `pnpm <script>` fails on the pre-script dependency
   check, not just the build. Do not delete it.
 - The directory name contains a space. Quote paths in every shell command.
-- `strict` plus `noUncheckedIndexedAccess` are on deliberately: indexing the stem/branch
-  tables is the most likely source of a silent off-by-one, and the compiler should catch it.
+- Stylelint runs `no-descending-specificity`. Order rules **base → animation → state → variant**
+  for the same element (`.rung__price`, then `.ladder--morphing .rung__price`, then
+  `.ladder[data-mode="time"] .rung__price`), or the check goes red on ordering alone.
+- Class names are BEM, enforced by a `selector-class-pattern` override in `.stylelintrc.json`.
 - Beware DOM globals when naming variables — `status`, `name`, `length`, `top`, `closed` and
-  friends already exist on `window`, and TypeScript reports the collision as a confusing
-  redeclaration error rather than a shadowing warning.
-- `@types/node` is present because the course template's `vite.config.ts` and `spec/` read the
-  filesystem. Our own tests still read `index.html` through Vite's `import x from
-  '../file.html?raw'` rather than `node:fs`: it reads the same file the build ships, and it keeps
-  the test honest if the entry ever moves.
-- `src/interaction.test.ts` runs under jsdom (`@vitest-environment jsdom` docblock) and loads the
-  real `index.html`, so a renamed id or a deleted input fails a test rather than only failing in
-  a browser.
+  friends already exist on `window`.
+- Our tests read `index.html` through Vite's `import x from '../file.html?raw'` rather than
+  `node:fs`: it reads the same file the build ships, and stays honest if the entry ever moves.
+- `src/interaction.test.ts` runs under jsdom and loads the real `index.html`. `main.ts` wires
+  itself at import time, so each test resets the body **and** calls `vi.resetModules()` before
+  re-importing — otherwise every test after the first drives the first test's page.
 
 ## The course sensors
 
 **What gets marked is the deployed site**, live in Chrome at 1920×1080 and 390×844 — both count
-in full — plus the process evidence below. Not this working copy, and not "it works on my
-machine". CI (`.github/workflows/checks.yml`) runs on every push *once the repo is public*; while
-it is private the jobs stay skipped and `pnpm check` is the same roster, faster.
+in full — plus the process evidence below. Not this working copy. CI
+(`.github/workflows/checks.yml`) runs on every push *once the repo is public*; while it is private
+the jobs stay skipped and `pnpm check` is the same roster, faster.
 
 | Sensor | What it measures | Where it runs |
 | --- | --- | --- |
@@ -226,18 +269,6 @@ decide it should be. Never commit a red state.
 
 Nothing here measures accessibility or performance. Those are ours to wire.
 
-## Verifying Bazi rules
-
-Bazi has genuine forks where schools disagree, and published sources contradict each other. Two
-standing rules, both earned (PROCESS.md, moment 3):
-
-- **Never accept a source because it agrees with the code.** Verify against an oracle that shares
-  no code with the implementation — the day pillar is checked by elapsed-day arithmetic from three
-  independently sourced anchors, not by re-running the Julian-day formula.
-- **Never silently resolve a disagreement.** Where sources genuinely conflict, store both inputs,
-  display only what is uncontested, and name the fork in the conventions block at the top of
-  `calculate.ts`. Six forks are labelled there; keep that list current.
-
 ## Working method
 
 Work incrementally. For each substantial phase:
@@ -253,12 +284,17 @@ Work incrementally. For each substantial phase:
 
 **Do not build the entire project in one pass.**
 
+When the same failure recurs: diagnose it, change a rule here or a test or an invariant, *then*
+fix it, verify, and commit. A fix with no rule behind it will be re-broken.
+
 ## Git discipline
 
 - Inspect the repo and `git status` before substantial work.
 - Commit at meaningful milestones, with the checks green. Never commit a red state.
 - The history must grow alongside the project — **do not collapse the work into one final
   commit.** The commit history is assessed.
+- Preserve unsuccessful but meaningful iterations. Prototype v0 is evidence, not clutter.
+- No remote push without explicit approval, branch by branch.
 
 ## Process artefacts
 
@@ -266,14 +302,17 @@ These are part of the mark and are maintained *throughout*, never written at the
 
 - **`PROCESS.md`** — 400–600 words, only **3–4 strong moments**. A moment qualifies when we
   identified a failure, diagnosed why, changed a rule, added a check, rejected an approach, or
-  verified an output before accepting it. Each moment states: what we assumed → what went wrong
-  → what we changed → how we verified. **Every moment carries a citation** whose link text is the
+  verified an output before accepting it. Each moment states: what we assumed → what went wrong →
+  what we changed → how we verified. **Every moment carries a citation** whose link text is the
   commit hash or range and whose target is this repo's commit or compare URL:
   ``[`f0a1874`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/f0a1874)``.
   A marker follows the citations and does not trawl the history for evidence we did not point at;
   `pnpm check:evidence` fails if a cited SHA does not resolve, or if none is cited at all.
+  *The file currently runs long, at six moments — a consolidation to four is outstanding.*
 - **`CLAUDE.md`** — this file. Grow it when a recurring constraint or mistake appears. The gap
   between the course boilerplate and this file is itself read as evidence.
 - **`reflections/assignment-1.md`** — the reflection, centred on the project's main
   breakthrough: where the interactive idea became clear or materially improved. The filename is
   checked against the deliverable this repo is for; it must stay `assignment-1.md`.
+- **Never fabricate process evidence.** A moment that did not happen, or a citation to a commit
+  that does not contain what the moment claims, is worse than a thin file.

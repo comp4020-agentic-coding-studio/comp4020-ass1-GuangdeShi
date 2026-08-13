@@ -1,41 +1,44 @@
-# 八字 — how a moment becomes eight characters
+# Everything has two prices
 
-An interactive explainer of **Bazi (八字 / Four Pillars of Destiny)**, built for **COMP8020 /
+An interactive explainer of the **life cost** of what things cost, built for **COMP8020 /
 COMP4020 Agentic Coding Studio, Assignment 1**.
 
 The one idea:
 
-> **A moment in time becomes four layers, and eight characters.**
+> **Every price tag hides an amount of your life.**
 
-Chinese calendrical tradition reads a single instant on four scales at once — year, month, day,
-hour — and each becomes a column of two characters. The four scales do not turn over together,
-and that is what the interaction teaches: change the birth moment and watch *which* columns move,
-and why. A pillar can move because its own layer moved, or because the layer above it did
-(五虎遁, 五鼠遁).
+You tell the page how you are paid. It works out what an hour of your life actually returns —
+once the unpaid time the job costs you is counted — and then reprices a ladder of ordinary and
+extraordinary objects in that second currency. A flat white stops being $6 and becomes sixteen
+minutes. A house stops being a number with six digits and becomes twenty-four working years.
 
-This is an explainer of a calendrical system, **not a fortune-telling service**. Nothing here
-predicts anything.
+Nothing on the page is for sale. There is no cart, no checkout, no comparison of your salary to
+anyone else's. The single interaction — **MONEY ↔ TIME** over the same unchanged objects — is the
+explanation.
+
+This is an **explanatory model, not an official economic or accounting measure.** It divides pay
+by committed hours. It does not model tax, superannuation, benefits, overtime, or unpaid work
+beyond the commute, and the page says so.
 
 ## Scope
 
-In scope: what Bazi is · what the Eight Characters represent · how Heavenly Stems, Earthly
-Branches and the Five Elements relate · the calendrical boundaries (立春, the 節 months, the 23:00
-day boundary) that make the transformation non-obvious.
+In scope: what an hour of your life is worth in money · why that is lower than your stated wage ·
+what ordinary and extraordinary objects cost when the price is read in hours · the scale between
+the two ends of that ladder.
 
-Out of scope by design: Zi Wei Dou Shu · fortune, marriage, wealth or career prediction ·
-ten-year luck cycles (大运) · annual fortune · compatibility matching.
+Out of scope by design: budgeting · investment or savings projections · salary benchmarking ·
+e-commerce of any kind · shopping-cart simulation · "spend a billionaire's money" games.
 
 ## Structure
 
 ```
-index.html                 the page shell — nav, form, live region, output containers
-src/bazi/types.ts          the shape of a chart
-src/data/sexagenary.ts     verified lookup tables (stems, branches, elements)
-src/bazi/solar.ts          solar longitude, Julian day, 立春
-src/bazi/calculate.ts      the transformation — pure, no DOM
-src/bazi/moment.ts         input strings → BirthMoment — pure, no DOM
-src/bazi/explain.ts        which pillar moved and why — pure, no DOM
-src/bazi/lichun.ts         the 立春 before/after comparison — pure, no DOM
+index.html                 the page shell — nav, hero, form, live regions, containers
+src/life/types.ts          the shapes the explainer is built on
+src/life/income.ts         pay → paid and life-adjusted hourly rates — pure, no DOM
+src/life/duration.ts       money → hours → a duration a person can picture — pure, no DOM
+src/life/parse.ts          form strings → numbers the model can refuse — pure, no DOM
+src/data/products.json     the ladder: 20 objects, each with its price and its source
+src/data/products.ts       the dataset, sorted by price at import
 src/components/*.ts        view factories: build once, then update in place
 src/main.ts                wiring only
 src/styles/main.css        design tokens and the whole visual language
@@ -56,6 +59,15 @@ pnpm preview    # serve the built dist/ locally
 pnpm dlx linkinator ./dist --silent   # reproduce CI's links check
 ```
 
+## Prices
+
+Prices are indicative Australian reference prices selected to illustrate scale, held locally in
+`src/data/products.json` — nothing is fetched at runtime. Each entry names the kind of price it
+is, and a checked price also carries the date it was checked. The objects at the top of the
+ladder are single representative examples rather than market averages: there is no universal
+price for a superyacht. A dataset test enforces the honesty of those fields, so a placeholder
+cannot claim to have been checked.
+
 ## How this repo is assessed
 
 The **deployed site** is the deliverable, marked live in Chrome at 1920×1080 and 390×844 — both
@@ -67,9 +79,13 @@ The process is marked too: `PROCESS.md` (a cited reading-guide to the moments th
 `CLAUDE.md` (the harness this project is built against), the commit history, and
 `reflections/assignment-1.md`.
 
-## Two histories
+## Three histories, none rewritten
 
-This repository carries two histories, joined with `--allow-unrelated-histories`: the course
-template, and the standalone BaZi prototype built before this repository was available. The
-prototype's original five commits are preserved unrewritten on the `bazi-prototype` branch as
-Assignment 1 Prototype v0.
+This repository carries the course template's history and the standalone prototype history,
+joined with `--allow-unrelated-histories`, and then a second concept built on top:
+
+- `bazi-prototype` — **Assignment 1 Prototype v0**, the BaZi explainer, its original five commits
+  preserved unrewritten. It is the reason this concept exists: it showed that interaction alone
+  is not explanation (see `PROCESS.md`, moment 1).
+- `main` — the merge of the course template with that prototype history.
+- `life-cost-v2` — **Prototype v1**, this concept.
