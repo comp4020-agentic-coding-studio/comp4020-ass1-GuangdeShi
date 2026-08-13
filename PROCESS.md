@@ -1,10 +1,39 @@
 # Process
 
-Four moments where something went wrong or a rule changed.
+The concept evaluation that closed the first direction, followed by the moments during its
+build where something went wrong or a rule changed.
 
 ---
 
-## Moment 1 — The repository I was told to use did not exist
+## Moment 1 — Interaction was not enough
+
+My first direction for Assignment 1 was an interactive BaZi (Four Pillars of Destiny) prototype.
+The visitor entered their birth date and time, the system calculated the corresponding Eight
+Characters, and the interface returned a broad personality interpretation.
+
+I initially chose this concept because it had an obvious interaction: changing the user's birth
+information changed the result. However, after building the prototype and returning to the
+assignment brief, I realised that an interactive input-output system was not necessarily an
+effective interactive explainer.
+
+BaZi depends on a much broader traditional Chinese cosmological and calendrical system. Explaining
+why a particular birth moment produces a particular interpretation would require introducing
+concepts such as the Five Elements, Heavenly Stems and Earthly Branches, calendrical boundaries,
+and the traditional logic connecting these classifications with personality and destiny.
+
+This made the project difficult to reduce to one clear idea and one mechanic. In the prototype, the
+user's birth information mostly entered a black box and produced a prediction. The interaction
+changed the output, but it did not help the visitor understand the mechanism behind it.
+
+I therefore decided to stop developing this direction. The prototype became an important early
+test: it showed me that interaction alone does not satisfy the brief. For the next iteration, I
+wanted the user's action itself to reveal the idea, rather than simply request a generated answer.
+
+**Evidence:** initial BaZi prototype commit — `[commit link to be added after push]`
+
+---
+
+## Moment 2 — The repository I was told to use did not exist
 
 **Assumed.** The brief said to inspect *the existing repository* and push to its remote, so one
 must exist.
@@ -23,7 +52,7 @@ wrong-but-harmless directory I had scaffolded — only my files, zero commits �
 
 ---
 
-## Moment 2 — A blocked postinstall broke every script, not just the build
+## Moment 3 — A blocked postinstall broke every script, not just the build
 
 **Assumed.** `Ignored build scripts: esbuild` looked like advisory noise.
 
@@ -41,7 +70,7 @@ collides with `window.status`). A red check that tells the truth is the point of
 
 ---
 
-## Moment 3 — Two sources disagreed about a day pillar, and my code agreed with one of them
+## Moment 4 — Two sources disagreed about a day pillar, and my code agreed with one of them
 
 **Assumed.** The day pillar is arithmetic on a day count — the least controversial of the four.
 
@@ -59,7 +88,7 @@ disputed date: 1990-06-15 is 辛亥, not 己酉"*.
 
 ---
 
-## Moment 4 — One input does not mean one pillar
+## Moment 5 — One input does not mean one pillar
 
 **Assumed.** Phase 2's change feedback looked mechanical: the visitor edits the hour, the Hour
 Pillar lights up.
