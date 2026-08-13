@@ -13,6 +13,19 @@
   <body>
     <a class="skip-link" href="#moment-form">Skip to the birth moment</a>
 
+    <!--
+      One page, so the nav is a table of contents rather than a site menu. Every
+      target exists in this file rather than in JavaScript-generated markup, so
+      the links resolve whether or not the script has run.
+    -->
+    <nav class="page-nav" aria-label="On this page">
+      <ul>
+        <li><a href="#moment-form">生時 The moment</a></li>
+        <li><a href="#chart-output">四柱 The pillars</a></li>
+        <li><a href="#boundary-output">立春 The year boundary</a></li>
+      </ul>
+    </nav>
+
     <main id="main">
       <header class="intro">
         <p class="intro__kicker">八字 · Bāzì · Four Pillars of Destiny</p>

@@ -3,19 +3,26 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "COMP8020 Assignment 1 — an interactive experimental website about Bazi (八字 / Four Pillars of Destiny)",
+  "description": "COMP8020 Assignment 1 — an interactive explainer of Bazi (八字 / Four Pillars of Destiny)",
   "scripts": {
+    "prepare": "git rev-parse --git-dir >/dev/null 2>&1 && git config core.hooksPath .githooks || true",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "check": "pnpm typecheck && pnpm test && pnpm build"
+    "check": "pnpm typecheck && pnpm build && oxlint --ignore-path .gitignore && stylelint \"**/*.css\" --ignore-path .gitignore --allow-empty-input && vitest run",
+    "check:evidence": "node scripts/check-evidence.ts",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "jsdom": "^30.0.1",
-    "typescript": "^5.9.3",
-    "vite": "^7.1.9",
+    "@types/jsdom": "^27.0.0",
+    "@types/node": "^24.0.0",
+    "jsdom": "^29.1.1",
+    "oxlint": "^1.75.0",
+    "stylelint": "^17.14.1",
+    "stylelint-config-standard": "^40.0.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.5",
     "vitest": "^4.1.10"
   },
   "packageManager": "pnpm@11.9.0"

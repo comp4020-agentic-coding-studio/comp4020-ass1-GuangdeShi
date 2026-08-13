@@ -24,7 +24,7 @@
   --rule: #ddd6c8;
   --rule-strong: #c6bda9;
   --cinnabar: #b23a2b;
-  --cinnabar-wash: rgba(178, 58, 43, 0.06);
+  --cinnabar-wash: rgb(178 58 43 / 6%);
 
   /* Five Elements. Chosen for contrast on paper, not for saturation. */
   --wood: #45703f;
@@ -32,12 +32,10 @@
   --earth: #8a6420;
   --metal: #5d6570;
   --water: #35617f;
-
-  --serif: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif;
-  --sans: ui-sans-serif, -apple-system, "Helvetica Neue", Arial, sans-serif;
-  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --serif: "Iowan Old Style", palatino, "Palatino Linotype", georgia, serif;
+  --sans: ui-sans-serif, -apple-system, "Helvetica Neue", arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", menlo, monospace;
   --han: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif CJK SC", serif;
-
   --measure: 34rem;
   --step: clamp(2.5rem, 7vw, 4.5rem);
 }
@@ -49,7 +47,7 @@
 }
 
 html {
-  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -63,6 +61,7 @@ body {
 
 main {
   max-width: 64rem;
+
   /* Fluid gutters rather than breakpoints: there is no width at which the layout
      snaps, so dragging the window during an interaction never jumps. */
   margin: 0 auto;
@@ -103,6 +102,42 @@ main {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* ── Page navigation ────────────────────────────────────────────────────── */
+
+/* A table of contents for one page: set as a running head rather than a menu,
+   so it orients without competing with the title below it. The hairline runs
+   full bleed while the links sit on the same gutters as <main>, which is what
+   makes it read as a masthead rule rather than a floating strip. */
+.page-nav {
+  border-bottom: 1px solid var(--rule);
+}
+
+.page-nav ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.5rem;
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 1rem clamp(1.25rem, 5vw, 3.5rem);
+  list-style: none;
+}
+
+.page-nav a {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 160ms ease-out, color 160ms ease-out;
+}
+
+.page-nav a:hover {
+  color: var(--ink);
+  border-bottom-color: var(--cinnabar);
 }
 
 /* ── Shared editorial furniture ─────────────────────────────────────────── */
@@ -167,6 +202,7 @@ main {
   font-weight: 400;
   line-height: 1.12;
   letter-spacing: -0.015em;
+
   /* No text-wrap: balance — the breaks are authored in the markup, and balancing
      fought them into "and eight / characters". */
 }
@@ -261,6 +297,7 @@ main {
 
 .pillars {
   display: grid;
+
   /* Four columns at every width. The 4 × 2 reading is the point, so it must not
      reflow into a list on a phone — the characters shrink instead. */
   grid-template-columns: repeat(4, 1fr);
@@ -275,7 +312,7 @@ main {
 .pillars::before {
   content: "";
   position: absolute;
-  inset: -0.75rem 0 auto 0;
+  inset: -0.75rem 0 auto;
   height: 6px;
   background-image: repeating-linear-gradient(
     to right,
@@ -348,9 +385,11 @@ main {
 .glyph {
   display: block;
   font-family: var(--han);
+
   /* The largest thing on the page, at every viewport. */
   font-size: clamp(2.25rem, 9vw, 4.25rem);
   line-height: 1.05;
+
   /* A thin element rule beside each character: a second, positional cue that does
      not depend on seeing the colour. */
   border-left: 3px solid var(--element, var(--rule-strong));
@@ -392,7 +431,7 @@ main {
 
 /* A pillar that moved only because the layer above it did. */
 .pillar[data-changed="inherited"] {
-  background: rgba(23, 20, 15, 0.035);
+  background: rgb(23 20 15 / 3.5%);
 }
 
 .pillar[data-changed]::before {
@@ -408,6 +447,7 @@ main {
 
 .pillar[data-changed="inherited"]::before {
   background: var(--ink-faint);
+
   /* Dashed, so "followed" reads differently from "moved" without relying on hue. */
   background-image: repeating-linear-gradient(
     to right,
@@ -421,6 +461,7 @@ main {
     transform: scaleX(0);
     transform-origin: left;
   }
+
   to {
     transform: scaleX(1);
     transform-origin: left;
@@ -444,13 +485,16 @@ main {
 .bazi-string {
   margin: 1.5rem 0 0;
   font-family: var(--han);
+
   /* The lower bound is set by the phone: all eight characters must sit on one
      line, because "eight characters" is the thing being claimed. */
   font-size: clamp(1.5rem, 6vw, 3rem);
   letter-spacing: 0.06em;
   line-height: 1.3;
+
   /* Four pairs separated by spaces; the spaces are how a Bazi is quoted. */
   word-spacing: 0.35em;
+
   /* Han text may break between any two characters, which split 乙未 across two
      lines on a phone. keep-all confines the breaks to the spaces between pairs. */
   word-break: keep-all;
@@ -615,7 +659,7 @@ main {
 
 /* ── Narrow viewports ─────────────────────────────────────────────────── */
 
-@media (max-width: 34rem) {
+@media (width <= 34rem) {
   /* The source and change notes are the first things to go: at this width the
      four columns need the room, and both are also announced in the live region.
      The change *marker* and background wash stay, so the feedback survives. */
@@ -648,6 +692,7 @@ main {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
   }
+
   /* The change feedback does not depend on the motion: the wash, the marker rule
      and the sentence are all still applied, they just appear without a sweep. */
 }

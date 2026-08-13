@@ -30,8 +30,19 @@ This is an **independent** Assignment 1 project.
 - **Never** modify C1, C2, riff2, CBETA, or any previous course project.
 - **Never** reuse an existing git repository or an existing git remote.
 - **Never** push to a repository belonging to another deliverable or another student.
-- No remote is connected until the author explicitly approves one. (See PROCESS.md, moment 1 —
+- No remote is connected until the author explicitly approves one. (See PROCESS.md, moment 2 —
   this rule exists because the rule was nearly broken.)
+
+One remote is now approved, and only this one:
+
+```
+origin  https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi.git
+```
+
+It is the course-provisioned Assignment 1 repository. `main` carries both histories — the course
+template and this prototype, joined with `--allow-unrelated-histories`. The prototype's original
+five commits are preserved unrewritten on `bazi-prototype` (Assignment 1 Prototype v0); **do not
+rewrite or delete either history.**
 
 ## Scope rules
 
@@ -110,12 +121,14 @@ Plain HTML + CSS + TypeScript on Vite. No UI framework — the interaction is sm
 framework would add weight without adding clarity.
 
 ```sh
-pnpm install     # esbuild's postinstall is allowed via pnpm-workspace.yaml
-pnpm dev         # local dev server
-pnpm typecheck   # tsc --noEmit
-pnpm test        # vitest run
-pnpm build       # produce dist/
-pnpm check       # typecheck && test && build — run before every commit
+pnpm install          # esbuild's postinstall is allowed via pnpm-workspace.yaml;
+                      # `prepare` also installs the .githooks pre-commit secret hook
+pnpm dev              # local dev server
+pnpm typecheck        # tsc --noEmit
+pnpm test             # vitest run
+pnpm build            # produce dist/
+pnpm check            # typecheck && build && oxlint && stylelint && vitest — before every commit
+pnpm check:evidence   # PROCESS.md citations resolve · reflection present · CLAUDE.md present
 ```
 
 ### Layers
@@ -130,7 +143,16 @@ src/bazi/explain.ts      which pillar moved and why; per-pillar sources — pure
 src/bazi/lichun.ts       the 立春 before/after comparison — pure, no DOM
 src/components/*.ts      view factories: build once, then update in place
 src/main.ts              wiring only; no logic a test would want to reach
+
+spec/invariants.test.ts  the course invariants — run against built dist/, not source
+scripts/                 the course evidence check; course infrastructure, do not edit
 ```
+
+`spec/` and `scripts/` came from the course template and are not this project's code. Own spec
+tests for a week's published brief go *alongside* `invariants.test.ts`, never inside it. The
+template's starter page (root `main.ts`, `styles.css`) and `spec/starter.test.ts` were deleted
+when the two histories merged: the starter page it described is gone, which is exactly the
+condition its own failure message says to delete it under.
 
 Anything a test would want to assert belongs above `main.ts`. If a rule ends up in `main.ts` or
 in a component, move it down. The explanatory text is part of that: *which pillar moved and why*
@@ -172,12 +194,37 @@ timeout or the highlight will have expired before the shot.
 - Beware DOM globals when naming variables — `status`, `name`, `length`, `top`, `closed` and
   friends already exist on `window`, and TypeScript reports the collision as a confusing
   redeclaration error rather than a shadowing warning.
-- `@types/node` is deliberately absent, so `node:fs` and friends do not typecheck. To read a file
-  in a test, use Vite's own `import x from '../file.html?raw'` — it is typed by `vite/client` and
-  reads the same file the build ships.
+- `@types/node` is present because the course template's `vite.config.ts` and `spec/` read the
+  filesystem. Our own tests still read `index.html` through Vite's `import x from
+  '../file.html?raw'` rather than `node:fs`: it reads the same file the build ships, and it keeps
+  the test honest if the entry ever moves.
 - `src/interaction.test.ts` runs under jsdom (`@vitest-environment jsdom` docblock) and loads the
   real `index.html`, so a renamed id or a deleted input fails a test rather than only failing in
   a browser.
+
+## The course sensors
+
+**What gets marked is the deployed site**, live in Chrome at 1920×1080 and 390×844 — both count
+in full — plus the process evidence below. Not this working copy, and not "it works on my
+machine". CI (`.github/workflows/checks.yml`) runs on every push *once the repo is public*; while
+it is private the jobs stay skipped and `pnpm check` is the same roster, faster.
+
+| Sensor | What it measures | Where it runs |
+| --- | --- | --- |
+| typecheck | `tsc --noEmit`; a red here is a false claim in the code | `pnpm check` + CI |
+| build | the site must build, or the deploy is stale | `pnpm check` + CI |
+| spec | `spec/invariants.test.ts` against **built** `dist/`: lang, title, viewport, a `<nav>`, exactly one `<h1>`, alt on every image | `pnpm check` + CI |
+| lint | `oxlint` for TS, `stylelint` for CSS | `pnpm check` + CI |
+| tests | everything in `src/**/*.test.ts` | `pnpm check` + CI |
+| evidence | `pnpm check:evidence` — PROCESS.md citations resolve, `reflections/assignment-1.md` exists, `CLAUDE.md` exists | CI (run it locally too) |
+| links | `pnpm dlx linkinator ./dist --silent` | CI only |
+| secrets | trufflehog, plus `.githooks/pre-commit` locally | CI + local hook |
+
+When a check fails, read its output before changing anything: the failure message names the file
+or the contract. A red check is authoritative — the page is wrong until it is green, not until we
+decide it should be. Never commit a red state.
+
+Nothing here measures accessibility or performance. Those are ours to wire.
 
 ## Verifying Bazi rules
 
@@ -220,7 +267,13 @@ These are part of the mark and are maintained *throughout*, never written at the
 - **`PROCESS.md`** — 400–600 words, only **3–4 strong moments**. A moment qualifies when we
   identified a failure, diagnosed why, changed a rule, added a check, rejected an approach, or
   verified an output before accepting it. Each moment states: what we assumed → what went wrong
-  → what we changed → how we verified.
-- **`CLAUDE.md`** — this file. Grow it when a recurring constraint or mistake appears.
+  → what we changed → how we verified. **Every moment carries a citation** whose link text is the
+  commit hash or range and whose target is this repo's commit or compare URL:
+  ``[`f0a1874`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/f0a1874)``.
+  A marker follows the citations and does not trawl the history for evidence we did not point at;
+  `pnpm check:evidence` fails if a cited SHA does not resolve, or if none is cited at all.
+- **`CLAUDE.md`** — this file. Grow it when a recurring constraint or mistake appears. The gap
+  between the course boilerplate and this file is itself read as evidence.
 - **`reflections/assignment-1.md`** — the reflection, centred on the project's main
-  breakthrough: where the interactive idea became clear or materially improved.
+  breakthrough: where the interactive idea became clear or materially improved. The filename is
+  checked against the deliverable this repo is for; it must stay `assignment-1.md`.

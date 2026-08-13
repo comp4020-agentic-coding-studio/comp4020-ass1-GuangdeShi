@@ -29,7 +29,9 @@ I therefore decided to stop developing this direction. The prototype became an i
 test: it showed me that interaction alone does not satisfy the brief. For the next iteration, I
 wanted the user's action itself to reveal the idea, rather than simply request a generated answer.
 
-**Evidence:** initial BaZi prototype commit — `[commit link to be added after push]`
+**Evidence:** the initial BaZi prototype, preserved unrewritten on the `bazi-prototype` branch —
+[`0b38c37...f0a1874`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/compare/0b38c37...f0a1874),
+closing commit [`f0a1874`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/f0a1874).
 
 ---
 
@@ -49,6 +51,8 @@ all until explicitly approved.
 
 **Verified.** Confirmed the riff repo untouched — clean tree, `HEAD` still `cad8082`. I audited the
 wrong-but-harmless directory I had scaffolded — only my files, zero commits — before deleting it.
+[`0b38c37`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/0b38c37)
+— the first commit of this project, in its own repository.
 
 ---
 
@@ -67,6 +71,8 @@ is never announced by an `echo` — only by a check's own exit status.
 
 **Verified.** Re-ran the checks bare; `typecheck` then failed honestly on a real error (`status`
 collides with `window.status`). A red check that tells the truth is the point of having one.
+[`0b38c37`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/0b38c37)
+(`pnpm-workspace.yaml`, and the diagnosis written into `CLAUDE.md`).
 
 ---
 
@@ -85,6 +91,7 @@ uncontested, and `calculate.ts` names the fork. Six are labelled there.
 
 **Verified.** A permanent test block, with the disputed date asserted by name: *"settles the
 disputed date: 1990-06-15 is 辛亥, not 己酉"*.
+[`826ec47`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/826ec47).
 
 ---
 
@@ -105,7 +112,9 @@ moved, so the hour stem followed it (五鼠遁)" — the coupling is the explana
 
 **Verified.** Tests pin both couplings *and* the cancellation, which looks like an oversight until
 asserted. Rendering the page headless at 1280px and 320px caught what tests could not: the badge
-read "moved · moved 1 day", and 乙未 broke across two lines.
+read "moved · moved 1 day", and 乙未 broke across two lines. The screenshot recipe went into
+`CLAUDE.md` so the next visual phase starts from a rendered page rather than an assumption.
+[`bc700b0...6e44db1`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/compare/bc700b0...6e44db1).
 
 ---
 
