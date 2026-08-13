@@ -1,0 +1,222 @@
+[
+  {
+    "id": "apple",
+    "name": "An apple",
+    "priceAUD": 1.2,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian supermarket price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "coffee",
+    "name": "A flat white",
+    "priceAUD": 6,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian café price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "eggs",
+    "name": "A dozen eggs",
+    "priceAUD": 9.5,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian supermarket price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "meal",
+    "name": "A meal out",
+    "priceAUD": 28,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian casual dining price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "mouse",
+    "name": "A computer mouse",
+    "priceAUD": 59,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "keyboard",
+    "name": "A keyboard",
+    "priceAUD": 129,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "sneakers",
+    "name": "A pair of sneakers",
+    "priceAUD": 220,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "headphones",
+    "name": "Noise-cancelling headphones",
+    "priceAUD": 549,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "smartphone",
+    "name": "A smartphone",
+    "priceAUD": 1549,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "laptop",
+    "name": "A laptop",
+    "priceAUD": 1800,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "television",
+    "name": "A television",
+    "priceAUD": 2400,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "holiday",
+    "name": "Two weeks overseas",
+    "priceAUD": 7500,
+    "image": null,
+    "priceSourceLabel": "Indicative cost for two people, flights and accommodation",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "major",
+    "provisional": true
+  },
+  {
+    "id": "motorcycle",
+    "name": "A motorcycle",
+    "priceAUD": 18000,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian ride-away price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "major",
+    "provisional": true
+  },
+  {
+    "id": "car",
+    "name": "A new car",
+    "priceAUD": 45000,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian drive-away price, mid-range model",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "major",
+    "provisional": true
+  },
+  {
+    "id": "deposit",
+    "name": "A 20% house deposit",
+    "priceAUD": 222220,
+    "image": null,
+    "priceSourceLabel": "One fifth of the mean Australian dwelling price below",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "major",
+    "provisional": true
+  },
+  {
+    "id": "house",
+    "name": "An Australian house",
+    "priceAUD": 1111100,
+    "image": null,
+    "priceSourceLabel": "ABS, mean price of residential dwellings, March quarter 2026",
+    "priceSourceURL": null,
+    "priceCheckedDate": "2026-08-13",
+    "scale": "extraordinary",
+    "provisional": false
+  },
+  {
+    "id": "helicopter",
+    "name": "A light helicopter",
+    "priceAUD": 4500000,
+    "image": null,
+    "priceSourceLabel": "Representative example, not a market average",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "extraordinary",
+    "provisional": true
+  },
+  {
+    "id": "artwork",
+    "name": "A major painting at auction",
+    "priceAUD": 6800000,
+    "image": null,
+    "priceSourceLabel": "Representative example, not a market average",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "extraordinary",
+    "provisional": true
+  },
+  {
+    "id": "yacht",
+    "name": "A superyacht",
+    "priceAUD": 12000000,
+    "image": null,
+    "priceSourceLabel": "Representative example, not a market average",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "extraordinary",
+    "provisional": true
+  },
+  {
+    "id": "jet",
+    "name": "A private jet",
+    "priceAUD": 65000000,
+    "image": null,
+    "priceSourceLabel": "Representative example, not a market average",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "extraordinary",
+    "provisional": true
+  }
+]

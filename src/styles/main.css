@@ -1,43 +1,36 @@
 /*
- * Visual language — Phase 2.
+ * Visual language — Life Cost.
  *
- * Ink on paper. A warm off-white ground, near-black type, one cinnabar accent used
- * only where something has changed, and the Chinese characters treated as the
- * largest objects on the page. The grid references an almanac page: hairline
- * column rules and a ticked scale above the pillars, nothing more decorative than
- * that.
+ * Editorial, not retail. A price list that looks like a shop invites shopping;
+ * this one is set like a printed table so the eye reads *down* the ladder and
+ * notices the scale changing, which is the argument.
  *
- * Three rules that hold for every later phase too:
- *  1. Element colour is never the only encoding — every coloured thing also names
- *     its element in text.
- *  2. Change feedback is never colour-and-motion only — the changed pillar also
- *     gains a sentence saying what moved and why.
+ * Three rules the whole sheet obeys:
+ *  1. The transformation is legible without colour. MONEY and TIME differ in
+ *     typeface, weight and alignment as well as hue, and the caption above the
+ *     ladder says in words which currency is on screen.
+ *  2. Nothing is sized in fixed breakpoints where a fluid clamp will do, so a
+ *     window dragged mid-interaction never snaps and never re-lays-out the
+ *     state out of existence.
  *  3. Focus outlines are styled, never removed.
  */
 
 :root {
-  --paper: #f4f1ea;
-  --paper-deep: #ece7db;
-  --ink: #17140f;
-  --ink-soft: #554e45;
-  --ink-faint: #8a8177;
-  --rule: #ddd6c8;
-  --rule-strong: #c6bda9;
-  --cinnabar: #b23a2b;
-  --cinnabar-wash: rgb(178 58 43 / 6%);
+  --paper: #f5f2ec;
+  --paper-deep: #ebe6dc;
+  --ink: #15130f;
+  --ink-soft: #514b42;
+  --ink-faint: #8b8377;
+  --rule: #ded7c8;
+  --rule-strong: #c4baa6;
 
-  /* Five Elements. Chosen for contrast on paper, not for saturation. */
-  --wood: #45703f;
-  --fire: #b23a2b;
-  --earth: #8a6420;
-  --metal: #5d6570;
-  --water: #35617f;
+  /* The one accent. It belongs to time — the currency the page is revealing. */
+  --cost: #a4341f;
+  --cost-wash: rgb(164 52 31 / 7%);
   --serif: "Iowan Old Style", palatino, "Palatino Linotype", georgia, serif;
   --sans: ui-sans-serif, -apple-system, "Helvetica Neue", arial, sans-serif;
   --mono: ui-monospace, "SF Mono", menlo, monospace;
-  --han: "Songti SC", "STSong", "Source Han Serif SC", "Noto Serif CJK SC", serif;
   --measure: 34rem;
-  --step: clamp(2.5rem, 7vw, 4.5rem);
 }
 
 *,
@@ -59,26 +52,17 @@ body {
   line-height: 1.6;
 }
 
-main {
-  max-width: 64rem;
-
-  /* Fluid gutters rather than breakpoints: there is no width at which the layout
-     snaps, so dragging the window during an interaction never jumps. */
-  margin: 0 auto;
-  padding: clamp(2.5rem, 7vw, 5.5rem) clamp(1.25rem, 5vw, 3.5rem) 5rem;
-}
-
-/* ── Focus, skip link, screen-reader text ────────────────────────────────── */
+/* ── Focus and the skip link ─────────────────────────────────────────────── */
 
 :focus-visible {
-  outline: 2px solid var(--cinnabar);
+  outline: 2px solid var(--cost);
   outline-offset: 3px;
 }
 
 .skip-link {
   position: absolute;
-  left: 1rem;
   top: -4rem;
+  left: 1rem;
   z-index: 10;
   padding: 0.6rem 1rem;
   background: var(--ink);
@@ -90,26 +74,11 @@ main {
 }
 
 .skip-link:focus {
-  top: 1rem;
+  top: 0;
 }
 
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
+/* ── Table of contents ───────────────────────────────────────────────────── */
 
-/* ── Page navigation ────────────────────────────────────────────────────── */
-
-/* A table of contents for one page: set as a running head rather than a menu,
-   so it orients without competing with the title below it. The hairline runs
-   full bleed while the links sit on the same gutters as <main>, which is what
-   makes it read as a masthead rule rather than a floating strip. */
 .page-nav {
   border-bottom: 1px solid var(--rule);
 }
@@ -117,582 +86,447 @@ main {
 .page-nav ul {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem 1.5rem;
-  max-width: 64rem;
+  gap: 0.5rem 2rem;
+
+  /* The hairline runs full bleed; the links sit on the same gutters as the
+     text below them, so nothing is flush against the viewport edge. */
+  max-width: 72rem;
   margin: 0 auto;
-  padding: 1rem clamp(1.25rem, 5vw, 3.5rem);
+  padding: 0.9rem clamp(1.25rem, 5vw, 3.5rem);
   list-style: none;
 }
 
 .page-nav a {
-  font-family: var(--sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
   color: var(--ink-soft);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color 160ms ease-out, color 160ms ease-out;
-}
-
-.page-nav a:hover {
-  color: var(--ink);
-  border-bottom-color: var(--cinnabar);
-}
-
-/* ── Shared editorial furniture ─────────────────────────────────────────── */
-
-.section {
-  margin-top: var(--step);
-  padding-top: 1.75rem;
-  border-top: 1px solid var(--rule);
-}
-
-.section__heading {
-  display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
-  margin: 0 0 0.75rem;
-  font-weight: 400;
-}
-
-.section__hanzi {
-  font-family: var(--han);
-  font-size: 1.375rem;
-  letter-spacing: 0.08em;
-}
-
-.section__english {
-  font-family: var(--sans);
-  font-size: 0.6875rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-.section__legend {
-  max-width: var(--measure);
-  margin: 1rem 0 0;
   font-family: var(--sans);
   font-size: 0.8125rem;
-  line-height: 1.55;
-  color: var(--ink-faint);
-}
-
-/* ── Introduction ───────────────────────────────────────────────────────── */
-
-.intro {
-  /* Wide enough for the title's authored lines to survive at the largest step;
-     the lede keeps its own narrower measure. */
-  max-width: 44rem;
-}
-
-.intro__kicker {
-  margin: 0 0 1.5rem;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.06em;
+  text-decoration: none;
   text-transform: uppercase;
-  color: var(--ink-faint);
 }
 
-.intro__title {
-  margin: 0 0 1.5rem;
-  font-size: clamp(1.875rem, 5vw, 3.25rem);
+.page-nav a:hover,
+.page-nav a:focus-visible {
+  color: var(--cost);
+}
+
+/* ── The claim ───────────────────────────────────────────────────────────── */
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  /* Between a quarter and a half of the first screen: enough that the sentence
+     is the only thing on it, not so much that the interaction is hidden. */
+  min-height: 46svh;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: clamp(3rem, 9vw, 7rem) clamp(1.25rem, 5vw, 3.5rem) clamp(2rem, 5vw, 4rem);
+}
+
+.hero__title {
+  max-width: 14em;
+  margin: 0;
+  font-size: clamp(3.25rem, 12.5vw, 9.5rem);
   font-weight: 400;
-  line-height: 1.12;
-  letter-spacing: -0.015em;
-
-  /* No text-wrap: balance — the breaks are authored in the markup, and balancing
-     fought them into "and eight / characters". */
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
 }
 
-.intro__lede {
-  max-width: var(--measure);
-  margin: 0;
+.hero__lede {
+  max-width: 26em;
+  margin: clamp(1.5rem, 3vw, 2.5rem) 0 0;
   color: var(--ink-soft);
-  font-size: clamp(1rem, 1.5vw, 1.0625rem);
+  font-size: clamp(1.125rem, 2.2vw, 1.5rem);
+  line-height: 1.45;
+  text-wrap: balance;
 }
 
-/* ── The birth moment ───────────────────────────────────────────────────── */
+/* ── Sections ────────────────────────────────────────────────────────────── */
 
-.moment {
-  margin-top: var(--step);
-}
-
-.moment fieldset {
-  margin: 0;
-  padding: 1.75rem 0 0;
-  border: 0;
+.section {
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: clamp(2.5rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 3.5rem);
   border-top: 1px solid var(--rule);
 }
 
-.moment__legend {
-  display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
-  padding: 0;
+.section__title {
+  max-width: 18em;
+  margin: 0 0 1rem;
+  font-size: clamp(1.5rem, 3.2vw, 2.25rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
 }
 
-.moment__legend-hanzi {
-  font-family: var(--han);
-  font-size: 1.375rem;
-  letter-spacing: 0.08em;
+.section__lede {
+  max-width: var(--measure);
+  margin: 0 0 2.5rem;
+  color: var(--ink-soft);
 }
 
-.moment__legend-english {
+/* ── The income form ─────────────────────────────────────────────────────── */
+
+.income {
+  margin: 0 0 clamp(2rem, 4vw, 3rem);
+}
+
+.income__fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 1.5rem 2rem;
+  margin: 0;
+  padding: 1.75rem clamp(1rem, 3vw, 2rem);
+  border: 1px solid var(--rule-strong);
+  background: var(--paper-deep);
+}
+
+.income__legend {
+  padding: 0 0.6rem;
+  margin-left: -0.6rem;
   font-family: var(--sans);
-  font-size: 0.6875rem;
-  letter-spacing: 0.2em;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ink-faint);
 }
 
-.moment__fields {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.25rem 2.5rem;
-  margin-top: 1.25rem;
-}
-
-.moment__field {
+.field {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+  margin: 0;
 }
 
-.moment__field label {
+.field__label {
+  color: var(--ink-soft);
   font-family: var(--sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
+  font-size: 0.8125rem;
+  line-height: 1.3;
 }
 
-.moment input {
-  min-height: 2.75rem; /* comfortable touch target */
-  padding: 0.35rem 0.65rem;
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--rule-strong);
+.field__hint {
+  display: block;
+  color: var(--ink-faint);
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.field__control {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--rule-strong);
   border-radius: 0;
+  background: var(--paper);
   color: var(--ink);
   font-family: var(--mono);
   font-size: 1.0625rem;
+  font-variant-numeric: tabular-nums;
 }
 
-.moment input:hover {
-  border-bottom-color: var(--ink-soft);
-}
+/* ── The two rates ───────────────────────────────────────────────────────── */
 
-.moment__note {
+.rate__empty {
   max-width: var(--measure);
-  margin: 1.25rem 0 0;
+  margin: 0;
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.rate[data-state="ready"] .rate__empty {
+  display: none;
+}
+
+.rate__pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: clamp(1.5rem, 4vw, 3rem);
+}
+
+.rate__figure {
+  padding-top: 1rem;
+  border-top: 2px solid var(--ink);
+}
+
+.rate__figure--life {
+  border-top-color: var(--cost);
+}
+
+.rate__label {
+  margin: 0;
   font-family: var(--sans);
   font-size: 0.8125rem;
-  color: var(--ink-faint);
-}
-
-/* ── The Four Pillars: the main visual object ───────────────────────────── */
-
-.pillars {
-  display: grid;
-
-  /* Four columns at every width. The 4 × 2 reading is the point, so it must not
-     reflow into a list on a phone — the characters shrink instead. */
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0;
-  margin: 1.75rem 0 0;
-  padding: 0;
-  list-style: none;
-  position: relative;
-}
-
-/* A ticked scale above the columns — an almanac reference, kept faint. */
-.pillars::before {
-  content: "";
-  position: absolute;
-  inset: -0.75rem 0 auto;
-  height: 6px;
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--rule-strong) 0 1px,
-    transparent 1px 12.5%
-  );
-  opacity: 0.7;
-}
-
-.pillar {
-  position: relative;
-  padding: 1.5rem clamp(0.4rem, 1.5vw, 1.25rem) 1.25rem;
-  border-left: 1px solid var(--rule);
-  transition: background-color 260ms ease-out;
-}
-
-.pillar:first-child {
-  border-left: 0;
-}
-
-.pillar__head {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-  margin: 0 0 0.85rem;
-  font-weight: 400;
-}
-
-.pillar__label-hanzi {
-  font-family: var(--han);
-  font-size: clamp(0.9375rem, 2vw, 1.125rem);
-  letter-spacing: 0.08em;
-}
-
-.pillar__label-english {
-  font-family: var(--sans);
-  font-size: 0.625rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-/* Which layer of the moment this column is derived from. */
-.pillar__source {
-  margin: 0 0 1.1rem;
-  min-height: 3.4rem;
-  font-family: var(--sans);
-  font-size: 0.75rem;
-  line-height: 1.4;
-  color: var(--ink-soft);
-}
-
-.pillar__source-value {
-  display: block;
-}
-
-.pillar__source-note {
-  display: block;
-  margin-top: 0.2rem;
-  font-size: 0.6875rem;
-  color: var(--ink-faint);
-}
-
-.pillar__glyphs {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.glyph {
-  display: block;
-  font-family: var(--han);
-
-  /* The largest thing on the page, at every viewport. */
-  font-size: clamp(2.25rem, 9vw, 4.25rem);
-  line-height: 1.05;
-
-  /* A thin element rule beside each character: a second, positional cue that does
-     not depend on seeing the colour. */
-  border-left: 3px solid var(--element, var(--rule-strong));
-  padding-left: 0.35rem;
-}
-
-.glyph__char {
-  display: block;
-  color: var(--ink);
-}
-
-.pillar__elements {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  margin: 1rem 0 0;
-}
-
-.element-chip {
-  font-family: var(--sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.02em;
-  color: var(--element, var(--ink-soft));
-}
-
-/* One rule per element, shared by glyph rules, chips and the tally. */
-[data-element="wood"] { --element: var(--wood); }
-[data-element="fire"] { --element: var(--fire); }
-[data-element="earth"] { --element: var(--earth); }
-[data-element="metal"] { --element: var(--metal); }
-[data-element="water"] { --element: var(--water); }
-
-/* ── Change feedback ───────────────────────────────────────────────────── */
-
-/* A pillar whose own layer of time moved. */
-.pillar[data-changed="own"] {
-  background: var(--cinnabar-wash);
-}
-
-/* A pillar that moved only because the layer above it did. */
-.pillar[data-changed="inherited"] {
-  background: rgb(23 20 15 / 3.5%);
-}
-
-.pillar[data-changed]::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -0.75rem;
-  height: 2px;
-  background: var(--cinnabar);
-  animation: mark 260ms ease-out;
-}
-
-.pillar[data-changed="inherited"]::before {
-  background: var(--ink-faint);
-
-  /* Dashed, so "followed" reads differently from "moved" without relying on hue. */
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--ink-faint) 0 4px,
-    transparent 4px 8px
-  );
-}
-
-@keyframes mark {
-  from {
-    transform: scaleX(0);
-    transform-origin: left;
-  }
-
-  to {
-    transform: scaleX(1);
-    transform-origin: left;
-  }
-}
-
-.pillar__change {
-  margin: 0.85rem 0 0;
-  font-family: var(--sans);
-  font-size: 0.6875rem;
-  line-height: 1.45;
-  color: var(--cinnabar);
-}
-
-.pillar[data-changed="inherited"] .pillar__change {
-  color: var(--ink-soft);
-}
-
-/* ── Eight characters, as written ──────────────────────────────────────── */
-
-.bazi-string {
-  margin: 1.5rem 0 0;
-  font-family: var(--han);
-
-  /* The lower bound is set by the phone: all eight characters must sit on one
-     line, because "eight characters" is the thing being claimed. */
-  font-size: clamp(1.5rem, 6vw, 3rem);
+  font-weight: 600;
   letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rate__value {
+  margin: 0.4rem 0 0.2rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.rate__figure--life .rate__value {
+  color: var(--cost);
+}
+
+.rate__working {
+  margin: 0;
+  color: var(--ink-soft);
+  font-family: var(--mono);
+  font-size: 0.875rem;
+}
+
+.rate__note {
+  max-width: 26em;
+  margin: 0.75rem 0 0;
+  color: var(--ink-faint);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.rate__gap {
+  max-width: var(--measure);
+  margin: 2rem 0 0;
+  padding-left: 1rem;
+  border-left: 2px solid var(--cost);
+  color: var(--ink-soft);
+}
+
+/* With no usable wage there is nothing honest to put here, so the whole reveal
+   is withheld rather than shown holding dashes. */
+.rate[data-state="empty"] .rate__pair,
+.rate[data-state="empty"] .rate__gap {
+  display: none;
+}
+
+/* ── The turn, and the last word ─────────────────────────────────────────── */
+
+.turn,
+.coda {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: clamp(3rem, 8vw, 6rem) clamp(1.25rem, 5vw, 3.5rem);
+  font-size: clamp(1.375rem, 3vw, 2rem);
   line-height: 1.3;
-
-  /* Four pairs separated by spaces; the spaces are how a Bazi is quoted. */
-  word-spacing: 0.35em;
-
-  /* Han text may break between any two characters, which split 乙未 across two
-     lines on a phone. keep-all confines the breaks to the spaces between pairs. */
-  word-break: keep-all;
+  text-align: center;
+  text-wrap: balance;
 }
 
-/* ── Five Elements ─────────────────────────────────────────────────────── */
-
-.tally {
-  margin: 1.5rem 0 0;
-  padding: 0;
-  list-style: none;
-  max-width: 34rem;
+.coda {
+  color: var(--cost);
 }
 
-.tally__row {
-  display: grid;
-  grid-template-columns: 1.75rem 4.5rem 1fr 1.5rem;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem 0;
+/* ── The ladder ──────────────────────────────────────────────────────────── */
+
+.section--wide {
+  max-width: 76rem;
+}
+
+.mode {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  margin: 0 0 1.5rem;
+  padding: 1rem 0;
+  background: var(--paper);
   border-bottom: 1px solid var(--rule);
 }
 
-.tally__hanzi {
-  font-family: var(--han);
-  font-size: 1.125rem;
+.mode__fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 
-.tally__english {
+.mode__legend {
+  padding: 0;
+  color: var(--ink-faint);
   font-family: var(--sans);
   font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  color: var(--ink-soft);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.tally__bar {
-  display: block;
-  height: 3px;
-  background: var(--rule);
+.mode__options {
+  display: flex;
+  gap: 0;
+  margin-top: 0.5rem;
+  border: 1px solid var(--ink);
+  width: fit-content;
 }
 
-.tally__fill {
-  display: block;
-  height: 100%;
-  background: var(--element, var(--ink));
-  transform: scaleX(var(--fill, 0));
-  transform-origin: left;
-  transition: transform 300ms ease-out;
+/* The radios stay in the DOM and stay focusable — they are the control. Only
+   their default appearance is removed, and the label carries the state. */
+.mode__radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.tally__count {
-  font-family: var(--mono);
+.mode__label {
+  padding: 0.5rem 1.6rem;
+  font-family: var(--sans);
   font-size: 0.875rem;
-  text-align: right;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
 }
 
-/* A missing element is a real reading in Bazi, so say it quietly rather than
-   hiding the row. */
-.tally__row[data-count="0"] .tally__english,
-.tally__row[data-count="0"] .tally__count {
-  color: var(--ink-faint);
+.mode__radio:checked + .mode__label {
+  background: var(--ink);
+  color: var(--paper);
 }
 
-.derivation {
-  margin: 1.5rem 0 0;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  line-height: 1.6;
-  color: var(--ink-faint);
+/* Focus lives on the visually hidden input, so it has to be drawn on the label. */
+.mode__radio:focus-visible + .mode__label {
+  outline: 2px solid var(--cost);
+  outline-offset: 3px;
 }
 
-/* ── The 立春 boundary ─────────────────────────────────────────────────── */
+/* TIME's own colour, so the control shows which currency is selected without
+   relying on the caption alone. */
+#mode-time:checked + .mode__label {
+  background: var(--cost);
+}
 
-.boundary__claim {
-  max-width: var(--measure);
-  margin: 1rem 0 0;
+.mode__caption {
+  margin: 0.75rem 0 0;
   color: var(--ink-soft);
+  font-size: 0.9375rem;
 }
 
-.boundary__instant {
-  margin: 1rem 0 0;
-  font-family: var(--mono);
-  font-size: 0.8125rem;
-  color: var(--ink-faint);
-}
-
-.boundary__pair {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(11rem, 15rem));
-  gap: 1rem;
-  margin: 1.5rem 0 0;
+.ladder {
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.boundary__button {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  width: 100%;
-  min-height: 2.75rem;
-  padding: 1rem 1.1rem 1.1rem;
-  background: transparent;
-  border: 1px solid var(--rule-strong);
-  border-radius: 0;
-  color: inherit;
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 180ms ease-out, border-color 180ms ease-out;
+.rung {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 0.15rem 1.5rem;
+  padding: clamp(0.9rem, 2vw, 1.4rem) 0;
+  border-bottom: 1px solid var(--rule);
 }
 
-.boundary__button:hover {
-  background: var(--paper-deep);
-  border-color: var(--ink-soft);
+.rung__name {
+  font-size: clamp(1.0625rem, 1.6vw, 1.375rem);
 }
 
-.boundary__date {
-  font-family: var(--sans);
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+.rung__price {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  color: var(--ink);
+  font-size: clamp(1.25rem, 2.6vw, 2rem);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  text-align: right;
+}
+
+.rung__source {
+  grid-column: 1;
   color: var(--ink-faint);
+  font-size: 0.8125rem;
+  line-height: 1.35;
 }
 
-.boundary__pillar {
-  font-family: var(--han);
-  font-size: clamp(1.75rem, 5vw, 2.25rem);
-  line-height: 1.1;
+/* The ascent: the objects get typographically heavier as the prices climb, so
+   the scale is visible before any number is read. */
+.rung--major .rung__name,
+.rung--extraordinary .rung__name {
+  font-size: clamp(1.125rem, 2vw, 1.75rem);
 }
 
-.boundary__side {
-  font-family: var(--sans);
-  font-size: 0.75rem;
-  color: var(--ink-soft);
+.rung--extraordinary {
+  border-bottom-color: var(--rule-strong);
 }
 
-/* ── Placeholder and colophon ─────────────────────────────────────────── */
+@keyframes reprice {
+  from {
+    opacity: 0;
+    transform: translateY(0.4em);
+  }
 
-.placeholder {
-  margin: var(--step) 0;
-  padding-top: 1.75rem;
-  border-top: 1px solid var(--rule);
-  color: var(--ink-soft);
-  font-size: 1.125rem;
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
-.colophon {
-  margin-top: var(--step);
-  padding-top: 1.75rem;
-  border-top: 1px solid var(--rule);
-  max-width: 42rem;
-  font-family: var(--sans);
-  font-size: 0.75rem;
-  line-height: 1.6;
-  color: var(--ink-faint);
+/* Staggered down the list, so the flip reads as one movement travelling
+   through the same objects rather than twenty independent swaps. */
+.ladder--morphing .rung__price {
+  animation: reprice 380ms ease-out both;
+  animation-delay: calc(var(--rung-index) * 14ms);
 }
 
-.colophon code {
+/* TIME is a different currency, so it is set in a different voice: the accent
+   colour, and the mono face the dollar figures do not use. */
+.ladder[data-mode="time"] .rung__price {
+  color: var(--cost);
   font-family: var(--mono);
+  font-size: clamp(1rem, 2vw, 1.5rem);
 }
 
-/* ── Narrow viewports ─────────────────────────────────────────────────── */
+.ladder__note {
+  max-width: var(--measure);
+  margin: 1.5rem 0 0;
+  color: var(--ink-faint);
+  font-size: 0.875rem;
+}
 
+/* ── The small print, which is not an afterthought here ──────────────────── */
+
+.fine {
+  max-width: var(--measure);
+  margin: 0 0 1rem;
+  color: var(--ink-soft);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+/* On a phone the price gets its own line rather than competing with the name
+   for a column: "31.6 working lifetimes" is a phrase, not a figure, and it must
+   never be the thing that forces a horizontal scroll. */
 @media (width <= 34rem) {
-  /* The source and change notes are the first things to go: at this width the
-     four columns need the room, and both are also announced in the live region.
-     The change *marker* and background wash stay, so the feedback survives. */
-  .pillar__source-note {
-    display: none;
+  .rung {
+    grid-template-columns: 1fr;
   }
 
-  .pillar__source {
-    min-height: 2.4rem;
+  .rung__price {
+    grid-column: 1;
+    grid-row: 2;
+    text-align: left;
   }
 
-  .pillar__change {
-    font-size: 0.625rem;
-  }
-
-  .tally__row {
-    grid-template-columns: 1.5rem 3.5rem 1fr 1.25rem;
-    gap: 0.5rem;
+  .rung__source {
+    grid-row: 3;
+    margin-top: 0.25rem;
   }
 }
-
-/* ── Reduced motion ───────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
+  .ladder--morphing .rung__price {
+    animation: none;
   }
 
-  /* The change feedback does not depend on the motion: the wash, the marker rule
-     and the sentence are all still applied, they just appear without a sweep. */
+  .skip-link {
+    transition: none;
+  }
 }

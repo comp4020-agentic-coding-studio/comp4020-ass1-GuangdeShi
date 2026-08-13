@@ -1,28 +1,30 @@
 /**
- * Entry point: wire the inputs to the transformation, and remember the last chart.
+ * Entry point: read the form, price the ladder, repeat.
  *
- * The one piece of state in the whole page is `previous` — the chart that was on
- * screen before this update. Without it there is no way to say *which* pillar
- * moved, and "which pillar moved" is the entire explanatory claim of Phase 2.
+ * The page holds exactly two pieces of state — what the visitor typed, and
+ * which currency the ladder is showing. Everything else is derived on every
+ * update, because a derived value that is cached is a derived value that can
+ * disagree with the form.
  *
- * Everything else is plumbing. Rules live in `bazi/calculate.ts`, the
- * explanations in `bazi/explain.ts`, parsing in `bazi/moment.ts`, markup in
- * `components/`. There is no logic here that a test would want to reach.
+ * Both live in the DOM rather than in variables here: the inputs hold the
+ * income, and the checked radio holds the mode. That is what makes the
+ * interaction survive a resize while in use — nothing is re-created on a layout
+ * change, so there is no second copy of the state to lose.
  *
- * The stylesheet is linked from index.html rather than imported here, so the page
- * is styled before the module graph arrives — it reads correctly on a slow
- * connection while the script is still in flight.
+ * There is no submit button by design. The two prices are a *function* of the
+ * wage, and a submit step would hide that behind an action.
  *
- * There is no submit button by design: the chart is a *function* of the moment,
- * and a submit step would hide that behind an action.
+ * Rules live in `life/`, markup in `components/`. There is no logic in this
+ * file that a test would want to reach.
  */
 
-import { calculateChart } from './bazi/calculate'
-import { announceChanges, describeChanges } from './bazi/explain'
-import { DEFAULT_MOMENT, parseMoment, toDateValue, toTimeValue } from './bazi/moment'
-import type { BaziChart, BirthMoment } from './bazi/types'
-import { createChartView } from './components/chart-view'
-import { createLiChunView } from './components/lichun-view'
+import { createLadderView } from './components/ladder-view'
+import { createRateView } from './components/rate-view'
+import { PRODUCTS, PROVISIONAL_COUNT } from './data/products'
+import { formatRate, rhythmFor } from './life/duration'
+import { PAY_LABEL, computeLifeRate } from './life/income'
+import { parseAmount, parsePeriod } from './life/parse'
+import type { PriceMode } from './life/types'
 
 function required<T extends Element>(selector: string): T {
   const found = document.querySelector<T>(selector)
@@ -30,57 +32,72 @@ function required<T extends Element>(selector: string): T {
   return found
 }
 
-const dateInput = required<HTMLInputElement>('#birth-date')
-const timeInput = required<HTMLInputElement>('#birth-time')
-const summary = required<HTMLElement>('#chart-summary')
+const periodSelect = required<HTMLSelectElement>('#pay-period')
+const payInput = required<HTMLInputElement>('#pay-amount')
+const payLabel = required<HTMLElement>('#pay-amount-label')
+const workInput = required<HTMLInputElement>('#work-hours')
+const commuteInput = required<HTMLInputElement>('#commute-hours')
+const caption = required<HTMLElement>('#ladder-caption')
 
-const chartView = createChartView(required<HTMLElement>('#chart-output'))
-const liChunView = createLiChunView(required<HTMLElement>('#boundary-output'), (moment) => {
-  // The boundary example sets the inputs and then goes through exactly the same
-  // path as typing — so the Year Pillar visibly moves, rather than the example
-  // asserting that it would.
-  apply(moment)
-})
+const rateView = createRateView(required<HTMLElement>('#life-rate'))
+const ladderView = createLadderView(required<HTMLElement>('#ladder'), PRODUCTS)
 
-/** The chart currently on screen, if any. The only state on the page. */
-let previous: BaziChart | null = null
+/** Which currency the ladder is speaking. Read from the radios, never cached. */
+function currentMode(): PriceMode {
+  const checked = document.querySelector<HTMLInputElement>('input[name="price-mode"]:checked')
+  return checked?.value === 'time' ? 'time' : 'money'
+}
 
-/** Read both inputs, recompute, repaint what moved. The whole interaction. */
+/** Read the form, do the arithmetic, repaint both halves. The whole interaction. */
 function update(): void {
-  const moment = parseMoment(dateInput.value, timeInput.value)
+  const period = parsePeriod(periodSelect.value)
+  payLabel.textContent = PAY_LABEL[period]
 
-  if (!moment) {
-    chartView.clear('Choose a birth date and time to see the eight characters.')
-    summary.textContent = ''
-    previous = null
-    return
-  }
+  const weeklyWorkHours = parseAmount(workInput.value)
+  const rate = computeLifeRate({
+    period,
+    pay: parseAmount(payInput.value),
+    weeklyWorkHours,
+    weeklyCommuteHours: parseAmount(commuteInput.value),
+  })
 
-  const chart = calculateChart(moment)
-  const changes = previous ? describeChanges(previous, chart) : []
+  rateView.update(rate)
 
-  chartView.update(chart, changes)
-  liChunView.update(moment)
-  // Only announce actual movement; re-reading the whole chart on every keystroke
-  // would make the live region useless.
-  summary.textContent = previous ? announceChanges(chart, changes) : ''
-  previous = chart
+  const mode = currentMode()
+  ladderView.update({
+    mode,
+    hourlyRate: rate ? rate.lifeAdjustedHourlyRate : null,
+    // The ladder's units are the visitor's own week — a "working day" is a
+    // fifth of the hours they said they work. Falling back to 40 keeps the
+    // units sane while that field is mid-edit; nothing is shown from it until
+    // there is a rate to show.
+    rhythm: rhythmFor(weeklyWorkHours > 0 ? weeklyWorkHours : 40),
+  })
+
+  caption.textContent =
+    mode === 'money'
+      ? 'Every price below is in Australian dollars — the number you already know.'
+      : rate
+        ? `Every price below is in hours of your life, at ${formatRate(rate.lifeAdjustedHourlyRate)} an hour.`
+        : 'Fill in how you are paid, and every price below becomes a length of your life.'
 }
 
-/** Put a moment into the inputs and run the transformation on it. */
-function apply(moment: BirthMoment): void {
-  dateInput.value = toDateValue(moment)
-  timeInput.value = toTimeValue(moment)
-  update()
+// `input` covers typing and the number spinners; `change` covers the select and
+// the radios. Listening on the containing form means a control added later is
+// wired without anyone having to remember to wire it.
+for (const selector of ['#income-form', '#mode-form']) {
+  const form = required<HTMLFormElement>(selector)
+  form.addEventListener('input', update)
+  form.addEventListener('change', update)
+  // Neither form submits — there is nowhere to submit to, and Enter in a number
+  // field would otherwise reload the page and throw away what was typed.
+  form.addEventListener('submit', (event) => event.preventDefault())
 }
 
-for (const input of [dateInput, timeInput]) {
-  input.addEventListener('input', update)
-  // Some browsers commit a picker selection with `change` but no `input`.
-  input.addEventListener('change', update)
-}
+required<HTMLElement>('#price-provenance').textContent =
+  `Of the ${PRODUCTS.length} objects listed, ${PROVISIONAL_COUNT} carry indicative placeholder prices while this prototype is built, and each names the kind of price it stands for. A price that cites a source also carries the date it was checked. The objects at the top of the ladder are single representative examples rather than market averages — there is no universal price for a superyacht.`
 
-// Open on a known moment rather than an empty form: the first thing a visitor
-// sees is a finished encoding, so their first interaction is a *change* to
-// something that already makes sense.
-apply(DEFAULT_MOMENT)
+// Open on a worked example rather than an empty form: the first thing a visitor
+// sees is a finished calculation, so their first interaction is a *change* to
+// something that already means something.
+update()

@@ -3,105 +3,178 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>八字 — how a moment becomes eight characters</title>
+    <title>Everything has two prices — the life cost of what you buy</title>
     <meta
       name="description"
-      content="An interactive explainer: how a birth date and time are encoded into the eight Chinese characters of Bazi (八字), the Four Pillars of Destiny."
+      content="An interactive explainer: every price tag hides an amount of your life. Enter how you are paid, then read the same objects in dollars and in hours."
     />
     <link rel="stylesheet" href="./src/styles/main.css" />
   </head>
   <body>
-    <a class="skip-link" href="#moment-form">Skip to the birth moment</a>
+    <a class="skip-link" href="#your-hours">Skip to the calculation</a>
 
     <!--
       One page, so the nav is a table of contents rather than a site menu. Every
-      target exists in this file rather than in JavaScript-generated markup, so
-      the links resolve whether or not the script has run.
+      target is static markup in this file, so the links resolve whether or not
+      the script has run.
     -->
     <nav class="page-nav" aria-label="On this page">
       <ul>
-        <li><a href="#moment-form">生時 The moment</a></li>
-        <li><a href="#chart-output">四柱 The pillars</a></li>
-        <li><a href="#boundary-output">立春 The year boundary</a></li>
+        <li><a href="#your-hours">What an hour costs you</a></li>
+        <li><a href="#the-ladder">The two prices</a></li>
+        <li><a href="#the-model">What this model is</a></li>
       </ul>
     </nav>
 
     <main id="main">
-      <header class="intro">
-        <p class="intro__kicker">八字 · Bāzì · Four Pillars of Destiny</p>
-        <!-- Explicit line breaks, because the phrase "eight characters" must not be
-             split across lines — it is the claim of the whole page. -->
-        <h1 class="intro__title">
-          A moment in time becomes<br />
-          four layers,<br />
-          and eight characters.
-        </h1>
-        <p class="intro__lede">
-          Chinese calendrical tradition reads a single instant on four scales at once —
-          year, month, day, hour. Each becomes a column of two characters. The four
-          scales do not turn over together, and that is the interesting part: change
-          the moment and watch which columns move.
-        </p>
+      <!--
+        The hero says the whole idea and nothing else: no menu, no cards, no
+        feature list. If a visitor reads only this and leaves, they have still
+        been told the thing the page exists to say.
+      -->
+      <header class="hero">
+        <h1 class="hero__title">Everything<br />has two<br />prices.</h1>
+        <p class="hero__lede">Money is the number you see. Time is the price you don’t.</p>
       </header>
 
-      <!--
-        A real <form> with real <label>s: keyboard reachable, works with autofill,
-        and the native pickers already handle locale and phone input. There is no
-        submit step — the chart is recomputed as the inputs change.
-      -->
-      <form class="moment" id="moment-form" novalidate>
-        <fieldset>
-          <legend class="moment__legend">
-            <span class="moment__legend-hanzi">生時</span>
-            <span class="moment__legend-english">The birth moment</span>
-          </legend>
+      <section class="section" id="your-hours" aria-labelledby="your-hours-title">
+        <h2 class="section__title" id="your-hours-title">First, what does an hour of you cost?</h2>
+        <p class="section__lede">
+          A price tag is written in dollars because dollars are easy to print. You did not get
+          those dollars for nothing — you got them for hours. So before anything can have a price
+          in time, your time needs a price in money.
+        </p>
 
-          <div class="moment__fields">
-            <div class="moment__field">
-              <label for="birth-date">Date</label>
+        <form class="income" id="income-form" novalidate>
+          <fieldset class="income__fields">
+            <legend class="income__legend">How are you paid?</legend>
+
+            <p class="field">
+              <label class="field__label" for="pay-period">Pay period</label>
+              <select class="field__control" id="pay-period" name="pay-period">
+                <option value="hourly">By the hour</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly" selected>Monthly</option>
+                <option value="yearly">Yearly</option>
+              </select>
+            </p>
+
+            <p class="field">
+              <label class="field__label" for="pay-amount" id="pay-amount-label">Monthly pay</label>
               <input
-                type="date"
-                id="birth-date"
-                name="birth-date"
-                min="1900-01-01"
-                max="2100-12-31"
+                class="field__control"
+                id="pay-amount"
+                name="pay-amount"
+                type="number"
+                inputmode="decimal"
+                min="0"
+                step="any"
+                value="4400"
               />
+            </p>
+
+            <p class="field">
+              <label class="field__label" for="work-hours">Hours you work, per week</label>
+              <input
+                class="field__control"
+                id="work-hours"
+                name="work-hours"
+                type="number"
+                inputmode="decimal"
+                min="0"
+                max="168"
+                step="any"
+                value="40"
+              />
+            </p>
+
+            <p class="field">
+              <label class="field__label" for="commute-hours">
+                Hours you commute, per week
+                <span class="field__hint">unpaid, but the job costs it</span>
+              </label>
+              <input
+                class="field__control"
+                id="commute-hours"
+                name="commute-hours"
+                type="number"
+                inputmode="decimal"
+                min="0"
+                max="168"
+                step="any"
+                value="10"
+              />
+            </p>
+          </fieldset>
+        </form>
+
+        <!-- Built once and updated in place by src/components/rate-view.ts. -->
+        <div class="rate" id="life-rate" aria-live="polite"></div>
+      </section>
+
+      <p class="turn">
+        So that is the exchange rate. Every price below was always written in this second
+        currency — the page just stopped hiding it.
+      </p>
+
+      <section class="section section--wide" id="the-ladder" aria-labelledby="the-ladder-title">
+        <h2 class="section__title" id="the-ladder-title">The same objects, twice</h2>
+
+        <form class="mode" id="mode-form">
+          <fieldset class="mode__fieldset">
+            <legend class="mode__legend">Show every price as</legend>
+            <div class="mode__options">
+              <input
+                class="mode__radio"
+                type="radio"
+                name="price-mode"
+                id="mode-money"
+                value="money"
+                checked
+              />
+              <label class="mode__label" for="mode-money">Money</label>
+              <input
+                class="mode__radio"
+                type="radio"
+                name="price-mode"
+                id="mode-time"
+                value="time"
+              />
+              <label class="mode__label" for="mode-time">Time</label>
             </div>
+          </fieldset>
+          <p class="mode__caption" id="ladder-caption" aria-live="polite"></p>
+        </form>
 
-            <div class="moment__field">
-              <label for="birth-time">Time</label>
-              <input type="time" id="birth-time" name="birth-time" />
-            </div>
-          </div>
+        <!-- Built once and updated in place by src/components/ladder-view.ts. -->
+        <ol class="ladder" id="ladder"></ol>
 
-          <p class="moment__note">
-            Read as China Standard Time (UTC+8), the meridian Chinese almanacs are
-            calculated for.
-          </p>
-        </fieldset>
-      </form>
-
-      <!--
-        aria-live="polite" announces which pillar moved and why, so the change
-        feedback is not carried by colour and motion alone.
-      -->
-      <p id="chart-summary" class="visually-hidden" aria-live="polite" aria-atomic="true"></p>
-
-      <div id="chart-output"></div>
-      <div id="boundary-output"></div>
-
-      <footer class="colophon">
-        <p>
-          An explainer of a calendrical system, not a fortune-telling service. Nothing
-          here predicts anything.
+        <p class="ladder__note">
+          Prices are indicative Australian reference prices selected to illustrate scale.
         </p>
-        <p>
-          Solar terms are computed from the Sun's apparent longitude to about ±15
-          minutes. Where schools of Bazi genuinely disagree — timezone, the day
-          boundary, branch polarity — the choice made is named in the source at
-          <code>src/bazi/calculate.ts</code> rather than hidden.
+      </section>
+
+      <p class="coda">
+        Nothing here changed price. The only thing that changed is what you are paying with.
+      </p>
+
+      <section class="section" id="the-model" aria-labelledby="the-model-title">
+        <h2 class="section__title" id="the-model-title">What this model is, and is not</h2>
+        <p class="fine">
+          This is an
+          <strong>explanatory model, not an official economic or accounting measure.</strong>
+          It divides pay by committed hours. It does not account for tax, superannuation,
+          benefits, overtime, unpaid work beyond the commute, or the fact that some hours cost
+          more than others.
         </p>
-      </footer>
+        <p class="fine">
+          A month is treated as four weeks and a year as fifty-two, exactly as the model was
+          specified. Those two figures do not agree — four weeks, twelve times, is forty-eight —
+          so the same salary entered monthly and yearly gives slightly different rates. The page
+          shows its arithmetic rather than hiding the disagreement.
+        </p>
+        <p class="fine" id="price-provenance"></p>
+      </section>
     </main>
 
     <script type="module" src="./src/main.ts"></script>
