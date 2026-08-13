@@ -118,4 +118,32 @@ read "moved · moved 1 day", and 乙未 broke across two lines. The screenshot r
 
 ---
 
+## Moment 6 — The formatter met a price it could not say
+
+**Assumed.** Turning money into time was the easy half of the Life Cost concept: divide by an
+hourly rate and print the result in whatever unit keeps the number small.
+
+**Went wrong.** The unit ladder stopped at working years, and the top of the product ladder walked
+straight off it. A private jet printed **"1,420 working years"** — the exact unpicturable number
+the formatter exists to prevent, produced by the formatter itself. Two of my own expectations were
+wrong in the same test run, which is what surfaced it: I had asserted a laptop at 2.3 working
+weeks when the arithmetic says 2.0, and 4 working weeks for a part-timer when 81.8 hours is a
+whole month of a 20-hour week.
+
+**Changed.** Not a rounding tweak — a new unit. `working lifetimes` (45 working years, a
+twenty-to-sixty-five working life), because past a whole working life the honest answer stops
+being a duration a person could work and becomes a count of lives, which is precisely the point
+the top of the ladder is making. The rule went into `CLAUDE.md`: every tier eventually meets a
+price that overflows it, so if a new rung overflows the top, add a unit — do not shrink the
+ladder. A second overflow of the same shape appeared later at the other end of the tier: a car
+read "13 working months", longer than the year containing it, because a 4-week month and a
+52-week year do not tile. The month tier now hands over at twelve.
+
+**Verified.** `duration.test.ts` pins every boundary, both singular forms at exactly one unit, and
+sweeps the ladder asserting no printed value ever reaches four digits; `products.test.ts` asserts
+the whole dataset climbs through all seven units at the brief's example rate of $22.00 an hour.
+[`4f011de`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/4f011de).
+
+---
+
 *Further moments are added as they occur, not reconstructed at the end.*
