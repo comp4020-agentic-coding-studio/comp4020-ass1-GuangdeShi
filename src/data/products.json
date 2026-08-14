@@ -1,8 +1,63 @@
 [
   {
+    "id": "banana",
+    "name": "A banana",
+    "priceAUD": 0.6,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian supermarket price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
     "id": "apple",
     "name": "An apple",
     "priceAUD": 1.2,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian supermarket price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "water",
+    "name": "A bottle of water",
+    "priceAUD": 2,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian supermarket price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "noodles",
+    "name": "A pack of instant noodles",
+    "priceAUD": 3.2,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian supermarket price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "milk",
+    "name": "A carton of milk",
+    "priceAUD": 4,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian supermarket price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "bread",
+    "name": "A loaf of bread",
+    "priceAUD": 4.8,
     "image": null,
     "priceSourceLabel": "Indicative Australian supermarket price",
     "priceSourceURL": null,
@@ -22,11 +77,66 @@
     "provisional": true
   },
   {
+    "id": "starbucks",
+    "name": "A Starbucks coffee",
+    "priceAUD": 7.5,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian café price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
     "id": "eggs",
     "name": "A dozen eggs",
     "priceAUD": 9.5,
     "image": null,
     "priceSourceLabel": "Indicative Australian supermarket price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "shampoo",
+    "name": "A bottle of shampoo",
+    "priceAUD": 12,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian supermarket price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "fastfood",
+    "name": "A fast food meal",
+    "priceAUD": 15,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian fast food price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "socks",
+    "name": "A pair of socks",
+    "priceAUD": 18,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "casuallunch",
+    "name": "A casual lunch out",
+    "priceAUD": 24,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian casual dining price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
@@ -44,6 +154,28 @@
     "provisional": true
   },
   {
+    "id": "steak",
+    "name": "A steak dinner",
+    "priceAUD": 42,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian restaurant price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
+    "id": "fish",
+    "name": "A whole fish",
+    "priceAUD": 52,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian seafood price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "everyday",
+    "provisional": true
+  },
+  {
     "id": "mouse",
     "name": "A computer mouse",
     "priceAUD": 59,
@@ -55,9 +187,31 @@
     "provisional": true
   },
   {
+    "id": "backpack",
+    "name": "A backpack",
+    "priceAUD": 85,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
     "id": "keyboard",
     "name": "A keyboard",
     "priceAUD": 129,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "officechair",
+    "name": "An office chair",
+    "priceAUD": 179,
     "image": null,
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
@@ -77,9 +231,75 @@
     "provisional": true
   },
   {
+    "id": "applewatch",
+    "name": "An Apple Watch",
+    "priceAUD": 279,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "airpods",
+    "name": "A pair of AirPods",
+    "priceAUD": 329,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
     "id": "headphones",
     "name": "Noise-cancelling headphones",
     "priceAUD": 549,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "mattress",
+    "name": "A mattress",
+    "priceAUD": 699,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "washer",
+    "name": "A washing machine",
+    "priceAUD": 899,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "fridge",
+    "name": "A fridge",
+    "priceAUD": 999,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "ipad",
+    "name": "An iPad",
+    "priceAUD": 1299,
     "image": null,
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
@@ -99,9 +319,31 @@
     "provisional": true
   },
   {
+    "id": "macbookair",
+    "name": "A MacBook Air",
+    "priceAUD": 1699,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
     "id": "laptop",
     "name": "A laptop",
     "priceAUD": 1800,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "bicycle",
+    "name": "A bicycle",
+    "priceAUD": 2100,
     "image": null,
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
@@ -118,6 +360,39 @@
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
+    "provisional": true
+  },
+  {
+    "id": "rtx5090",
+    "name": "An RTX 5090 graphics card",
+    "priceAUD": 3499,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "major",
+    "provisional": true
+  },
+  {
+    "id": "gamingpc",
+    "name": "A gaming PC",
+    "priceAUD": 4999,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "major",
+    "provisional": true
+  },
+  {
+    "id": "oledtv",
+    "name": "An OLED TV",
+    "priceAUD": 5999,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian retail price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "major",
     "provisional": true
   },
   {
@@ -154,6 +429,28 @@
     "provisional": true
   },
   {
+    "id": "luxurywatch",
+    "name": "A luxury watch",
+    "priceAUD": 55000,
+    "image": null,
+    "priceSourceLabel": "Representative example, not a market average",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "major",
+    "provisional": true
+  },
+  {
+    "id": "teslaev",
+    "name": "A Tesla / electric car",
+    "priceAUD": 79000,
+    "image": null,
+    "priceSourceLabel": "Indicative Australian drive-away price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "major",
+    "provisional": true
+  },
+  {
     "id": "deposit",
     "name": "A 20% house deposit",
     "priceAUD": 222220,
@@ -162,6 +459,17 @@
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "major",
+    "provisional": true
+  },
+  {
+    "id": "sydneycbdapartment",
+    "name": "A Sydney CBD apartment",
+    "priceAUD": 950000,
+    "image": null,
+    "priceSourceLabel": "Indicative Sydney CBD apartment price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "extraordinary",
     "provisional": true
   },
   {
@@ -174,6 +482,28 @@
     "priceCheckedDate": "2026-08-13",
     "scale": "extraordinary",
     "provisional": false
+  },
+  {
+    "id": "sydneyhouse",
+    "name": "A Sydney house",
+    "priceAUD": 1800000,
+    "image": null,
+    "priceSourceLabel": "Indicative Sydney median house price",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "extraordinary",
+    "provisional": true
+  },
+  {
+    "id": "beachhouse",
+    "name": "A beach house",
+    "priceAUD": 3200000,
+    "image": null,
+    "priceSourceLabel": "Representative example, not a market average",
+    "priceSourceURL": null,
+    "priceCheckedDate": null,
+    "scale": "extraordinary",
+    "provisional": true
   },
   {
     "id": "helicopter",

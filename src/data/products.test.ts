@@ -7,8 +7,8 @@ import { formatWorkTime, hoursToEarn, rhythmFor } from '../life/duration'
 
 describe('the shape of the ladder', () => {
   it('has enough rungs to show a range, and few enough to read', () => {
-    expect(PRODUCTS.length).toBeGreaterThanOrEqual(16)
-    expect(PRODUCTS.length).toBeLessThanOrEqual(24)
+    expect(PRODUCTS.length).toBeGreaterThanOrEqual(40)
+    expect(PRODUCTS.length).toBeLessThanOrEqual(60)
   })
 
   it('gives every product a unique id', () => {

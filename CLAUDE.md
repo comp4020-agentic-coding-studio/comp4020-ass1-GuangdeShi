@@ -174,7 +174,7 @@ src/life/types.ts        the shapes the explainer is built on
 src/life/income.ts       pay → paid and life-adjusted hourly rates — pure, no DOM
 src/life/duration.ts     money → hours → a duration a person can picture — pure, no DOM
 src/life/parse.ts        form strings → numbers the model can refuse — pure, no DOM
-src/data/products.json   the ladder: 20 objects, each with its price and its source
+src/data/products.json   the ladder: 50 objects, each with its price and its source
 src/data/products.ts     the dataset, sorted by price at import
 src/components/*.ts      view factories: build once, then update in place
 src/main.ts              wiring only; no logic a test would want to reach
