@@ -8,13 +8,14 @@ The one idea:
 > **Every price tag hides an amount of your life.**
 
 You tell the page how you are paid. It works out what an hour of your life actually returns —
-once the unpaid time the job costs you is counted — and then reprices a ladder of ordinary and
-extraordinary objects in that second currency. A flat white stops being $6 and becomes sixteen
-minutes. A house stops being a number with six digits and becomes twenty-four working years.
+once the unpaid time the job costs you is counted — and then shows a ladder of ordinary and
+extraordinary objects priced *only* in that currency. A flat white isn't $6 on this page — it's
+sixteen minutes. A house isn't a number with six digits — it's twenty-four working years.
 
 Nothing on the page is for sale. There is no cart, no checkout, no comparison of your salary to
-anyone else's. The single interaction — **MONEY ↔ TIME** over the same unchanged objects — is the
-explanation.
+anyone else's, and no dollar figure competing for attention on the ladder itself. The page states
+the exchange rate once, in dollars, and from there on speaks only in time — because that is the
+argument: money was only ever the disguise.
 
 This is an **explanatory model, not an official economic or accounting measure.** It divides pay
 by committed hours. It does not model tax, superannuation, benefits, overtime, or unpaid work

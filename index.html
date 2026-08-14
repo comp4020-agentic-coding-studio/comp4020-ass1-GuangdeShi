@@ -6,7 +6,7 @@
     <title>Everything has two prices — the life cost of what you buy</title>
     <meta
       name="description"
-      content="An interactive explainer: every price tag hides an amount of your life. Enter how you are paid, then read the same objects in dollars and in hours."
+      content="An interactive explainer: every price tag hides an amount of your life. Enter how you are paid, and fifty everyday and extraordinary objects are priced again — in hours of your life."
     />
     <link rel="stylesheet" href="./src/styles/main.css" />
   </head>
@@ -21,7 +21,7 @@
     <nav class="page-nav" aria-label="On this page">
       <ul>
         <li><a href="#your-hours">What an hour costs you</a></li>
-        <li><a href="#the-ladder">The two prices</a></li>
+        <li><a href="#the-ladder">Priced in time</a></li>
         <li><a href="#the-model">What this model is</a></li>
       </ul>
     </nav>
@@ -112,51 +112,41 @@
         <div class="rate" id="life-rate" aria-live="polite"></div>
       </section>
 
-      <p class="turn">
-        So that is the exchange rate. Every price below was always written in this second
-        currency — the page just stopped hiding it.
+      <!--
+        Two manifesto beats, back to back. Together they perform the pivot the
+        page used to hand a visitor as a toggle: the price never moved, only
+        the currency it is read in did — and from here on, that currency is
+        time.
+      -->
+      <p class="manifesto">
+        Nothing here changed price.<br />
+        The only thing that changed<br />
+        is what you are paying with.
+      </p>
+
+      <p class="manifesto manifesto--accent">
+        So that is the exchange rate.<br />
+        Every price below was always<br />
+        written in this second currency —<br />
+        the page just stopped hiding it.
       </p>
 
       <section class="section section--wide" id="the-ladder" aria-labelledby="the-ladder-title">
-        <h2 class="section__title" id="the-ladder-title">The same objects, twice</h2>
+        <h2 class="section__title" id="the-ladder-title">Fifty things, priced in time</h2>
+        <p class="section__lede">
+          These are no longer prices in dollars. They are prices in minutes, hours, days, months
+          and years of your one life — at the life-adjusted rate above.
+        </p>
 
-        <form class="mode" id="mode-form">
-          <fieldset class="mode__fieldset">
-            <legend class="mode__legend">Show every price as</legend>
-            <div class="mode__options">
-              <input
-                class="mode__radio"
-                type="radio"
-                name="price-mode"
-                id="mode-money"
-                value="money"
-                checked
-              />
-              <label class="mode__label" for="mode-money">Money</label>
-              <input
-                class="mode__radio"
-                type="radio"
-                name="price-mode"
-                id="mode-time"
-                value="time"
-              />
-              <label class="mode__label" for="mode-time">Time</label>
-            </div>
-          </fieldset>
-          <p class="mode__caption" id="ladder-caption" aria-live="polite"></p>
-        </form>
+        <p class="ladder__status" id="ladder-caption" aria-live="polite"></p>
 
         <!-- Built once and updated in place by src/components/ladder-view.ts. -->
         <ol class="ladder" id="ladder"></ol>
 
-        <p class="ladder__note">
-          Prices are indicative Australian reference prices selected to illustrate scale.
-        </p>
+        <p class="ladder__note">Reference prices are indicative Australian prices.</p>
       </section>
 
-      <p class="coda">
-        Nothing here changed price. The only thing that changed is what you are paying with.
-      </p>
+      <p class="coda">Money was only ever the disguise.</p>
 
       <section class="section" id="the-model" aria-labelledby="the-model-title">
         <h2 class="section__title" id="the-model-title">What this model is, and is not</h2>

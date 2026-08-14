@@ -1,21 +1,20 @@
 /**
- * The ladder: the same objects, read twice.
+ * The ladder: fifty objects, each read in a single currency — time.
  *
  * The rows are built once from the dataset and never rebuilt. Only the price
- * cell's text changes when the toggle moves — which is the point. If the list
- * were re-rendered, MONEY → TIME would read as a new page arriving; updating the
- * text in place makes it read as the *same* object being repriced, and that
- * transformation is the explanation the page exists to perform.
+ * cell's text changes when the wage changes, so a retyped number reads as the
+ * *same* object being repriced rather than a new list arriving. Money never
+ * appears here: it stays in the data layer, where it is the thing being
+ * translated away.
  *
  * Nothing here decides what a duration should say. That belongs to
  * `life/duration.ts`, where a test can hold it to account.
  */
 
-import { formatMoney, formatWorkTime, hoursToEarn, type WorkRhythm } from '../life/duration'
-import type { PriceMode, Product } from '../life/types'
+import { formatWorkTime, hoursToEarn, type WorkRhythm } from '../life/duration'
+import type { Product } from '../life/types'
 
 export interface LadderState {
-  readonly mode: PriceMode
   /** The life-adjusted rate the ladder is priced in, or null while unknown. */
   readonly hourlyRate: number | null
   readonly rhythm: WorkRhythm
@@ -65,35 +64,33 @@ export function createLadderView(root: HTMLElement, products: readonly Product[]
   })
 
   let morphing: ReturnType<typeof setTimeout> | undefined
-  let shown: PriceMode | null = null
+  // Whether the ladder has shown a real duration yet. The one genuine
+  // transformation left to animate is the reveal itself — the first moment a
+  // wage turns every "—" into a length of time — so only that transition gets
+  // the effect. Every keystroke after that repaints the numbers too, and
+  // marking each one as a transformation would spend the effect until it
+  // stopped meaning anything.
+  let revealed = false
 
   return {
     update(state: LadderState): void {
-      const { mode, hourlyRate, rhythm } = state
+      const { hourlyRate, rhythm } = state
 
       for (const { product, price } of rungs) {
-        if (mode === 'money') {
-          price.textContent = formatMoney(product.priceAUD)
-        } else if (hourlyRate === null) {
-          // No honest rate yet, so no time. A placeholder duration would be a
-          // made-up number in the one place the page is asking to be believed.
-          price.textContent = '—'
-        } else {
-          price.textContent = formatWorkTime(hoursToEarn(product.priceAUD, hourlyRate), rhythm).text
-        }
+        // No honest rate yet, so no time. A placeholder duration would be a
+        // made-up number in the one place the page is asking to be believed.
+        price.textContent =
+          hourlyRate === null ? '—' : formatWorkTime(hoursToEarn(product.priceAUD, hourlyRate), rhythm).text
       }
 
-      root.dataset.mode = mode
+      root.dataset.state = hourlyRate === null ? 'empty' : 'ready'
 
-      // Only a genuine flip is worth animating. Retyping a wage repaints the
-      // times too, and marking every keystroke as a transformation would spend
-      // the effect until it stopped meaning anything.
-      if (shown !== null && shown !== mode) {
+      if (!revealed && hourlyRate !== null) {
         root.classList.add('ladder--morphing')
         clearTimeout(morphing)
         morphing = setTimeout(() => root.classList.remove('ladder--morphing'), MORPH_MS)
       }
-      shown = mode
+      revealed = hourlyRate !== null
     },
   }
 }

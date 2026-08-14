@@ -63,6 +63,3 @@ export interface Product {
 }
 
 export type ProductScale = 'everyday' | 'household' | 'major' | 'extraordinary'
-
-/** Which price the ladder is currently showing. The toggle *is* the argument. */
-export type PriceMode = 'money' | 'time'

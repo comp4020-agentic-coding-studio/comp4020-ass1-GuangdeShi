@@ -17,8 +17,12 @@ The current concept is **Life Cost** (Prototype v1, branch `life-cost-v2`). The 
 > Everything has two prices: money, and time.
 
 The visitor says how they are paid. The page derives what an hour of their life actually returns,
-then reprices a ladder of objects in that currency. The **MONEY ↔ TIME** toggle over unchanged
-objects *is* the explanation.
+then shows a fifty-object ladder priced *only* in that currency — time. Money still drives the
+arithmetic and the sourcing, but the visible ladder never states a dollar figure: the page
+performs the translation once, in the exchange-rate section, and from there on speaks only in
+hours, days, months and years. (An earlier iteration let the visitor toggle MONEY ↔ TIME over the
+same objects; that toggle was removed so the page commits to one currency rather than offering a
+choice — see PROCESS.md if that moment is recorded there.)
 
 The first concept, an interactive BaZi explainer, is **Prototype v0** — preserved unrewritten on
 `bazi-prototype`. It was closed deliberately: it had an interaction, but the interaction did not
@@ -73,18 +77,22 @@ mechanic, carried all the way.
 
 ## The core interaction
 
-> The visitor toggles **MONEY ↔ TIME** and watches the same objects, in the same order, at the
-> same prices, become durations of their own life.
+> The visitor tells the page how they are paid, and watches fifty objects — the same objects, in
+> the same order — become durations of their own life.
 
 Consequences of this being *the* interaction:
 
-- The toggle is a real radio group, so it is operable by keyboard without any custom key handling.
-- The rows are **built once and updated in place**. Rebuilding the list would make the flip read
-  as a new page arriving; changing only the price cell makes it read as the *same object* being
-  repriced, which is the explanatory moment.
-- Labels are MONEY and TIME. Never Buy/Sell — this is not a transaction.
-- Only a genuine mode flip animates. Editing the wage also repaints every duration, and marking
-  every keystroke as a transformation spends the effect until it means nothing.
+- There is no MONEY/TIME choice. The ladder speaks one currency, time, so it reads as a page that
+  has already done the translation rather than a tool offering two views.
+- The rows are **built once and updated in place**. Rebuilding the list on every keystroke would
+  make each repricing read as a new page arriving; changing only the price cell makes it read as
+  the *same object* being repriced, which is the explanatory moment.
+- Money survives only where it has to: the exchange-rate section states the paid and
+  life-adjusted hourly rate in dollars, because that division *is* the argument. Everywhere past
+  that section, a dollar figure would undercut the page's own claim that time is the real price.
+- The reveal — the first moment a wage turns every "—" into a length of time — is the one
+  transition worth animating. Every keystroke after that repaints the numbers too, and marking
+  each one as a transformation would spend the effect until it stopped meaning anything.
 
 ## Hard constraints
 
@@ -98,20 +106,19 @@ Consequences of this being *the* interaction:
 
 ### State survives resize, because there is no second copy of it
 
-The only state is *what the visitor typed* and *which radio is checked*, and both live in the DOM
-rather than in module variables. Nothing is re-created on a layout change, so there is nothing to
-lose when the window is dragged mid-interaction. Keep it that way: do not introduce a cached copy
-of a derived value, and do not rebuild anything on `resize`.
+The only state is *what the visitor typed*, and it lives in the DOM's own inputs rather than in
+module variables. Nothing is re-created on a layout change, so there is nothing to lose when the
+window is dragged mid-interaction. Keep it that way: do not introduce a cached copy of a derived
+value, and do not rebuild anything on `resize`.
 
 ### Accessibility specifics
 
 - Real elements only: `<button>`, `<input>`, `<label>`, `<fieldset>`, `<select>`. No click
   handlers on `<div>`s.
-- The mode radios are visually hidden, never `display: none` and never `disabled` — they are the
-  control, and the focus ring is drawn on their labels.
 - Never remove focus outlines.
-- Colour is never the only encoding: MONEY and TIME differ in typeface and weight as well as hue,
-  and the caption above the ladder says in words which currency is on screen.
+- The ladder's empty state (no honest rate yet) is never colour-only: the dash sits back in the
+  serif prose face, not the mono face a real duration gets, and `#ladder-caption` says in words
+  that a wage is still needed.
 - Respect `prefers-reduced-motion` for every animation.
 
 ## Honesty rules

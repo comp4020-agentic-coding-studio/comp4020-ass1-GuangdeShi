@@ -6,8 +6,8 @@
  * These load the real `index.html` — not a fixture — so a renamed id, a deleted
  * input or a control that stopped being wired fails here instead of failing
  * silently in a browser. The pure modules are tested elsewhere; what is tested
- * here is only what the *page* does: that typing changes the rates, that the
- * toggle repricess the same objects, and that nothing invents a number.
+ * here is only what the *page* does: that typing changes the rate, that the
+ * ladder reprices every object in time, and that nothing invents a number.
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -57,12 +57,6 @@ function select(selector: string, value: string): void {
   control.dispatchEvent(new Event('change', { bubbles: true }))
 }
 
-function choose(id: string): void {
-  const radio = $<HTMLInputElement>(id)
-  radio.checked = true
-  radio.dispatchEvent(new Event('change', { bubbles: true }))
-}
-
 beforeEach(async () => {
   await loadPage()
 })
@@ -76,17 +70,21 @@ describe('the page as it first appears', () => {
     expect(text('[data-testid="life-rate-working"]')).toContain('200 h')
   })
 
-  it('shows money first, so the visitor starts from what they already know', () => {
-    expect($('#ladder').getAttribute('data-mode')).toBe('money')
-    expect(price('apple')).toBe('$1.20')
-    expect(price('house')).toBe('$1,111,100')
+  it('shows every price in time, with no currency to choose', () => {
+    expect(document.querySelector('#mode-form')).toBeNull()
+    expect(document.querySelector('input[name="price-mode"]')).toBeNull()
+    expect($('#ladder').getAttribute('data-state')).toBe('ready')
+    expect(price('coffee')).toBe('16 minutes')
   })
 
   it('builds one rung per product, in ascending order', () => {
     const rungs = document.querySelectorAll('.rung')
     expect(rungs.length).toBeGreaterThanOrEqual(16)
-    expect(rungs[0]?.getAttribute('data-id')).toBe('apple')
-    expect(rungs[rungs.length - 1]?.getAttribute('data-id')).toBe('jet')
+    const first = rungs[0]?.getAttribute('data-id')
+    const last = rungs[rungs.length - 1]?.getAttribute('data-id')
+    expect(first).toBeTruthy()
+    expect(last).toBeTruthy()
+    expect(first).not.toBe(last)
   })
 
   it('names a source on every rung', () => {
@@ -97,43 +95,20 @@ describe('the page as it first appears', () => {
   })
 })
 
-describe('the central transformation', () => {
-  it('reprices every object without changing any of them', () => {
-    const names = [...document.querySelectorAll('.rung__name')].map((n) => n.textContent)
-
-    choose('#mode-time')
-
-    expect($('#ladder').getAttribute('data-mode')).toBe('time')
-    expect(price('coffee')).toBe('16 minutes')
-    expect(price('laptop')).toBe('2 working weeks')
-    expect(price('house')).toBe('24 working years')
-    expect(price('jet')).toBe('32 working lifetimes')
-    // Same objects, same order — only the currency moved.
-    expect([...document.querySelectorAll('.rung__name')].map((n) => n.textContent)).toEqual(names)
-  })
-
-  it('goes back, so the two prices can be compared rather than replaced', () => {
-    choose('#mode-time')
-    choose('#mode-money')
-    expect(price('coffee')).toBe('$6')
-  })
-
-  it('says in words which currency is on screen', () => {
-    expect(text('#ladder-caption')).toContain('Australian dollars')
-    choose('#mode-time')
-    expect(text('#ladder-caption')).toContain('$22.00 an hour')
-  })
-})
-
-describe('the wage drives everything downstream', () => {
+describe('the wage drives everything the ladder says', () => {
   it('makes every price longer when the same job pays less', () => {
-    choose('#mode-time')
     const before = price('laptop')
     type('#pay-amount', '2200')
     expect(price('laptop')).not.toBe(before)
     expect(text('[data-testid="life-rate"]')).toBe('$11.00 an hour')
     // Half the pay, so the same laptop crosses into the next unit up.
     expect(price('laptop')).toBe('1 working month')
+  })
+
+  it('reprices the same objects without renaming or reordering them', () => {
+    const names = [...document.querySelectorAll('.rung__name')].map((n) => n.textContent)
+    type('#pay-amount', '2200')
+    expect([...document.querySelectorAll('.rung__name')].map((n) => n.textContent)).toEqual(names)
   })
 
   it('counts the commute, and shows what it costs', () => {
@@ -157,7 +132,6 @@ describe('the wage drives everything downstream', () => {
   })
 
   it('uses the visitor’s own working week as the unit', () => {
-    choose('#mode-time')
     type('#work-hours', '20')
     type('#commute-hours', '0')
     type('#pay-amount', '2200')
@@ -165,6 +139,12 @@ describe('the wage drives everything downstream', () => {
     // working week is half as long, so the same price is twice as many of them.
     expect(text('[data-testid="life-rate"]')).toBe('$27.50 an hour')
     expect(price('laptop')).toBe('3.3 working weeks')
+  })
+
+  it('says in words what the ladder is doing', () => {
+    expect(text('#ladder-caption')).toContain('$22.00 an hour')
+    type('#pay-amount', '')
+    expect(text('#ladder-caption')).toContain('Fill in how you are paid')
   })
 })
 
@@ -175,16 +155,10 @@ describe('what it does when it cannot answer honestly', () => {
     expect(text('[data-testid="paid-rate"]')).toBe('—')
   })
 
-  it('refuses to price anything in time without a rate', () => {
-    choose('#mode-time')
+  it('refuses to price anything on the ladder without a rate', () => {
     type('#pay-amount', '')
     expect(price('house')).toBe('—')
-    expect(text('#ladder-caption')).toContain('Fill in how you are paid')
-  })
-
-  it('still shows the money prices, because those never depended on the wage', () => {
-    type('#pay-amount', '')
-    expect(price('house')).toBe('$1,111,100')
+    expect($('#ladder').getAttribute('data-state')).toBe('empty')
   })
 
   it('refuses a week with more hours than a week has', () => {
@@ -199,15 +173,6 @@ describe('the page keeps its promises to a keyboard', () => {
     for (const id of ['#pay-period', '#pay-amount', '#work-hours', '#commute-hours']) {
       const control = $<HTMLElement>(id)
       expect(document.querySelector(`label[for="${control.id}"]`), id).toBeTruthy()
-    }
-  })
-
-  it('leaves the mode control as real focusable radios', () => {
-    for (const id of ['#mode-money', '#mode-time']) {
-      const radio = $<HTMLInputElement>(id)
-      expect(radio.type).toBe('radio')
-      expect(radio.hasAttribute('disabled')).toBe(false)
-      expect(radio.hasAttribute('tabindex')).toBe(false)
     }
   })
 
