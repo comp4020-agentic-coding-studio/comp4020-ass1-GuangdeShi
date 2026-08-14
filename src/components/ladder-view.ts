@@ -29,8 +29,14 @@ interface Rung {
   readonly price: HTMLElement
 }
 
-/** How long the repricing highlight lasts, in step with the CSS. */
-const MORPH_MS = 700
+/**
+ * How long the repricing highlight lasts, in step with the CSS.
+ *
+ * Long enough to cover the slowest rung's stagger delay plus its own
+ * animation, or the class comes off mid-fade and the tail of a fifty-item
+ * ladder pops in instead of settling.
+ */
+const MORPH_MS = 900
 
 export function createLadderView(root: HTMLElement, products: readonly Product[]): LadderView {
   root.textContent = ''

@@ -421,10 +421,11 @@ body {
 }
 
 /* Staggered down the list, so the reveal reads as one movement travelling
-   through the same objects rather than fifty independent arrivals. */
+   through the same objects rather than fifty independent arrivals. Kept short
+   per row so the sweep across all fifty still finishes inside MORPH_MS. */
 .ladder--morphing .rung__price {
   animation: reprice 380ms ease-out both;
-  animation-delay: calc(var(--rung-index) * 14ms);
+  animation-delay: calc(var(--rung-index) * 8ms);
 }
 
 /* No honest rate yet, so no time — the dash is withheld information, not a
