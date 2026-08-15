@@ -3,47 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Everything has two prices — the life cost of what you buy</title>
+    <title>In life, only time costs</title>
     <meta
       name="description"
-      content="An interactive explainer: every price tag hides an amount of your life. Enter how you are paid, and fifty everyday and extraordinary objects are priced again — in hours of your life."
+      content="Enter how you are paid to find your true hourly time value, then see fifty everyday and extraordinary things priced only in time."
     />
     <link rel="stylesheet" href="./src/styles/main.css" />
   </head>
   <body>
-    <a class="skip-link" href="#your-hours">Skip to the calculation</a>
+    <a class="skip-link" href="#calculator">Skip to the calculator</a>
 
-    <!--
-      One page, so the nav is a table of contents rather than a site menu. Every
-      target is static markup in this file, so the links resolve whether or not
-      the script has run.
-    -->
     <nav class="page-nav" aria-label="On this page">
       <ul>
-        <li><a href="#your-hours">What an hour costs you</a></li>
-        <li><a href="#the-ladder">Priced in time</a></li>
-        <li><a href="#the-model">What this model is</a></li>
+        <li><a href="#calculator">Calculator</a></li>
+        <li><a href="#products">Products</a></li>
       </ul>
     </nav>
 
     <main id="main">
-      <!--
-        The hero says the whole idea and nothing else: no menu, no cards, no
-        feature list. If a visitor reads only this and leaves, they have still
-        been told the thing the page exists to say.
-      -->
       <header class="hero">
-        <h1 class="hero__title">Everything<br />has two<br />prices.</h1>
-        <p class="hero__lede">Money is the number you see. Time is the price you don’t.</p>
+        <h1 class="hero__title">In life,<br />only time<br />costs.</h1>
       </header>
 
-      <section class="section" id="your-hours" aria-labelledby="your-hours-title">
-        <h2 class="section__title" id="your-hours-title">First, what does an hour of you cost?</h2>
-        <p class="section__lede">
-          A price tag is written in dollars because dollars are easy to print. You did not get
-          those dollars for nothing — you got them for hours. So before anything can have a price
-          in time, your time needs a price in money.
-        </p>
+      <section class="section" id="calculator" aria-labelledby="calculator-title">
+        <h2 class="section__title" id="calculator-title">First, what’s your price?</h2>
 
         <form class="income" id="income-form" novalidate>
           <fieldset class="income__fields">
@@ -89,10 +72,7 @@
             </p>
 
             <p class="field">
-              <label class="field__label" for="commute-hours">
-                Hours you commute, per week
-                <span class="field__hint">unpaid, but the job costs it</span>
-              </label>
+              <label class="field__label" for="commute-hours">Hours you commute, per week</label>
               <input
                 class="field__control"
                 id="commute-hours"
@@ -112,58 +92,11 @@
         <div class="rate" id="life-rate" aria-live="polite"></div>
       </section>
 
-      <!--
-        Two manifesto beats, back to back. Together they perform the pivot the
-        page used to hand a visitor as a toggle: the price never moved, only
-        the currency it is read in did — and from here on, that currency is
-        time.
-      -->
-      <p class="manifesto">
-        Nothing here changed price.<br />
-        The only thing that changed<br />
-        is what you are paying with.
-      </p>
-
-      <p class="manifesto manifesto--accent">
-        So that is the exchange rate.<br />
-        Every price below was always<br />
-        written in this second currency —<br />
-        the page just stopped hiding it.
-      </p>
-
-      <section class="section section--wide" id="the-ladder" aria-labelledby="the-ladder-title">
-        <h2 class="section__title" id="the-ladder-title">Fifty things, priced in time</h2>
-        <p class="section__lede">
-          These are no longer prices in dollars. They are prices in minutes, hours, days, months
-          and years of your one life — at the life-adjusted rate above.
-        </p>
-
-        <p class="ladder__status" id="ladder-caption" aria-live="polite"></p>
+      <section class="section section--wide" id="products" aria-labelledby="products-title">
+        <h2 class="visually-hidden" id="products-title">Products, priced in time</h2>
 
         <!-- Built once and updated in place by src/components/ladder-view.ts. -->
-        <ol class="ladder" id="ladder"></ol>
-
-        <p class="ladder__note">Reference prices are indicative Australian prices.</p>
-      </section>
-
-      <p class="coda">Money was only ever the disguise.</p>
-
-      <section class="section" id="the-model" aria-labelledby="the-model-title">
-        <h2 class="section__title" id="the-model-title">What this model is, and is not</h2>
-        <p class="fine">
-          This is an
-          <strong>explanatory model, not an official economic or accounting measure.</strong>
-          It divides pay by committed hours. It does not account for tax, superannuation,
-          benefits, overtime, unpaid work beyond the commute, or the fact that some hours cost
-          more than others.
-        </p>
-        <p class="fine">
-          A month is treated as four weeks and a year as fifty-two, exactly as the model was
-          specified. Those two figures do not agree — four weeks, twelve times, is forty-eight —
-          so the same salary entered monthly and yearly gives slightly different rates. The page
-          shows its arithmetic rather than hiding the disagreement.
-        </p>
-        <p class="fine" id="price-provenance"></p>
+        <ol class="catalogue" id="ladder"></ol>
       </section>
     </main>
 

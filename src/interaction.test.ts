@@ -7,7 +7,7 @@
  * input or a control that stopped being wired fails here instead of failing
  * silently in a browser. The pure modules are tested elsewhere; what is tested
  * here is only what the *page* does: that typing changes the rate, that the
- * ladder reprices every object in time, and that nothing invents a number.
+ * catalogue reprices every object in time, and that nothing invents a number.
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -64,10 +64,7 @@ beforeEach(async () => {
 describe('the page as it first appears', () => {
   it('opens on the worked example, already calculated', () => {
     // $4,400 a month, 40 h work, 10 h commute: 160 paid, 200 committed.
-    expect(text('[data-testid="paid-rate"]')).toBe('$27.50 an hour')
-    expect(text('[data-testid="life-rate"]')).toBe('$22.00 an hour')
-    expect(text('[data-testid="paid-rate-working"]')).toContain('160 h')
-    expect(text('[data-testid="life-rate-working"]')).toContain('200 h')
+    expect(text('[data-testid="life-rate"]')).toBe('$22.00 / hour')
   })
 
   it('shows every price in time, with no currency to choose', () => {
@@ -77,47 +74,46 @@ describe('the page as it first appears', () => {
     expect(price('coffee')).toBe('16 minutes')
   })
 
-  it('builds one rung per product, in ascending order', () => {
-    const rungs = document.querySelectorAll('.rung')
-    expect(rungs.length).toBeGreaterThanOrEqual(16)
-    const first = rungs[0]?.getAttribute('data-id')
-    const last = rungs[rungs.length - 1]?.getAttribute('data-id')
+  it('builds one tile per product, in ascending order', () => {
+    const tiles = document.querySelectorAll('.tile')
+    expect(tiles.length).toBeGreaterThanOrEqual(16)
+    const first = tiles[0]?.getAttribute('data-id')
+    const last = tiles[tiles.length - 1]?.getAttribute('data-id')
     expect(first).toBeTruthy()
     expect(last).toBeTruthy()
     expect(first).not.toBe(last)
   })
 
-  it('names a source on every rung', () => {
-    for (const rung of document.querySelectorAll('.rung')) {
-      const source = rung.querySelector('.rung__source')?.textContent ?? ''
-      expect(source.length, rung.getAttribute('data-id') ?? '').toBeGreaterThan(0)
+  it('names every tile', () => {
+    for (const tile of document.querySelectorAll('.tile')) {
+      const name = tile.querySelector('.tile__name')?.textContent ?? ''
+      expect(name.length, tile.getAttribute('data-id') ?? '').toBeGreaterThan(0)
     }
   })
 })
 
-describe('the wage drives everything the ladder says', () => {
+describe('the wage drives everything the catalogue says', () => {
   it('makes every price longer when the same job pays less', () => {
     const before = price('laptop')
     type('#pay-amount', '2200')
     expect(price('laptop')).not.toBe(before)
-    expect(text('[data-testid="life-rate"]')).toBe('$11.00 an hour')
+    expect(text('[data-testid="life-rate"]')).toBe('$11.00 / hour')
     // Half the pay, so the same laptop crosses into the next unit up.
     expect(price('laptop')).toBe('1 working month')
   })
 
   it('reprices the same objects without renaming or reordering them', () => {
-    const names = [...document.querySelectorAll('.rung__name')].map((n) => n.textContent)
+    const names = [...document.querySelectorAll('.tile__name')].map((n) => n.textContent)
     type('#pay-amount', '2200')
-    expect([...document.querySelectorAll('.rung__name')].map((n) => n.textContent)).toEqual(names)
+    expect([...document.querySelectorAll('.tile__name')].map((n) => n.textContent)).toEqual(names)
   })
 
-  it('counts the commute, and shows what it costs', () => {
+  it('counts the commute even though it is no longer explained on the page', () => {
     type('#commute-hours', '0')
-    expect(text('[data-testid="life-rate"]')).toBe('$27.50 an hour')
-    expect(text('[data-testid="rate-gap"]')).toContain('no commute')
+    expect(text('[data-testid="life-rate"]')).toBe('$27.50 / hour')
 
     type('#commute-hours', '10')
-    expect(text('[data-testid="rate-gap"]')).toContain('20%')
+    expect(text('[data-testid="life-rate"]')).toBe('$22.00 / hour')
   })
 
   it('re-labels the pay field for the period, and re-does the arithmetic', () => {
@@ -127,8 +123,7 @@ describe('the wage drives everything the ladder says', () => {
     type('#pay-amount', '27.5')
     // An hourly worker's entered wage *is* the paid rate; the life-adjusted one
     // is still lower, because the commute is still unpaid.
-    expect(text('[data-testid="paid-rate"]')).toBe('$27.50 an hour')
-    expect(text('[data-testid="life-rate"]')).toBe('$22.00 an hour')
+    expect(text('[data-testid="life-rate"]')).toBe('$22.00 / hour')
   })
 
   it('uses the visitor’s own working week as the unit', () => {
@@ -137,14 +132,8 @@ describe('the wage drives everything the ladder says', () => {
     type('#pay-amount', '2200')
     // $2,200 a month over 80 paid hours is the same $27.50 an hour — but a
     // working week is half as long, so the same price is twice as many of them.
-    expect(text('[data-testid="life-rate"]')).toBe('$27.50 an hour')
+    expect(text('[data-testid="life-rate"]')).toBe('$27.50 / hour')
     expect(price('laptop')).toBe('3.3 working weeks')
-  })
-
-  it('says in words what the ladder is doing', () => {
-    expect(text('#ladder-caption')).toContain('$22.00 an hour')
-    type('#pay-amount', '')
-    expect(text('#ladder-caption')).toContain('Fill in how you are paid')
   })
 })
 
@@ -152,10 +141,10 @@ describe('what it does when it cannot answer honestly', () => {
   it('refuses to show a rate for an empty wage', () => {
     type('#pay-amount', '')
     expect($('#life-rate').getAttribute('data-state')).toBe('empty')
-    expect(text('[data-testid="paid-rate"]')).toBe('—')
+    expect(text('[data-testid="life-rate"]')).toBe('—')
   })
 
-  it('refuses to price anything on the ladder without a rate', () => {
+  it('refuses to price anything in the catalogue without a rate', () => {
     type('#pay-amount', '')
     expect(price('house')).toBe('—')
     expect($('#ladder').getAttribute('data-state')).toBe('empty')
@@ -176,8 +165,7 @@ describe('the page keeps its promises to a keyboard', () => {
     }
   })
 
-  it('announces the parts that change without being scrolled to', () => {
+  it('announces the result without being scrolled to', () => {
     expect($('#life-rate').getAttribute('aria-live')).toBe('polite')
-    expect($('#ladder-caption').getAttribute('aria-live')).toBe('polite')
   })
 })
