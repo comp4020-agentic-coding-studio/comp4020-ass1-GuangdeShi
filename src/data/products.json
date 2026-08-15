@@ -221,12 +221,13 @@
     "id": "officechair",
     "name": "An office chair",
     "priceAUD": 179,
-    "image": "./images/products/officechair.svg",
+    "image": "./images/products-cutout/officechair.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "sneakers",
@@ -280,34 +281,37 @@
     "id": "mattress",
     "name": "A mattress",
     "priceAUD": 699,
-    "image": "./images/products/mattress.svg",
+    "image": "./images/products-cutout/mattress.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "washer",
     "name": "A washing machine",
     "priceAUD": 899,
-    "image": "./images/products/washer.svg",
+    "image": "./images/products-cutout/washer.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "fridge",
     "name": "A fridge",
     "priceAUD": 999,
-    "image": "./images/products/fridge.svg",
+    "image": "./images/products-cutout/fridge.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "ipad",
@@ -349,12 +353,13 @@
     "id": "laptop",
     "name": "A laptop",
     "priceAUD": 1800,
-    "image": "./images/products/laptop.svg",
+    "image": "./images/products-cutout/laptop.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "bicycle",
@@ -371,12 +376,13 @@
     "id": "television",
     "name": "A television",
     "priceAUD": 2400,
-    "image": "./images/products/television.svg",
+    "image": "./images/products-cutout/television.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "rtx5090",
@@ -394,23 +400,25 @@
     "id": "gamingpc",
     "name": "A gaming PC",
     "priceAUD": 4999,
-    "image": "./images/products/gamingpc.svg",
+    "image": "./images/products-cutout/gamingpc.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "major",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "oledtv",
     "name": "An OLED TV",
     "priceAUD": 5999,
-    "image": "./images/products/oledtv.svg",
+    "image": "./images/products-cutout/oledtv.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "major",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "holiday",

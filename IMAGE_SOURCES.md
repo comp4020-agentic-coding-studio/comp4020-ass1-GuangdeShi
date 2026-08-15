@@ -185,6 +185,90 @@ iteration 3: `/tmp/cutout.py` — rembg U2Net segmentation with alpha-matting re
   survive into the final cutout. This was accepted as-is rather than re-sourced, since the result
   still reads cleanly as "an iPad" alone.
 
+## Iteration 5 — reusable cutout skill applied to Batch B (home electronics/furniture)
+
+**Why this exists:** continuing the same skill from iteration 4 onto the next batch of eight
+still-SVG products — laptop, television, OLED TV, gaming PC, office chair, mattress, washing
+machine, fridge.
+
+Sourcing again used Wikimedia Commons search API and Openverse with the descriptive `User-Agent`
+header (avoiding the 429s hit in the previous batch). Every top candidate was downloaded, checked
+with `file`, and personally viewed before acceptance — this personal-viewing step caught two
+problems a sourcing agent's text description alone did not surface (see "Judgement calls" below).
+
+| Product | File | Raw source | Original page | License / creator | Cutout applied |
+|---|---|---|---|---|---|
+| Laptop | `laptop.jpg` | Wikimedia Commons, HP Pavilion dv2000, open, screen off | Aaron Patterson upload | CC BY 2.0, Aaron Patterson | Yes — rembg (U2Net), alpha matting |
+| Television | `television.jpg` | Wikimedia Commons, Mirai LCD TV on a stand, screen off | User:CHG upload | Public Domain | Yes — rembg (U2Net), alpha matting |
+| OLED TV | `oledtv.jpg` | Flickr, Sony XEL-1 OLED TV, front view | Steve Liao upload | CC BY-SA 2.0, Steve Liao | Yes — rembg (U2Net), alpha matting |
+| Gaming PC | `gamingpc.jpg` | Wikimedia Commons, Kolink Observatory RGB tempered-glass case, front view | PantheraLeo1359531 upload | CC BY 4.0, PantheraLeo1359531 | Yes — rembg (U2Net), alpha matting |
+| Office chair | `officechair.jpg` | Wikimedia Commons, modern grey mesh ergonomic chair | Ohidul Islam upload | CC0 1.0, Ohidul Islam | Yes — rembg (U2Net), alpha matting |
+| Mattress | `mattress.jpg` | Wikimedia Commons, Shifman pillow-top mattress set with pillows | Yahquinn upload | CC BY-SA 3.0, Yahquinn | Yes — rembg (U2Net), alpha matting |
+| Washing machine | `washer.jpg` | Wikimedia Commons, Beko front-loader, tiled wall | — | CC BY-SA 2.0 | Yes — rembg (U2Net), alpha matting |
+| Fridge | `fridge.jpg` | Wikimedia Commons/INDUS museum collection, vintage Montgomery Ward "Deluxe" enamel fridge, studio backdrop | INDUS museum upload | CC0 | Yes — rembg (U2Net), alpha matting |
+
+Local files live under `public/images/products-cutout/`, named by product id. Same pipeline as
+iterations 3–4: `/tmp/cutout.py` — rembg U2Net segmentation with alpha-matting refinement
+(`alpha_matting_foreground_threshold=240`, `alpha_matting_background_threshold=10`,
+`alpha_matting_erode_size=8`), cropped to the alpha bounding box, resized so the long edge fills
+~78% of a 1000×1000 canvas, composited centred onto solid `rgb(255,255,255)`.
+
+### Rejected candidates
+
+- **Laptop**: an IBM ThinkPad R51 (CC BY-SA 2.5/4.0, André Karwath) — a sourcing agent's top pick,
+  but personal viewing showed its screen powered on and displaying a dated (~2004) German Wikipedia
+  homepage, which reads as distracting and dates the whole tile; rejected in favour of the HP
+  Pavilion with its screen off. A Lenovo G500s (CC BY-SA 4.0, Raimond Spekking) — visible desktop
+  clutter and a password sticker; a lime-green Dell Studio 1535 (CC BY-SA 3.0, Matt Eason) —
+  unusual colour/angle, not representative.
+- **Television**: a Samsung on a cluttered entertainment unit (CC BY-SA 4.0, EvanProdromou); a
+  Techwood at a tilted angle against a busy background (CC BY-SA 4.0, Percivalor).
+- **OLED TV**: a Sony XEL-1 side-profile shot (CC BY 2.0, MShades) — a sourcing agent's top pick,
+  but personal viewing showed it as an unusable near-edge-on sliver in a cluttered showroom with a
+  Japanese signboard visible; rejected. An LG 55EA980T curved OLED (CC BY-SA 3.0, Solomon203) — a
+  runner-up, but the shot includes a visible "$299,000" price signboard baked into the frame, which
+  would read as a foreign in-frame price fighting the catalogue's own pricing; rejected. A Metz 77"
+  OLED (CC BY-SA 4.0, MB-one) — a person visible in the background.
+- **Gaming PC**: an extreme macro of case fans (CC0, SankalpSasnur) — too abstract to read as "a
+  PC"; a cluttered Shenzhen market-stall shot (CC BY-SA 4.0, Benlisquare); a macro of a CPU
+  water-block only (CC0, Jonathan Cutrer).
+- **Office chair**: a black leather chair on white studio background (CC BY-SA 2.0, chairbazaar) —
+  clean background but only 241×402, too low-resolution; a navy task chair (CC BY 2.0,
+  Kare_Products) — modest resolution; a brown leather executive chair (CC BY-SA 2.0,
+  SafeTinspector) — cluttered office background.
+- **Mattress**: a Pillowtop mattress in a real bedroom with visible clutter (CC BY 2.5, Jeffrey M.
+  Vinocur); an air mattress (CC BY-SA 4.0, W.carter) — wrong product type entirely.
+- **Washing machine**: a Fagor front-loader (Public Domain, Dany kg) — a sourcing agent's top pick,
+  but the cutout pipeline failed on it: the machine's pale-grey body blended into the pale
+  background at rembg's segmentation stage, and only the circular door survived as "foreground,"
+  discarding the rest of the machine body. Rejected after seeing the broken output, not the source
+  photo itself. A National/Panasonic front-loader in a real laundry alcove (CC BY-SA 2.0, Peter Van
+  den Bossche) — a potted plant and papers on top of the machine, real-world clutter.
+- **Fridge**: a small Frigidaire table-top/bar fridge (CC BY-SA 4.0, Cjp24) — tried first for its
+  cleaner, less-worn appearance, but the cutout pipeline left a visible shadow/discolouration halo
+  on one edge because the real-room lighting (teal wall, wood floor) gave rembg uneven contrast to
+  key against; rejected after seeing the cutout artefact, and replaced with the vintage "Deluxe"
+  fridge's even studio backdrop, which segmented cleanly. A Nestor Martin fridge from the same
+  museum collection (CC0) — near-identical setup to the accepted image, not distinct enough to
+  prefer; a rusty vintage Kelvinator (CC0, Hasthashilpa) — visible clutter around the base.
+
+### Judgement calls
+
+- **Laptop screen content**: rejected the agent-recommended ThinkPad specifically because its
+  on-screen content (a dated foreign-language webpage) would have been a distraction baked
+  permanently into the tile — this was only visible after personally opening the image, not from
+  the agent's text description, reinforcing the standing rule to never accept a sourcing
+  recommendation without viewing the file.
+- **Washing machine cutout failure**: this is the first case in the whole workflow where the
+  *cutout step itself*, not the source photo, produced a bad result — a reminder that accepting a
+  clean-looking source photo doesn't guarantee a clean segmentation, and every cutout output (not
+  just every source candidate) must be personally viewed before wiring it into `products.json`.
+- **Fridge age vs. cutout cleanliness**: chose a visibly vintage/worn fridge over a cleaner-looking
+  modern one because the vintage photo's even studio lighting produced a clean cutout edge, while
+  the modern photo's real-room lighting produced a shadow artefact. Prioritised a clean silhouette
+  over a modern appearance, consistent with the AirPods reference standard's emphasis on cutout
+  quality over subject styling.
+
 ## Iteration 2 — packshot standard (superseded for these eight ids)
 
 The first pass (iteration 1, commit `0e6fa0a`) accepted any real photograph
