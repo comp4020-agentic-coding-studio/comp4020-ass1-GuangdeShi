@@ -393,6 +393,82 @@ descriptions, a bulk/AI-content-mill signature.
   requiring a genuinely clean result, the illustration (`fish.svg`) was kept rather than accepting a
   cluttered real photo just to check the "real photo" box.
 
+## Iteration 7 — reusable cutout skill applied to Batch D (vehicles/misc)
+
+**Why this exists:** continuing the same skill from iterations 4–6 onto the last mixed batch of
+mainstream illustrations: a pair of socks, a bicycle, a motorcycle, a new car, a Tesla/electric
+car, and a luxury watch.
+
+Sourcing again used the Wikimedia Commons search API and Openverse with a descriptive
+`User-Agent` header. Every top candidate was downloaded, checked with `file` to confirm it was a
+real image and not an HTML error page, and personally viewed before acceptance.
+
+| Product | File | Raw source | Original page | License / creator | Cutout applied |
+|---|---|---|---|---|---|
+| Pair of socks | `socks.jpg` | Wikimedia Commons, "Villased sokid, STM 1998" (striped hand-knit wool socks, Seto Farm Museum collection) | https://commons.wikimedia.org/wiki/File:Villased_sokid,_STM_1998.jpg | CC0, maker Linda Helü, photographer Toomas Tuul (Seto Talumuuseum) | Yes — rembg (U2Net), alpha matting |
+| Bicycle | `bicycle.jpg` | Wikimedia Commons, Triumph-branded bicycle, plain blurred concrete background | uploader "Andrew Dressel", own work | CC BY-SA 3.0, Andrew Dressel | Yes — rembg (U2Net), alpha matting |
+| Motorcycle | `motorcycle.jpg` | Wikimedia Commons, KTM RC-series sportsbike, side/three-quarter view | uploader "Arunsmokiofficial", own work | CC BY-SA 4.0, Arunsmokiofficial | Yes — rembg (U2Net), alpha matting, plus manual patch (see below) |
+| New car | `car.jpg` | Wikimedia Commons, "Moscow, Honda Civic sedan, Apr 2026 03" | https://commons.wikimedia.org/wiki/File:Moscow,_Honda_Civic_sedan,_Apr_2026_03.jpg | CC0, "Retired electrician" | Yes — rembg (U2Net), alpha matting |
+| Tesla / electric car | `teslaev.jpg` | Wikimedia Commons, "Tesla Model 3 parked, rear driver side" | https://commons.wikimedia.org/wiki/File:Tesla_Model_3_parked,_rear_driver_side.jpg | CC BY-SA 4.0, Carlquinn | Yes — rembg (U2Net), alpha matting |
+| Luxury watch | `luxurywatch.jpg` | Wikimedia Commons (via Flickr), Rolex GMT-Master II, plain white studio macro | https://commons.wikimedia.org/wiki/File:Rolex_GMT_Master_II_4657617812.jpg | CC BY 2.0, Håkan Dahlström | Yes — rembg (U2Net), alpha matting |
+
+Local files live under `public/images/products-cutout/`, named by product id. Same pipeline as
+iterations 3–6: `/tmp/cutout.py` — rembg U2Net segmentation with alpha-matting refinement
+(`alpha_matting_foreground_threshold=240`, `alpha_matting_background_threshold=10`,
+`alpha_matting_erode_size=8`), cropped to the alpha bounding box, resized so the long edge fills
+~78% of a 1000×1000 canvas, composited centred onto solid `rgb(255,255,255)`.
+
+**Motorcycle background-pole artifact — manual patch.** The accepted KTM photo's rembg cutout left
+a vertical ghosted line (a background tree branch/pole) in the upper-middle background, bridged
+through the mirror-stalk region closely enough that `scipy.ndimage.label` connected-component
+filtering — tried at two alpha thresholds (`>20` and `>128` with a 15-iteration dilation) — could
+not separate it from the bike's own mask. Rather than accept the artifact or discard the photo,
+the flattened white-composited output was scanned pixel-by-pixel with numpy across several
+horizontal bands to confirm a small rectangle (`[455, 30, 510, 218]`) contained only the pole and
+no motorcycle geometry (the mirror head only starts appearing from y≈220), then that rectangle was
+painted solid white with `PIL.ImageDraw`. This is a patch on the already-correct white canvas
+colour, not an edit to the source photograph or a blind algorithmic mask edit — the result was
+read back and visually confirmed clean before acceptance.
+
+### Rejected candidates
+
+- **Bicycle**: the CC0 top pick (a green bicycle against a stucco wall) was tried first and
+  rejected purely on cutout-quality grounds — the wall's texture ghosted through the "white"
+  background after rembg processing — not on licensing grounds. The CC BY-SA 3.0 Triumph photo
+  (plain blurred concrete background) was substituted and produced a clean cutout.
+- **Motorcycle**: a Suzuki GZ125 on a grass hillside (CC BY-SA 2.0, O3D) — green colour bled
+  through the mask near the engine/exhaust, worse than the KTM's pole artifact; a 1956 AJS Model 16
+  MS (CC BY-SA 4.0, VRT-verified) produced the cleanest cutout of all three candidates tried, but
+  was rejected despite the superior image quality: `products.json`'s `motorcycle` entry prices at
+  $18,000 AUD as an "Indicative Australian ride-away price" for an ordinary modern motorcycle, and
+  a 1956 collector antique would misrepresent what that price actually buys.
+- **Luxury watch**: a Rolex Submariner bracelet/clasp photo (same photographer's Commons upload)
+  showed only the clasp and bracelet resting on wrinkled fabric, with the watch face not visible
+  at all — rejected as not recognisably "a watch."
+- **Tesla/electric car**: the sourcing agent assigned to this item returned only a placeholder
+  status message with no usable findings; its candidate downloads and metadata in
+  `/tmp/sources/teslaev/` were reviewed directly instead. Of five CC-licensed Tesla Model 3
+  candidates (all CC BY-SA 4.0 or CC BY 4.0, all named Commons contributors' own work), the
+  accepted rear-three-quarter photo was chosen for a plain background with no other vehicles
+  dominating the frame; alternatives had a second car cropped into frame, a busier residential
+  street background, or an atypical top-down angle.
+
+### Judgement calls
+
+- **Bicycle and motorcycle branding**: both accepted photos carry the bike's own printed/molded
+  brand markings (Triumph, KTM). Consistent with the AirPods/Apple precedent, this is treated as
+  an ordinary feature of a real object's own photo, not out-of-scope marketing photography — the
+  photographers are named individual Commons contributors, not the manufacturers.
+- **Motorcycle conceptual fit over cutout quality**: the AJS antique produced a technically
+  cleaner cutout than the accepted KTM, but was rejected because it doesn't match the modern,
+  ordinary motorcycle implied by the existing (unchanged) $18,000 AUD price entry. Imagery must
+  represent the item the price actually models, not just look the cleanest.
+- **Motorcycle manual patch, not connected-component filtering**: two algorithmic attempts to
+  isolate the pole as a separate mask blob failed because it was pixel-bridged to the bike itself,
+  not a genuinely disconnected artifact. The manual white-rectangle patch on the finished
+  white-composited output was judged safe only after empirically confirming (by scanning pixel
+  values, not by eye alone) that the patched region contained no real bike geometry.
+
 ## Iteration 2 — packshot standard (superseded for these eight ids)
 
 The first pass (iteration 1, commit `0e6fa0a`) accepted any real photograph

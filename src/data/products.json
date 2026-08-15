@@ -135,12 +135,13 @@
     "id": "socks",
     "name": "A pair of socks",
     "priceAUD": 18,
-    "image": "./images/products/socks.svg",
+    "image": "./images/products-cutout/socks.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "casuallunch",
@@ -373,12 +374,13 @@
     "id": "bicycle",
     "name": "A bicycle",
     "priceAUD": 2100,
-    "image": "./images/products/bicycle.svg",
+    "image": "./images/products-cutout/bicycle.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "television",
@@ -443,45 +445,49 @@
     "id": "motorcycle",
     "name": "A motorcycle",
     "priceAUD": 18000,
-    "image": "./images/products/motorcycle.svg",
+    "image": "./images/products-cutout/motorcycle.jpg",
     "priceSourceLabel": "Indicative Australian ride-away price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "major",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "car",
     "name": "A new car",
     "priceAUD": 45000,
-    "image": "./images/products/car.svg",
+    "image": "./images/products-cutout/car.jpg",
     "priceSourceLabel": "Indicative Australian drive-away price, mid-range model",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "major",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "luxurywatch",
     "name": "A luxury watch",
     "priceAUD": 55000,
-    "image": "./images/products/luxurywatch.svg",
+    "image": "./images/products-cutout/luxurywatch.jpg",
     "priceSourceLabel": "Representative example, not a market average",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "major",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "teslaev",
     "name": "A Tesla / electric car",
     "priceAUD": 79000,
-    "image": "./images/products/teslaev.svg",
+    "image": "./images/products-cutout/teslaev.jpg",
     "priceSourceLabel": "Indicative Australian drive-away price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "major",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "deposit",
