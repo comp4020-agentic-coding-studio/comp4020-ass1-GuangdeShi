@@ -46,13 +46,13 @@ describe('the ladder of units', () => {
     expect(formatWorkTime(rhythm.hoursPerMonth * 12, rhythm).unitKey).toBe('working years')
   })
 
-  // The unit ladder used to stop at years, and the top of the product ladder
-  // broke it: a private jet printed "1,420 working years". Past a working life
-  // the honest unit is a count of lives, not a longer number of years.
-  it('says working lifetimes past a whole working life', () => {
-    expect(priceAsTime(65000000)).toBe('32 working lifetimes')
-    expect(formatWorkTime(rhythm.hoursPerLifetime, rhythm).text).toBe('1 working lifetime')
-    expect(formatWorkTime(rhythm.hoursPerLifetime - 1, rhythm).unitKey).toBe('working years')
+  // Years used to hand over to "working lifetimes" past forty-five of them —
+  // a private jet came out as "32 working lifetimes". That word names a count
+  // of whole lives, which carries more judgement than a duration should. Years
+  // is the top rung now, however large the number gets.
+  it('stays in working years past a whole working life, rather than naming it a lifetime', () => {
+    expect(priceAsTime(65000000)).toBe('1,420 working years')
+    expect(priceAsTime(65000000)).not.toMatch(/lifetime/)
   })
 })
 
@@ -74,14 +74,24 @@ describe('the units belong to the visitor, not the calendar', () => {
 })
 
 describe('the rule the formatter exists to keep', () => {
-  // "41802 hours" is the exact failure the brief names. Sweep the whole ladder
-  // and assert no price ever prints a number too large to picture.
-  it('never prints a raw value larger than 100', () => {
-    for (const price of [1, 6, 25, 129, 549, 1800, 7500, 45000, 1111100, 65000000]) {
+  // "41802 hours" is the exact failure the brief names. Below the top rung, the
+  // unit always climbs before the number does, so nothing here prints a value
+  // too large to picture.
+  it('never prints a raw value larger than 100, below the years tier', () => {
+    for (const price of [1, 6, 25, 129, 549, 1800, 7500, 45000]) {
       const formatted = formatWorkTime(hoursToEarn(price, RATE), rhythm)
       expect(formatted.value, `${price} → ${formatted.text}`).toBeLessThan(100)
       expect(formatted.text).not.toMatch(/\d{4}/)
     }
+  })
+
+  // Years is the top rung, and there is nowhere further up to hand off to — so
+  // an extraordinary enough price prints a large number of years rather than
+  // being renamed into a count of lives.
+  it('lets working years run past a hundred at the top of the ladder', () => {
+    const formatted = formatWorkTime(hoursToEarn(65000000, RATE), rhythm)
+    expect(formatted.unitKey).toBe('working years')
+    expect(formatted.text).toBe('1,420 working years')
   })
 
   it('never hands back a bare unit with no number', () => {

@@ -196,19 +196,22 @@ afterwards write only text nodes and attributes.
 ### Saying a duration
 
 `duration.ts` exists to keep one promise: **never print a number a person cannot picture.**
-"41,802 hours" is a number, not a scale. Two rules follow, both earned (PROCESS.md, moment 6):
+"41,802 hours" is a number, not a scale. Rules follow, earned across PROCESS.md moments:
 
-- **The ladder must have a top.** Every unit tier eventually meets a price that overflows it. The
-  private jet printed "1,420 working years" until `working lifetimes` (45 working years) was
-  added. If a new rung ever overflows the top again, add a unit — do not shrink the ladder.
+- **Working years is the top rung, uncapped.** An earlier iteration added a `working lifetimes`
+  tier (45 working years) once the private jet overflowed years at "1,420 working years" —
+  but naming a price as a count of whole lives carried more judgement than a duration should,
+  which cut against the piece's own honesty rules. Years now stays the top rung however large the
+  number gets; below it, the unit still climbs to keep the value small, so a plain number of years
+  is the one place on the ladder allowed past a hundred.
 - **The units are the visitor's, not the calendar's.** A working day is a fifth of the hours
   *they* said they work. Pricing a part-timer's laptop in 8-hour days is arithmetic about somebody
   else.
 - The month tier stops at twelve, because a 4-week month and a 52-week year do not tile (52 ÷ 4 =
   13) and "13 working months" reads as an error even when the arithmetic is right.
 
-`duration.test.ts` pins each boundary, each singular form, and a sweep asserting no printed value
-reaches four digits. `products.test.ts` asserts the whole ladder climbs through every unit at the
+`duration.test.ts` pins each boundary, each singular form, and a sweep asserting no value below the
+years tier reaches four digits. `products.test.ts` asserts the whole ladder climbs through every unit at the
 brief's example rate.
 
 ### Checking the rendering

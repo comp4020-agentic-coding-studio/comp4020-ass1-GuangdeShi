@@ -69,6 +69,19 @@ ladder are single representative examples rather than market averages: there is 
 price for a superyacht. A dataset test enforces the honesty of those fields, so a placeholder
 cannot claim to have been checked.
 
+## Images
+
+Each product tile carries an icon from [Twemoji](https://github.com/twitter/twemoji), Twitter's
+open-source emoji artwork, used here as a single, consistently-styled catalogue rather than fifty
+unrelated stock photos — the same flat, centred-object style across all fifty products. Twemoji is
+licensed [CC-BY 4.0](https://github.com/twitter/twemoji/blob/master/LICENSE-GRAPHICS); Copyright
+2019 Twitter, Inc and other contributors.
+
+The SVGs are downloaded once and committed as static files under `public/images/products/`, named
+by product id (e.g. `banana.svg`, `jet.svg`) — nothing is fetched at runtime, and there is no
+client-side JavaScript involved in loading them. Vite copies `public/` verbatim into `dist/` at
+build time, so the deployed site serves these same local files.
+
 ## How this repo is assessed
 
 The **deployed site** is the deliverable, marked live in Chrome at 1920×1080 and 390×844 — both

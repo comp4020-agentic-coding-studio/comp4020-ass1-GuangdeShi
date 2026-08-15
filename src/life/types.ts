@@ -47,7 +47,7 @@ export interface Product {
   readonly id: string
   readonly name: string
   readonly priceAUD: number
-  /** Local asset path once real imagery exists; null while the tile is typographic. */
+  /** Local static asset path, relative to `index.html` (e.g. `./images/products/banana.svg`). */
   readonly image: string | null
   readonly priceSourceLabel: string
   readonly priceSourceURL: string | null

@@ -76,27 +76,24 @@ describe('what the ladder does at the visitor’s rate', () => {
   const rhythm = rhythmFor(40)
   const times = PRODUCTS.map((p) => formatWorkTime(hoursToEarn(p.priceAUD, 22), rhythm))
 
-  it('starts in minutes and ends in lifetimes', () => {
+  it('starts in minutes and ends in working years', () => {
     expect(times[0]!.unitKey).toBe('minutes')
-    expect(times.at(-1)!.unitKey).toBe('working lifetimes')
+    expect(times.at(-1)!.unitKey).toBe('working years')
   })
 
   it('passes through every unit on the way, so the climb is visible', () => {
     expect(new Set(times.map((t) => t.unitKey))).toEqual(
-      new Set([
-        'minutes',
-        'hours',
-        'working days',
-        'working weeks',
-        'working months',
-        'working years',
-        'working lifetimes',
-      ]),
+      new Set(['minutes', 'hours', 'working days', 'working weeks', 'working months', 'working years']),
     )
   })
 
-  it('never prints an unpicturable number anywhere on the ladder', () => {
+  // Below the top rung the unit always climbs before the number does. Years is
+  // the top rung itself, so the most extraordinary object on the ladder is the
+  // one place a value is allowed past a hundred — there is no higher unit left
+  // to hand it off to.
+  it('keeps every value under the years tier picturable', () => {
     for (const [i, t] of times.entries()) {
+      if (t.unitKey === 'working years') continue
       expect(t.value, `${PRODUCTS[i]!.id} → ${t.text}`).toBeLessThan(100)
     }
   })

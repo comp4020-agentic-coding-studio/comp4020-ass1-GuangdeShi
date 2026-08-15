@@ -9,8 +9,10 @@
  *    the visitor works 20 hours a week would be arithmetic about somebody else.
  *
  * 2. **Never print a large raw number of hours.** "41,802 hours" is a number,
- *    not a scale — nobody can feel it. The unit is chosen so the value in front
- *    of it stays small enough to picture.
+ *    not a scale — nobody can feel it. The unit climbs from minutes up to
+ *    working years so the value in front of it stays as small as the price
+ *    allows; years is the top rung; nothing past it renames the number into a
+ *    count of lives.
  *
  * Pure: no DOM.
  */
@@ -21,7 +23,6 @@ export interface WorkRhythm {
   readonly hoursPerWeek: number
   readonly hoursPerMonth: number
   readonly hoursPerYear: number
-  readonly hoursPerLifetime: number
 }
 
 export type WorkUnit =
@@ -31,7 +32,6 @@ export type WorkUnit =
   | 'working weeks'
   | 'working months'
   | 'working years'
-  | 'working lifetimes'
 
 export interface WorkTime {
   /** The number, already rounded for display. */
@@ -49,18 +49,6 @@ const DAYS_PER_WEEK = 5
 const WEEKS_PER_MONTH = 4
 const WEEKS_PER_YEAR = 52
 
-/**
- * A working life: from twenty to sixty-five.
- *
- * The unit ladder used to stop at years, and the top of the product ladder
- * broke it — a private jet came out as "1,420 working years", which is the
- * exact unpicturable number this file exists to prevent. Adding a bigger unit
- * is not a rounding fix: at that price the honest answer stops being a duration
- * a person could work and becomes a count of whole lives, which is the point
- * the top of the ladder is making.
- */
-const WORKING_YEARS_PER_LIFETIME = 45
-
 export function rhythmFor(weeklyWorkHours: number): WorkRhythm {
   const hoursPerWeek = weeklyWorkHours
   return {
@@ -68,7 +56,6 @@ export function rhythmFor(weeklyWorkHours: number): WorkRhythm {
     hoursPerWeek,
     hoursPerMonth: hoursPerWeek * WEEKS_PER_MONTH,
     hoursPerYear: hoursPerWeek * WEEKS_PER_YEAR,
-    hoursPerLifetime: hoursPerWeek * WEEKS_PER_YEAR * WORKING_YEARS_PER_LIFETIME,
   }
 }
 
@@ -136,9 +123,10 @@ export function formatWorkTime(hours: number, rhythm: WorkRhythm): WorkTime {
   // the year it is supposed to sit inside. The tier hands over at twelve.
   if (hours < rhythm.hoursPerMonth * 12) return say(hours / rhythm.hoursPerMonth, 'working months')
 
-  const years = hours / rhythm.hoursPerYear
-  if (years < WORKING_YEARS_PER_LIFETIME) return say(years, 'working years')
-  return say(years / WORKING_YEARS_PER_LIFETIME, 'working lifetimes')
+  // The top of the ladder. However large the price, it stays a count of years —
+  // "lifetimes" named a number of whole lives, which read as heavier judgement
+  // than a duration should carry. A large number of years is still just a number.
+  return say(hours / rhythm.hoursPerYear, 'working years')
 }
 
 /** Thousands separators, and no trailing ".0" on a whole number. */

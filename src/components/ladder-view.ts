@@ -49,12 +49,20 @@ export function createLadderView(root: HTMLElement, products: readonly Product[]
     // as travelling through it rather than flashing all at once.
     item.style.setProperty('--tile-index', String(index))
 
+    const imageWrap = document.createElement('div')
+    imageWrap.className = 'tile__image'
+
+    const image = document.createElement('img')
+    image.className = 'tile__image-img'
+    image.src = product.image ?? ''
     // Decorative — the product name beside it already carries the identity,
     // so a screen reader does not need to announce this twice.
-    const image = document.createElement('div')
-    image.className = 'tile__image'
-    image.setAttribute('aria-hidden', 'true')
-    image.textContent = product.name.replace(/^(a|an|the)\s+/i, '').charAt(0).toUpperCase()
+    image.alt = ''
+    image.loading = 'lazy'
+    image.decoding = 'async'
+    image.width = 96
+    image.height = 96
+    imageWrap.append(image)
 
     const name = document.createElement('span')
     name.className = 'tile__name'
@@ -64,7 +72,7 @@ export function createLadderView(root: HTMLElement, products: readonly Product[]
     time.className = 'tile__time'
     time.dataset.testid = `price-${product.id}`
 
-    item.append(image, name, time)
+    item.append(imageWrap, name, time)
     root.append(item)
     return { product, time }
   })
