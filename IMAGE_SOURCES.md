@@ -12,7 +12,102 @@ surfaced through those two, and rawpixel's CC0 library were used instead —
 all keyless and reachable via plain HTTP. Every image below is filtered to
 `by`, `by-sa`, `cc0`, or `pdm` licenses.
 
-## Iteration 2 — packshot standard (current)
+## Iteration 3 — cutout on pure white (current)
+
+Iteration 2's packshot standard still let two real constraints through: a photo could only be
+"white background" if it was shot that way, and the two aircraft kept their natural sky instead.
+This iteration removes that exception — every image is now a **segmented cutout of the main
+object, composited onto a pure white canvas**, so the background is manufactured consistently
+rather than inherited from whatever the original photo happened to be shot against. Same eight
+sample items: banana, bottle of water, instant noodles, coffee, MacBook Air, RTX 5090, helicopter,
+private jet.
+
+**Important disclosure — no fresh re-sourcing was done this round.** Stage 3 of this iteration's
+brief asked to prefer product-dataset/e-commerce sources over general stock photography. That
+was not acted on: all eight raw photos are the same already-vetted originals from iteration 1 or
+2 (see the source table below), reused because they were already confirmed clean, single-object,
+real photographs — re-searching against dedicated e-commerce/catalogue sites was skipped in favour
+of testing the new cutout pipeline itself. Two of the eight (water, RTX 5090) still carry
+iteration 1's original caveats unchanged: the water photo is a generic bottle stock photo, not
+from a retailer catalogue, and the RTX 5090 image is still a real photo of an older EVGA GeForce
+GTX 750 Ti standing in for the category — no CC-licensed photo of the actual 2025 card exists.
+**No candidates were rejected this round** because no new candidates were sought.
+
+| Product | File | Raw source reused from | Original page | Cutout applied |
+|---|---|---|---|---|
+| Banana | `banana.jpg` | Iteration 2 (`banana_a.jpg`) — Wikimedia Commons via Flickr, robin_24, CC BY 2.0 | https://commons.wikimedia.org/w/index.php?curid=16419110 | Yes — rembg (U2Net), alpha matting |
+| Bottle of water | `water.jpg` | Iteration 1 (`water_e.jpg`) — Wikimedia Commons, CC0 | https://commons.wikimedia.org/wiki/File:Cil%C3%ADndrica_botella_de_agua_con_tapa_negra.jpg | Yes — rembg (U2Net), alpha matting |
+| Instant noodles | `noodles.jpg` | Iteration 2 (`noodles_a.jpg`) — Wikimedia Commons, Takeaway, CC BY-SA 3.0 | https://commons.wikimedia.org/w/index.php?curid=32787360 | Yes — rembg (U2Net), alpha matting |
+| Coffee | `coffee.jpg` | Iteration 2 (`coffee_d.jpg`) — Flickr, dlg_images, CC BY 2.0 | https://www.flickr.com/photos/131260238@N08/16768489546 | Yes — rembg (U2Net), alpha matting |
+| MacBook Air | `macbookair.jpg` | Iteration 2 (`laptop_a.jpg`) — rawpixel, CC0 | https://www.rawpixel.com/image/5907652/photo-image-background-public-domain-technology | Yes — rembg (U2Net), alpha matting |
+| RTX 5090 (graphics card) | `rtx5090.jpg` | Iteration 1 (`gpu_a.jpg`) — Flickr (EVGA GTX 750 Ti stand-in) | https://www.flickr.com/photos/196975524@N05/14898396601 | Yes — rembg (U2Net), alpha matting |
+| Helicopter | `helicopter.jpg` | Iteration 2 (`helicopter_d.jpg`) — WordPress Photo Directory, werkform, CC0 | https://wordpress.org/photos/photo/781663c860/ | Yes — rembg (U2Net), alpha matting |
+| Private jet | `jet.jpg` | Iteration 2 (`privatejet_d.jpg`) — rawpixel, CC0 | https://www.rawpixel.com/image/6080440/d-chec | Yes — rembg (U2Net), alpha matting |
+
+Local files live under `public/images/products-cutout/`, named by product id. Nothing is fetched
+at runtime.
+
+### Processing
+
+Every image went through the same script: [rembg](https://github.com/danielgatis/rembg)
+(U2Net segmentation model, run locally, no network calls at build or runtime) removes the
+background and returns an alpha-channel cutout of the main object; the object is cropped to its
+alpha bounding box, resized so its long edge fills ~78% of a 1000×1000 canvas, and composited
+centred onto a solid `rgb(255,255,255)` canvas using its own alpha as the paste mask, then
+flattened to a JPEG.
+
+The first pass (no alpha matting) left a faint blue/grey halo around the two aircraft, where the
+sky-blue background bled into the semi-transparent edge pixels of the segmentation mask before
+they were composited onto white. Re-run with rembg's alpha-matting refinement
+(`alpha_matting_foreground_threshold=240`, `alpha_matting_background_threshold=10`,
+`alpha_matting_erode_size=8`) sharpened the edge and removed the halo — this refined pass is what
+was kept for all eight items, not just the two aircraft, so the whole set uses one consistent
+pipeline.
+
+### Judgement calls carried over from earlier iterations
+
+- **Coffee**: still the same "cup of coffee" stand-in for the product's display name "A flat
+  white" — black coffee with a thin crema, not steamed milk (see iteration 2's note).
+- **Graphics card**: still a real photo of an older EVGA GeForce GTX 750 Ti, standing in for
+  "graphics card" as a category (see iteration 1's note) — no CC-licensed photo of an actual RTX
+  5090 exists.
+- **Helicopter and private jet**: iteration 2 kept their natural sky background because a real
+  aircraft in flight has no isolated studio version. This iteration overrides that judgement per
+  the new brief's explicit "pure white, no stated exception" requirement — the sky is now removed
+  entirely via segmentation rather than cropped tighter around. Whether an aircraft looking
+  "cut out of the sky" reads as more or less honest than keeping its real backdrop is a genuine
+  trade-off, not a settled question — flagged here for review rather than decided silently.
+
+## Iteration 3b — AirPods addition (single-item scope extension)
+
+**Why this exists outside the eight-item checkpoint:** the user pasted a reference AirPods photo
+and asked to replace the catalogue's generic headphone-note icon with it directly. That reference
+photo was studio-lit in the style of Apple's own official marketing photography — using it would
+have broken this project's CC-BY / CC-BY-SA / CC0 / PDM-only sourcing discipline (see the header
+note above), and it also sat outside the eight-sample checkpoint the prior iteration stopped at.
+Both concerns were raised with the user explicitly rather than decided silently; the user chose to
+source a CC-licensed equivalent instead of using the pasted photo, and gave explicit go-ahead to
+do AirPods now while continuing to hold off on the remaining ~41 products.
+
+| Product | File | Raw source | Original page | License / creator | Cutout applied |
+|---|---|---|---|---|---|
+| AirPods | `airpods.jpg` | Wikimedia Commons ("AirPods.jpg"), originally Flickr | https://www.flickr.com/photos/pestoverde/28954822254/ | CC BY 2.0, Maurizio Pesce ("pestoverde") | Yes — rembg (U2Net), alpha matting, same pipeline as iteration 3 |
+
+**Rejected candidates:**
+
+- `airpods_a.jpg` — Wikimedia, "Second generation AirPods", CC BY 4.0 (Gameplay010unused). Rejected:
+  dark reddish wood background, dim lighting.
+- `airpods_b.jpg` — Wikimedia, "AirPods Pro (2nd generation)", CC BY-SA 4.0 (Hajoon0102). Rejected:
+  buds laid beside the closed case rather than inside it.
+- `airpods_c.jpg` — Wikimedia, "Airpods Pro in a Case", CC BY-SA 4.0 (Harjotbhui). Rejected:
+  third-party black fabric case, not Apple's own, busy background.
+
+`airpods_d.jpg` was accepted: clean light-gray studio background, both original AirPods out of the
+case plus the case open beside them, no watermark, no hands, high resolution (4906×3348).
+
+Local file lives under `public/images/products-cutout/airpods.jpg`. Nothing is fetched at runtime.
+
+## Iteration 2 — packshot standard (superseded for these eight ids)
 
 The first pass (iteration 1, commit `0e6fa0a`) accepted any real photograph
 over an illustration, which let some stock/lifestyle shots through (props,
