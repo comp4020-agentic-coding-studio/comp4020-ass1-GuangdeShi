@@ -298,6 +298,14 @@ body {
   border-color: var(--rule-strong);
 }
 
+/* Real photographs carry their own white background — the beige tile frame
+   would just repeat what the photo already shows, so it's dropped here. */
+.tile__image.tile__image--photo {
+  padding: 0;
+  background: none;
+  border: none;
+}
+
 .tile__image-img {
   width: 100%;
   height: 100%;

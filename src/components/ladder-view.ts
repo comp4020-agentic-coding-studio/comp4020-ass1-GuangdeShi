@@ -50,7 +50,7 @@ export function createLadderView(root: HTMLElement, products: readonly Product[]
     item.style.setProperty('--tile-index', String(index))
 
     const imageWrap = document.createElement('div')
-    imageWrap.className = 'tile__image'
+    imageWrap.className = product.realPhoto ? 'tile__image tile__image--photo' : 'tile__image'
 
     const image = document.createElement('img')
     image.className = 'tile__image-img'

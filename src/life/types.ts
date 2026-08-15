@@ -60,6 +60,12 @@ export interface Product {
    * the source fields agree, so nothing can quietly claim a source it lacks.
    */
   readonly provisional: boolean
+  /**
+   * True when `image` is a real photograph rather than an illustration — the
+   * tile drops its frame so the photo can sit directly on the page. Absent
+   * (or false) for the illustration-based rungs.
+   */
+  readonly realPhoto?: boolean
 }
 
 export type ProductScale = 'everyday' | 'household' | 'major' | 'extraordinary'

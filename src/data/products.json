@@ -3,45 +3,49 @@
     "id": "banana",
     "name": "A banana",
     "priceAUD": 0.6,
-    "image": "./images/products/banana.jpg",
+    "image": "./images/products-real/banana.jpg",
     "priceSourceLabel": "Indicative Australian supermarket price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "apple",
     "name": "An apple",
     "priceAUD": 1.2,
-    "image": "./images/products/apple.svg",
+    "image": "./images/products-real/apple.jpg",
     "priceSourceLabel": "Indicative Australian supermarket price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "water",
     "name": "A bottle of water",
     "priceAUD": 2,
-    "image": "./images/products/water.svg",
+    "image": "./images/products-real/water.jpg",
     "priceSourceLabel": "Indicative Australian supermarket price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "noodles",
     "name": "A pack of instant noodles",
     "priceAUD": 3.2,
-    "image": "./images/products/noodles.svg",
+    "image": "./images/products-real/noodles.jpg",
     "priceSourceLabel": "Indicative Australian supermarket price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "milk",
@@ -69,12 +73,13 @@
     "id": "coffee",
     "name": "A flat white",
     "priceAUD": 6,
-    "image": "./images/products/coffee.svg",
+    "image": "./images/products-real/coffee.jpg",
     "priceSourceLabel": "Indicative Australian café price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "starbucks",
@@ -157,12 +162,13 @@
     "id": "steak",
     "name": "A steak dinner",
     "priceAUD": 42,
-    "image": "./images/products/steak.svg",
+    "image": "./images/products-real/steak.jpg",
     "priceSourceLabel": "Indicative Australian restaurant price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "fish",
@@ -322,12 +328,13 @@
     "id": "macbookair",
     "name": "A MacBook Air",
     "priceAUD": 1699,
-    "image": "./images/products/macbookair.jpg",
+    "image": "./images/products-real/macbookair.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "laptop",
@@ -366,12 +373,13 @@
     "id": "rtx5090",
     "name": "An RTX 5090 graphics card",
     "priceAUD": 3499,
-    "image": "./images/products/rtx5090.svg",
+    "image": "./images/products-real/rtx5090.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "major",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "gamingpc",
@@ -498,12 +506,13 @@
     "id": "beachhouse",
     "name": "A beach house",
     "priceAUD": 3200000,
-    "image": "./images/products/beachhouse.jpg",
+    "image": "./images/products-real/beachhouse.jpg",
     "priceSourceLabel": "Representative example, not a market average",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "extraordinary",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "helicopter",
@@ -542,11 +551,12 @@
     "id": "jet",
     "name": "A private jet",
     "priceAUD": 65000000,
-    "image": "./images/products/jet.jpg",
+    "image": "./images/products-real/jet.jpg",
     "priceSourceLabel": "Representative example, not a market average",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "extraordinary",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   }
 ]
