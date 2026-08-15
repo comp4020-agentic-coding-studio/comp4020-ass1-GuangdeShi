@@ -107,6 +107,84 @@ case plus the case open beside them, no watermark, no hands, high resolution (49
 
 Local file lives under `public/images/products-cutout/airpods.jpg`. Nothing is fetched at runtime.
 
+## Iteration 4 — reusable cutout skill applied to Batch A (personal tech/accessories)
+
+**Why this exists:** the AirPods result (iteration 3b) was named the reference standard for a
+repeatable skill — source a real object photo, reject weak candidates, cut it out with the same
+rembg pipeline, normalise it onto pure white at consistent scale, wire it in, document it — to be
+applied across the remaining ~38 illustration-based products. This is the first batch: eight
+personal-tech/accessory items that were still SVG icons — computer mouse, keyboard, backpack,
+sneakers, Apple Watch, headphones, iPad, smartphone.
+
+Sourcing used the same keyless pipeline as earlier iterations (Wikimedia Commons search API,
+Openverse) with one addition: a descriptive `User-Agent` header on Wikimedia/Flickr downloads to
+avoid the 429 rate-limiting encountered partway through this batch. Every top candidate was
+downloaded, checked with `file` to confirm it was a real image (not an HTML error page), and
+personally viewed before being accepted or rejected — not judged on a search result's title alone.
+
+| Product | File | Raw source | Original page | License / creator | Cutout applied |
+|---|---|---|---|---|---|
+| Computer mouse | `mouse.jpg` | Wikimedia Commons, black wireless mouse | Pixloom upload | CC BY-SA 4.0, Pixloom | Yes — rembg (U2Net), alpha matting |
+| Keyboard | `keyboard.jpg` | Wikimedia Commons, Apple Magic Keyboard on a wood desk | Fletcher upload | CC BY 4.0, Fletcher | Yes — rembg (U2Net), alpha matting |
+| Backpack | `backpack.jpg` | Wikimedia Commons, Quechua "Escape 30" hiking backpack | Fructibus upload | CC0, Fructibus | Yes — rembg (U2Net), alpha matting |
+| Sneakers | `sneakers.jpg` | Wikimedia Commons, Adidas Yeezy Boost 350 V2 ("MX Rock") | Jacek Halicki upload | CC BY-SA 4.0, Jacek Halicki | Yes — rembg (U2Net), alpha matting |
+| Apple Watch | `applewatch.jpg` | Flickr, Apple Watch on a wood table | https://www.flickr.com/photos/yasunobuikeda | CC BY-SA 2.0, Yasunobu Ikeda | Yes — rembg (U2Net), alpha matting |
+| Headphones | `headphones.jpg` | Wikimedia Commons, Bose QuietComfort 25 | Florian Fuchs upload | CC BY-SA 3.0, Florian Fuchs | Yes — rembg (U2Net), alpha matting |
+| iPad | `ipad.jpg` | Flickr via Wikimedia, iPad Air against a plain wall, Apple Pencil beside it | https://www.flickr.com/photos/ajay_suresh | CC BY 2.0, ajay_suresh | Yes — rembg (U2Net), alpha matting |
+| Smartphone | `smartphone.jpg` | Flickr, Nexus S, front, screen off, on white | https://www.flickr.com/photos/justusbluemer | CC BY 2.0, justusbluemer | Yes — rembg (U2Net), alpha matting |
+
+Local files live under `public/images/products-cutout/`, named by product id. Same pipeline as
+iteration 3: `/tmp/cutout.py` — rembg U2Net segmentation with alpha-matting refinement
+(`alpha_matting_foreground_threshold=240`, `alpha_matting_background_threshold=10`,
+`alpha_matting_erode_size=8`), cropped to the alpha bounding box, resized so the long edge fills
+~78% of a 1000×1000 canvas, composited centred onto solid `rgb(255,255,255)`.
+
+### Rejected candidates
+
+- **Computer mouse**: an HP wired mouse (CC BY-SA 4.0, Pixloom) — visible dust/fingerprint smudges
+  on the body on close inspection, did not meet the clean bar the catalogue holds itself to; a
+  Lenovo wired mouse (CC0, Raysonho) — visible brand logo prominent in frame; a generic black
+  mouse (CC0, Peter Astbury) — too low-resolution (738×1025).
+- **Keyboard**: a Logitech G PRO TKL (CC0, AzureSaturn) — sharp, top-pick quality, but shot on a
+  black/dark surface with a black keyboard, low contrast against its own background; a Rii mini
+  wireless keyboard (CC BY 4.0, Hayden Schiff) — a niche remote-style form factor, not
+  representative of "a keyboard"; an HP wireless keyboard (CC BY-SA 4.0, Pixloom) — visible grime.
+- **Backpack**: first sourcing attempt for this item produced corrupted output (HTML/text saved
+  with a `.jpg` extension, caught via `file` before use) and was redone from scratch. Of the
+  redone candidates: an Eastpak Sugarbush (CC BY-SA 4.0, Ubcule) — shot on a neutral bedsheet, not
+  as clean as the accepted one; a Wenger daypack (CC0, Sir Tragedy) — shot against a wall/tile
+  background; a Champion backpack (CC0) — softer focus.
+- **Sneakers**: three Museum Rotterdam pieces (Onitsuka Tiger, Nike Air Huarache, a G-Unit-style
+  white sneaker, all CC BY-SA 3.0) — all shot on a black background rather than white/neutral, and
+  the white sneaker showed visible scuffing.
+- **Apple Watch**: a worn-on-wrist shot (CC0, fancycrave1/Pixabay) — kept only as a fallback since
+  the brief calls for the product itself, not a lifestyle/worn shot; the accepted image and its
+  companion frame from the same Flickr session were compared against each other and confirmed as
+  a standalone table shot (watch and band laid across a wood surface, not worn) before acceptance.
+- **Headphones**: a Bose QC3 (CC BY-SA 3.0, Mark Kim) — mediocre resolution/quality; an
+  Audio-Technica ATH-M50s (CC BY 2.0) — on a wood table with a visible coiled cable, cluttered; a
+  generic wireless headphone stock photo (CC0) — only retrievable at 960×640.
+- **iPad**: an iPad in grass with the screen on (CC BY-SA 2.0, twicepix) — outdoor, non-neutral
+  background; a near-duplicate frame from the same accepted photo session was reviewed and judged
+  equivalent, not better, so the original pick stood.
+- **Smartphone**: an HTC One M8 and a Samsung Galaxy S5, both back-view on a wood table (CC BY 2.0,
+  Janitors) — surface not neutral, and the Galaxy S5 crop clipped its edges; an iPhone 12 Pro flat
+  on a wood table (CC BY 2.0, ajay_suresh) — real photo but on a distracting wood grain background.
+
+### Judgement calls
+
+- **Keyboard background vs. cutout pipeline**: the accepted Apple Magic Keyboard photo sits on a
+  wood desk, not a white/neutral surface. Since the rembg segmentation step discards the entire
+  background regardless of colour and only the isolated keyboard survives onto the manufactured
+  white canvas, the raw photo's backdrop doesn't carry through to the final tile — the deciding
+  factor was keeping to a light-coloured *object* (matching the catalogue's Apple-product visual
+  register) over the accepted Logitech candidate's low-contrast black-on-black source, which risks
+  a worse segmentation result even though its own background was also discarded.
+- **iPad companion object**: the accepted source photo includes an Apple Pencil standing beside
+  the iPad. The rembg segmentation isolated the iPad as the dominant object; the pencil did not
+  survive into the final cutout. This was accepted as-is rather than re-sourced, since the result
+  still reads cleanly as "an iPad" alone.
+
 ## Iteration 2 — packshot standard (superseded for these eight ids)
 
 The first pass (iteration 1, commit `0e6fa0a`) accepted any real photograph

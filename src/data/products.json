@@ -185,34 +185,37 @@
     "id": "mouse",
     "name": "A computer mouse",
     "priceAUD": 59,
-    "image": "./images/products/mouse.svg",
+    "image": "./images/products-cutout/mouse.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "backpack",
     "name": "A backpack",
     "priceAUD": 85,
-    "image": "./images/products/backpack.svg",
+    "image": "./images/products-cutout/backpack.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "keyboard",
     "name": "A keyboard",
     "priceAUD": 129,
-    "image": "./images/products/keyboard.svg",
+    "image": "./images/products-cutout/keyboard.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "officechair",
@@ -229,23 +232,25 @@
     "id": "sneakers",
     "name": "A pair of sneakers",
     "priceAUD": 220,
-    "image": "./images/products/sneakers.svg",
+    "image": "./images/products-cutout/sneakers.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "applewatch",
     "name": "An Apple Watch",
     "priceAUD": 279,
-    "image": "./images/products/applewatch.svg",
+    "image": "./images/products-cutout/applewatch.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "airpods",
@@ -263,12 +268,13 @@
     "id": "headphones",
     "name": "Noise-cancelling headphones",
     "priceAUD": 549,
-    "image": "./images/products/headphones.svg",
+    "image": "./images/products-cutout/headphones.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "mattress",
@@ -307,23 +313,25 @@
     "id": "ipad",
     "name": "An iPad",
     "priceAUD": 1299,
-    "image": "./images/products/ipad.svg",
+    "image": "./images/products-cutout/ipad.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "smartphone",
     "name": "A smartphone",
     "priceAUD": 1549,
-    "image": "./images/products/smartphone.svg",
+    "image": "./images/products-cutout/smartphone.jpg",
     "priceSourceLabel": "Indicative Australian retail price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "household",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "macbookair",
