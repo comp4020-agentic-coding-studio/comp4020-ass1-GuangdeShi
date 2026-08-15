@@ -518,12 +518,13 @@
     "id": "helicopter",
     "name": "A light helicopter",
     "priceAUD": 4500000,
-    "image": "./images/products/helicopter.svg",
+    "image": "./images/products-real/helicopter.jpg",
     "priceSourceLabel": "Representative example, not a market average",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "extraordinary",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "artwork",
