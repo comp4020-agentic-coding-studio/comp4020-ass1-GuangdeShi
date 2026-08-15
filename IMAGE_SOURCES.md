@@ -269,6 +269,130 @@ iterations 3–4: `/tmp/cutout.py` — rembg U2Net segmentation with alpha-matti
   over a modern appearance, consistent with the AirPods reference standard's emphasis on cutout
   quality over subject styling.
 
+## Iteration 6 — reusable cutout skill applied to Batch C (food/groceries)
+
+**Why this exists:** continuing the same skill from iterations 4–5 onto Batch C — nine
+food/grocery items still shown as illustrations, or in one case an undocumented photo: a Starbucks
+coffee, a dozen eggs, a carton of milk, a loaf of bread, a bottle of shampoo, a fast food meal, a
+casual lunch out, a meal out, and a whole fish.
+
+**Starbucks provenance note:** `starbucks.jpg` already existed under `public/images/products/`
+before this batch started, wired with `priceSourceURL: null` and no entry anywhere in this file —
+an undocumented real photo. Rather than repeat the earlier Geo F. Trumper shampoo mistake (a
+visually-clean image accepted with no recoverable licence), its source was reconstructed from this
+session's own sourcing-agent transcript before being wired into the cutout pipeline: see the table
+below for the recovered licence and creator.
+
+Sourcing again used Wikimedia Commons search API and Openverse with the descriptive `User-Agent`
+header. Persistent Wikimedia 429s and Flickr CDN 502s recurred through this batch; agents worked
+around them with Wikimedia's `/thumb/.../{width}px-...` cache path (which hits the CDN rather than
+the rate-limited origin) and, for Flickr, either a plain browser user agent for binary downloads or
+Openverse's own image proxy. Every top candidate was downloaded, checked with `file` to confirm it
+was a real image and not an HTML error page, and personally viewed before acceptance — not judged
+on a sourcing agent's text description alone.
+
+| Product | File | Raw source | Original page | License / creator | Cutout applied |
+|---|---|---|---|---|---|
+| Starbucks coffee | `starbucks.jpg` | Wikimedia Commons ("Red Cup Front (No Flash)"), originally Flickr | https://www.flickr.com/photos/mastermaq/293202301/ | CC BY-SA 2.0, Mack Male | Yes — rembg (U2Net), alpha matting |
+| Dozen eggs | `eggs.jpg` | Wikimedia Commons, open carton of a dozen Grade A eggs on a wood table | Famartin upload | CC BY-SA 4.0, Famartin | Yes — rembg (U2Net), alpha matting |
+| Carton of milk | `milk.jpg` | Wikimedia Commons, quart of skim milk, studio background | NCI Visuals Online (Renee Comet, 1994) | Public Domain | Yes — rembg (U2Net), alpha matting |
+| Loaf of bread | `bread.jpg` | Wikimedia Commons, tin loaf with one slash in the crust | Mike Finn upload | CC BY 2.0, Mike Finn | Yes — rembg (U2Net), alpha matting |
+| Bottle of shampoo | `shampoo.jpg` | Wikimedia Commons, Dove shampoo bottle on black background (cropped before cutout) | Ranjima np upload | CC0, Ranjima np | Yes — rembg (U2Net), alpha matting |
+| Fast food meal | `fastfood.jpg` | Wikimedia Commons, burger with French fries in a takeaway box | Gaurav Dhwaj Khadka upload | CC BY-SA 4.0, Gaurav Dhwaj Khadka | Yes — rembg (U2Net), alpha matting |
+| Casual lunch out | `casuallunch.jpg` | Flickr, leafy salad in a white bowl | https://www.flickr.com/photos/73344268@N00/5022035719 | CC BY 2.0, junyaogura | Yes — rembg (U2Net), alpha matting |
+| Meal out | `meal.jpg` | Flickr, seared beef tenderloin, Guillaume at Bennelong (Sydney Opera House restaurant) | https://www.flickr.com/photos/10559879@N00/3646892644 | CC BY-SA 2.0, avlxyz | Yes — rembg (U2Net), alpha matting |
+
+Local files live under `public/images/products-cutout/`, named by product id. Same pipeline as
+iterations 3–5: `/tmp/cutout.py` — rembg U2Net segmentation with alpha-matting refinement
+(`alpha_matting_foreground_threshold=240`, `alpha_matting_background_threshold=10`,
+`alpha_matting_erode_size=8`), cropped to the alpha bounding box, resized so the long edge fills
+~78% of a 1000×1000 canvas, composited centred onto solid `rgb(255,255,255)`.
+
+**Fish — could not be improved, left as `fish.svg`.** Two sourcing rounds (roughly 35 searches
+across Wikimedia Commons and Openverse for whole raw/cooked fish: salmon, snapper, trout, mackerel,
+tilapia, bream, pomfret, barramundi, carp) turned up only one CC-licensed candidate showing a
+single whole fish: `fish_b.jpg` ("DSC_9979", Flickr, PattayaPatrol, CC BY-SA 2.0,
+https://www.flickr.com/photos/194424926@N05/54372786221). Personally viewed and rejected: an
+extreme macro close-up dominated by a numbered price tag stuck directly to the fish's body, a metal
+market-stall rail crossing the frame, and a second fish/plate intruding at the edge — the tag in
+particular cannot be cropped away without cutting into the fish itself, so it would survive into
+the rembg cutout as a foreign object fused to the product. This fails the AirPods reference
+standard on composition grounds even though its licence is valid, so the illustration was kept
+rather than shipping a cluttered cutout. A promising-looking alternative (a whole flatfish beside a
+second plate showing just its severed head, "Decapitation" by John Loo, CC BY 2.0) was independently
+rejected by the sourcing agent for the same single-whole-fish reason before being reviewed. A
+"Whole raw tilapia fish" hit (uploader HaJunkiyada) was rejected outright on authenticity grounds —
+the uploader's history showed dozens of bulk-uploaded "own work" files with fabricated-sounding
+descriptions, a bulk/AI-content-mill signature.
+
+### Rejected candidates
+
+- **Starbucks**: `starbucks_a.jpg`, "Starbucks Red Cup" (CC BY-SA 2.0, Hiro - Kokoro☆Photo) —
+  extreme blurred macro at a tilted angle, brand mark barely legible; `starbucks_b.jpg`, a 2021
+  Rotterdam street photo (CC BY-SA 4.0, Donald Trung) — sharp and high-resolution, but the cup is
+  litter lying on its side in snow, reads as trash rather than a product; `starbucks_c.jpg`, an
+  Iced Pumpkin Spice Latte (CC BY-SA 4.0, JimmyStardust) — sharp and well-framed, but a hand holds
+  the cup in shot, which would drag fingers into the rembg mask.
+- **Eggs**: a shallow-depth-of-field dozen-carton shot (CC0, Alan Levine/"cogdogblog") — only the
+  front two eggs in focus, shot from an extreme near-vertical angle; a second Famartin angle of the
+  same carton, a "Duck eggs" photo (CC BY 2.0, Leslie Seaton), and the Unsplash-import "Making an
+  Omelet" carton (CC0) were all found but blocked by a sustained Wikimedia 429 window and not
+  retrieved.
+- **Milk**: a Norwegian "Q Melk" carton (CC BY-SA 4.0, Wolfmann) — a stuck-on date label overlaps
+  the silhouette, and the side panel is shown rather than the front label; a Japanese pouch-style
+  180ml carton (CC BY 4.0, RuinDig/Yuki Uchida) — lying on its side on a busy checkered tablecloth;
+  an Arla-brand carton (CC BY 3.0) — technically the cleanest studio shot of the four, but credited
+  to the dairy brand itself, which this project's sourcing rule excludes as marketing photography;
+  a "windowsill" carton (CC BY 2.0, Shixart1985) — good composition, but its Commons description
+  read as an AI-generated caption from an uploader known for bulk "own work" claims of uncertain
+  provenance, excluded on authenticity grounds.
+- **Bread**: "White bread 800" (CC BY-SA 3.0, Sannse) — clean plain background but only 800×500,
+  too low-resolution; "Wibs Bread" (CC BY-SA 4.0, Reshadp) — already on a near-white background and
+  easiest to cut out, but a real competitor brand name/logo is prominent on the packaging.
+- **Shampoo**: two Unilever "Care" range bottles (`care_peach.jpg`, `care_seven.jpg`) were sourced
+  and reviewed but not accepted in favour of the Dove bottle's cleaner black-background studio shot;
+  the accepted Dove photo was cropped before cutout to remove a second object at the frame edge.
+- **Fast food**: a "Five Guys" burger-and-fries shot (CC BY 2.0, chief_huddleston) — good
+  composition but a legible brand name printed on the drink cup; a takeaway-box burger on a car
+  dashboard (CC BY-SA 4.0, Gaurav Dhwaj Khadka) — workable but a busier interior background than the
+  accepted basket shot; a Kenyan fast-food and a Swiss burger-and-fries photo — both had a person's
+  hand intruding into frame.
+- **Casual lunch**: a steak sandwich at the Albion Hotel, Cottesloe (CC BY-SA 4.0, Bahnfrend) —
+  clean single-plate composition, close runner-up, but a butter knife rests partly off-plate onto
+  the table; a Reuben sandwich (CC BY-SA 4.0, Bahnfrend) — a second drink glass and a small branded
+  flag pick in frame; an extreme macro of a toasted baguette (CC BY-SA 2.0, avlxyz) — the plate
+  itself barely visible, reads as a food macro rather than a plated meal; a club sandwich at a
+  shopping-mall café (CC BY-SA 4.0, Bahnfrend) — multiple people and heavy third-party branding
+  visible in the background.
+- **Meal out**: a filet mignon dinner at Ruth's Chris Steak House, New Orleans (CC BY 2.0,
+  "nola.agent") — soft focus, a second dish visible behind the main plate; a chicken schnitzel parmi
+  (CC BY-SA 4.0, Bahnfrend) — high resolution but heavily cluttered, including a visible human
+  hand/arm holding a phone; a rack of lamb (CC BY 2.0, "waferboard") — clean and well-separated, a
+  close second to the accepted beef tenderloin.
+- **Fish**: see the paragraph above — every multi-fish/on-ice Commons and Openverse result
+  (Cornish mackerel display, iced bream, salmon on ice) would have needed cropping to isolate a
+  single fish, which was judged out of scope for straight sourcing rather than attempted.
+
+### Judgement calls
+
+- **Starbucks branding**: the accepted cup carries a 2006-era Starbucks logo (the older text-in-
+  circle design). This is treated the same as the AirPods box's Apple branding elsewhere in the
+  catalogue — a real object legitimately carries its own printed branding; what stays out of scope
+  is official marketing/ad photography sourced from the brand itself, and this is a Flickr user's
+  own photo of a cup they bought.
+- **Starbucks provenance reconstruction**: because the accepted file carried no embedded EXIF/XMP
+  source metadata (confirmed via `strings` and a PIL EXIF read — only generic Adobe XMP rating
+  boilerplate was present), its licence and creator were recovered from this session's own
+  sourcing-agent transcript rather than from the file. This is treated as sufficient because the
+  chain of evidence — an identifiable sourcing agent, a specific Commons/Flickr URL, and an explicit
+  CC BY-SA 2.0 licence — is fully reconstructable, unlike the Geo F. Trumper case where no such
+  chain existed at all.
+- **Fish left unresolved**: the sole surviving candidate after two extensive sourcing rounds had a
+  price tag physically stuck to the fish and other market-stall clutter that would survive into any
+  cutout. Consistent with this project's standing rule that visual/licence quality never overrides
+  requiring a genuinely clean result, the illustration (`fish.svg`) was kept rather than accepting a
+  cluttered real photo just to check the "real photo" box.
+
 ## Iteration 2 — packshot standard (superseded for these eight ids)
 
 The first pass (iteration 1, commit `0e6fa0a`) accepted any real photograph

@@ -51,23 +51,25 @@
     "id": "milk",
     "name": "A carton of milk",
     "priceAUD": 4,
-    "image": "./images/products/milk.svg",
+    "image": "./images/products-cutout/milk.jpg",
     "priceSourceLabel": "Indicative Australian supermarket price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "bread",
     "name": "A loaf of bread",
     "priceAUD": 4.8,
-    "image": "./images/products/bread.svg",
+    "image": "./images/products-cutout/bread.jpg",
     "priceSourceLabel": "Indicative Australian supermarket price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "coffee",
@@ -85,45 +87,49 @@
     "id": "starbucks",
     "name": "A Starbucks coffee",
     "priceAUD": 7.5,
-    "image": "./images/products/starbucks.jpg",
+    "image": "./images/products-cutout/starbucks.jpg",
     "priceSourceLabel": "Indicative Australian café price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "eggs",
     "name": "A dozen eggs",
     "priceAUD": 9.5,
-    "image": "./images/products/eggs.svg",
+    "image": "./images/products-cutout/eggs.jpg",
     "priceSourceLabel": "Indicative Australian supermarket price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "shampoo",
     "name": "A bottle of shampoo",
     "priceAUD": 12,
-    "image": "./images/products/shampoo.svg",
+    "image": "./images/products-cutout/shampoo.jpg",
     "priceSourceLabel": "Indicative Australian supermarket price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "fastfood",
     "name": "A fast food meal",
     "priceAUD": 15,
-    "image": "./images/products/fastfood.svg",
+    "image": "./images/products-cutout/fastfood.jpg",
     "priceSourceLabel": "Indicative Australian fast food price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "socks",
@@ -140,23 +146,25 @@
     "id": "casuallunch",
     "name": "A casual lunch out",
     "priceAUD": 24,
-    "image": "./images/products/casuallunch.svg",
+    "image": "./images/products-cutout/casuallunch.jpg",
     "priceSourceLabel": "Indicative Australian casual dining price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "meal",
     "name": "A meal out",
     "priceAUD": 28,
-    "image": "./images/products/meal.svg",
+    "image": "./images/products-cutout/meal.jpg",
     "priceSourceLabel": "Indicative Australian casual dining price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "steak",
