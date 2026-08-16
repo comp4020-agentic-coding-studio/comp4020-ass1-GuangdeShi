@@ -266,13 +266,65 @@ body {
   max-width: 76rem;
 }
 
+/*
+ * The catalogue is grouped by the dataset's own `scale` field — everyday,
+ * household, major, extraordinary — one section per band, each on its own
+ * grid. The bands are not just labelled differently: their cards are
+ * physically bigger from one band to the next, so the layout itself argues
+ * that these things cost more of a life before any number is read.
+ */
 .catalogue {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 6vw, 4.5rem);
+  margin: 0;
+  padding: 0;
+}
+
+.catalogue__group {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+}
+
+.catalogue__group-title {
+  margin: 0;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-soft);
+  font-family: var(--sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.catalogue__group-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(clamp(7rem, 24vw, 10rem), 1fr));
   gap: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 2.5vw, 1.5rem);
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/* Many small cards per row — cheap, forgettable, barely worth a glance. */
+.catalogue__group--everyday .catalogue__group-list {
+  grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+}
+
+.catalogue__group--household .catalogue__group-list {
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+}
+
+.catalogue__group--major .catalogue__group-list {
+  grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
+}
+
+/* Few, dominant blocks — the top of the ladder gets the most room, not the
+   most decoration. */
+.catalogue__group--extraordinary .catalogue__group-list {
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  max-width: 46rem;
 }
 
 .tile {
@@ -327,6 +379,36 @@ body {
   letter-spacing: -0.01em;
 }
 
+/* Type grows alongside the card, so a bigger block reads louder, not just
+   larger — the size hierarchy is doing the same argument twice, on purpose. */
+.tile--household .tile__name {
+  font-size: 0.9375rem;
+}
+
+.tile--household .tile__time {
+  font-size: clamp(1.0625rem, 2.4vw, 1.375rem);
+}
+
+.tile--major .tile__name {
+  font-size: 1.0625rem;
+}
+
+.tile--major .tile__time {
+  font-size: clamp(1.25rem, 2.8vw, 1.75rem);
+}
+
+.tile--extraordinary {
+  gap: 0.75rem;
+}
+
+.tile--extraordinary .tile__name {
+  font-size: 1.1875rem;
+}
+
+.tile--extraordinary .tile__time {
+  font-size: clamp(1.5rem, 3.8vw, 2.375rem);
+}
+
 @keyframes reprice {
   from {
     opacity: 0;
@@ -353,6 +435,17 @@ body {
 .catalogue[data-state="empty"] .tile__time {
   color: var(--ink-faint);
   font-family: var(--serif);
+}
+
+/* Below ~544px the two heaviest bands drop to one card per row rather than
+   squeezing an oversized card sideways — the hierarchy stays legible as
+   fewer, taller rows instead of shrinking back to the everyday band's size. */
+@media (width <= 34rem) {
+  .catalogue__group--major .catalogue__group-list,
+  .catalogue__group--extraordinary .catalogue__group-list {
+    grid-template-columns: 1fr;
+    max-width: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

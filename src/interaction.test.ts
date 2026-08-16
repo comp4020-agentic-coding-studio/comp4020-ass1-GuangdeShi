@@ -90,6 +90,23 @@ describe('the page as it first appears', () => {
       expect(name.length, tile.getAttribute('data-id') ?? '').toBeGreaterThan(0)
     }
   })
+
+  it('groups the tiles into headed, ascending scale bands', () => {
+    const groups = document.querySelectorAll('.catalogue__group')
+    expect(groups.length).toBe(4)
+
+    const order = ['everyday', 'household', 'major', 'extraordinary']
+    for (const [i, group] of [...groups].entries()) {
+      const scale = order[i]
+      expect(group.className).toContain(`catalogue__group--${scale}`)
+      expect(group.querySelector('.catalogue__group-title')?.textContent?.length).toBeGreaterThan(0)
+      // Every tile inside a band carries that band's own size class — this is
+      // what the card-size hierarchy is keyed off in CSS.
+      for (const tile of group.querySelectorAll('.tile')) {
+        expect(tile.className).toContain(`tile--${scale}`)
+      }
+    }
+  })
 })
 
 describe('the wage drives everything the catalogue says', () => {

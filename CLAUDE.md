@@ -232,10 +232,15 @@ To see an *interacted* state, copy `dist/index.html` to a throwaway `dist/__prob
 trailing module script that checks `#mode-time` and dispatches `change`, screenshot that, then
 delete it. `dist/` is generated, so nothing enters the repo.
 
-Two traps in this technique: the shell screenshots from the top of the layout regardless of
+Three traps in this technique: the shell screenshots from the top of the layout regardless of
 `scrollIntoView`, so to inspect the bottom of the ladder hide the sections above it in the probe;
-and a tall capture window inflates every `svh`, so judge the hero's height only in a 1080- or
-844-high window.
+a tall capture window inflates every `svh`, so judge the hero's height only in a 1080- or
+844-high window; and a *very* tall narrow window (e.g. `390,7000` to fit the whole mobile
+ladder in one shot) can outrun the shell's own image-decode budget — real photos past a certain
+scroll distance render as blank space even with a generous `--virtual-time-budget`, while the
+same images are fine in a shorter window or in a real phone browser. Confirm a suspected missing
+image is a real bug, not this, by re-capturing a short window (a few thousand px) around just
+that section before treating it as a CSS defect.
 
 ### Tooling notes
 

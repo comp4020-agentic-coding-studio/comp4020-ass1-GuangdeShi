@@ -12,7 +12,21 @@
  */
 
 import { formatWorkTime, hoursToEarn, type WorkRhythm } from '../life/duration'
-import type { Product } from '../life/types'
+import type { Product, ProductScale } from '../life/types'
+
+/**
+ * Headings for the four price-scale groups already carried by the dataset.
+ *
+ * This reuses `Product.scale` rather than inventing a second grouping — the
+ * scale a product already has (and `products.test.ts` already keeps in step
+ * with price) is the size hierarchy the layout below draws from.
+ */
+const GROUP_LABEL: Record<ProductScale, string> = {
+  everyday: 'Everyday',
+  household: 'Around the home',
+  major: 'The big purchases',
+  extraordinary: 'The extraordinary',
+}
 
 export interface LadderState {
   /** The life-adjusted rate the catalogue is priced in, or null while unknown. */
@@ -41,13 +55,39 @@ const MORPH_MS = 900
 export function createLadderView(root: HTMLElement, products: readonly Product[]): LadderView {
   root.textContent = ''
 
-  const tiles: Tile[] = products.map((product, index) => {
+  // One `<section>` per scale, each with its own grid — that is what lets a
+  // group's cards be physically bigger than the one before it. Products
+  // arrive pre-sorted by price with scale already non-decreasing
+  // (`products.test.ts` enforces it), so a scale change always starts a new,
+  // final group rather than re-opening an earlier one.
+  let group: HTMLOListElement | undefined
+  let groupScale: ProductScale | undefined
+  let tileIndex = 0
+
+  const tiles: Tile[] = products.map((product) => {
+    if (product.scale !== groupScale) {
+      groupScale = product.scale
+      const section = document.createElement('section')
+      section.className = `catalogue__group catalogue__group--${product.scale}`
+
+      const heading = document.createElement('h3')
+      heading.className = 'catalogue__group-title'
+      heading.textContent = GROUP_LABEL[product.scale]
+
+      group = document.createElement('ol')
+      group.className = 'catalogue__group-list'
+
+      section.append(heading, group)
+      root.append(section)
+    }
+
     const item = document.createElement('li')
     item.className = `tile tile--${product.scale}`
     item.dataset.id = product.id
-    // Lets the CSS stagger the repricing across the grid, so the change reads
-    // as travelling through it rather than flashing all at once.
-    item.style.setProperty('--tile-index', String(index))
+    // Lets the CSS stagger the repricing across the whole catalogue, so the
+    // change reads as travelling through it rather than flashing all at once.
+    item.style.setProperty('--tile-index', String(tileIndex))
+    tileIndex += 1
 
     const imageWrap = document.createElement('div')
     imageWrap.className = product.realPhoto ? 'tile__image tile__image--photo' : 'tile__image'
@@ -73,7 +113,7 @@ export function createLadderView(root: HTMLElement, products: readonly Product[]
     time.dataset.testid = `price-${product.id}`
 
     item.append(imageWrap, name, time)
-    root.append(item)
+    group!.append(item)
     return { product, time }
   })
 
