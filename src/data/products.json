@@ -434,12 +434,13 @@
     "id": "holiday",
     "name": "Two weeks overseas",
     "priceAUD": 7500,
-    "image": "./images/products/holiday.svg",
+    "image": "./images/products-cutout/holiday.jpg",
     "priceSourceLabel": "Indicative cost for two people, flights and accommodation",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "major",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "motorcycle",
@@ -504,12 +505,13 @@
     "id": "sydneycbdapartment",
     "name": "A Sydney CBD apartment",
     "priceAUD": 950000,
-    "image": "./images/products/sydneycbdapartment.svg",
+    "image": "./images/products-cutout/sydneycbdapartment.jpg",
     "priceSourceLabel": "Indicative Sydney CBD apartment price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "extraordinary",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "house",
@@ -561,23 +563,25 @@
     "id": "artwork",
     "name": "A major painting at auction",
     "priceAUD": 6800000,
-    "image": "./images/products/artwork.svg",
+    "image": "./images/products-cutout/artwork.jpg",
     "priceSourceLabel": "Representative example, not a market average",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "extraordinary",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "yacht",
     "name": "A superyacht",
     "priceAUD": 12000000,
-    "image": "./images/products/yacht.svg",
+    "image": "./images/products-cutout/yacht.jpg",
     "priceSourceLabel": "Representative example, not a market average",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "extraordinary",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "jet",

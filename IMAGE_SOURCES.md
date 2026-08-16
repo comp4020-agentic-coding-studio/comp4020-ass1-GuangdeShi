@@ -469,6 +469,117 @@ read back and visually confirmed clean before acceptance.
   white-composited output was judged safe only after empirically confirming (by scanning pixel
   values, not by eye alone) that the patched region contained no real bike geometry.
 
+## Iteration 8 — reusable cutout skill applied to Batch E (abstract/hard cases)
+
+**Why this exists:** the last batch of still-illustration products, and the one flagged from the
+start as containing the hardest cases: a holiday, a house deposit, a Sydney CBD apartment, an
+Australian house, a Sydney house, a major painting, and a superyacht. Four resolved cleanly through
+the same skill used in iterations 4–7; three did not, for two different reasons documented below.
+
+Sourcing again used the Wikimedia Commons search API and Openverse with a descriptive
+`User-Agent` header. One sourcing agent (Sydney house) hit a hard 403 "robot policy" block from
+`upload.wikimedia.org` in its environment (Commons' own API/HTML pages were unaffected) and worked
+around it via Openverse's index of the same CC-licensed photos hosted on Flickr's CDN instead.
+Every top candidate was downloaded, checked with `file`, and personally viewed before acceptance —
+including, for this batch, viewing every *cutout output*, not just every source photo, since two
+of the four resolved cases and both unresolved cases needed a source crop before the cutout step.
+
+| Product | File | Raw source | Original page | License / creator | Cutout applied |
+|---|---|---|---|---|---|
+| Two weeks overseas | `holiday.jpg` | Wikimedia Commons/Openverse, packed suitcase interior | Flickr, puroticorico | CC BY 2.0, puroticorico | Yes — rembg (U2Net), alpha matting |
+| A Sydney CBD apartment | `sydneycbdapartment.jpg` | Wikimedia Commons/Openverse, "Byron Hall", Potts Point apartment tower, low-angle corner view | Flickr | CC BY-SA 2.0, avlxyz | Yes — cropped to remove street-level car/bicycle and tree branches, then rembg (U2Net), alpha matting |
+| A major painting at auction | `artwork.jpg` | Wikimedia Commons, Jan van Eyck, "Portrait of a Man in a Turban" (Yorck Project reproduction) | Yorck Project scan | Public Domain / PD-Art (CC-PD-Mark) | Yes — rembg (U2Net), alpha matting (trims the gold frame, isolates the painted panel) |
+| A superyacht | `yacht.jpg` | Wikimedia Commons, "Savannah" motor yacht, side profile | Tangopaso upload | Public Domain, Tangopaso | Yes — rembg (U2Net), alpha matting |
+
+Local files live under `public/images/products-cutout/`, named by product id. Same pipeline as
+iterations 3–7: `/tmp/cutout.py` — rembg U2Net segmentation with alpha-matting refinement
+(`alpha_matting_foreground_threshold=240`, `alpha_matting_background_threshold=10`,
+`alpha_matting_erode_size=8`), cropped to the alpha bounding box, resized so the long edge fills
+~78% of a 1000×1000 canvas, composited centred onto solid `rgb(255,255,255)`.
+
+**Deposit, house, and Sydney house — could not be improved, left as illustrations.**
+
+- **A 20% house deposit (`deposit.svg`)** — not sourced at all. A deposit is a fraction of a price,
+  not a physical thing; there is no discrete real object a photograph could show that would read as
+  "a deposit" rather than as a house, a bank, or a pile of cash standing in for something else
+  entirely. The existing key-shaped icon was judged the honest choice and left untouched, the same
+  category of decision as leaving `fish.svg` in Batch C rather than force a real photo where the
+  underlying thing being priced resists a literal image.
+- **An Australian house (`house.svg`) and a Sydney house (`sydneyhouse.svg`)** — sourced and
+  attempted, and rejected on cutout-quality grounds after four independent attempts, not on
+  licensing grounds. For `house`: a Lockleys weatherboard house (CC BY-SA 2.0, Flickr "pjf3984")
+  run through the standard pipeline first produced an output containing only two wheelie bins on
+  white with the house itself entirely absent — rembg's saliency model judged the bins, being
+  closer to camera and higher-contrast, more salient than the house filling the rest of the frame.
+  Cropping the bins/car out of frame and re-running the standard alpha-matting pipeline produced a
+  second, still-unusable result: the garage door and upper facade partially bleached to a
+  translucent white, because the pale/cream weatherboard siding sat close enough in tone to the
+  white canvas for the alpha-matting step to treat it as ambiguous background. A third attempt on
+  the same crop with alpha matting disabled entirely still produced a soft, incomplete mask with
+  roofline ghosting and the car still faintly visible — ruling out alpha matting as the sole cause
+  and implicating the base U2Net segmentation itself. For `sydneyhouse`: a Federation-style bungalow
+  in Coogee (CC BY-SA 2.0, Flickr "hugh llewelyn"), cropped to remove wheelie bins at the bottom of
+  frame, was run through the same pipeline — rembg instead keyed onto the dark tiled roof as the
+  primary salient object, washing out the brick facade below almost to invisibility. Four attempts
+  across two unrelated source photographs, with and without cropping, with and without alpha
+  matting, all failed the same way in substance: full-frame, squat/wide building photography is a
+  genuine, reproducible hard case for this tool's saliency-based segmentation, not a fluke of one
+  bad source image. By contrast, the accepted Sydney CBD apartment photo (a tall tower shot from a
+  dramatic low angle, with open sky filling most of the frame around it) segmented cleanly — the
+  failure is specifically about frame-filling building compositions with little surrounding
+  negative space for the model to key its foreground/background boundary against, not architecture
+  photography as a category. Both illustrations were kept rather than shipping a partially-erased
+  or ghosted building, consistent with this project's standing rule that a valid licence never
+  overrides requiring a genuinely clean cutout result.
+
+### Rejected candidates
+
+- **Holiday**: a flat-lay of packing items on a bed (CC BY 2.0, Familydestinationsguide.com Images)
+  — busier, multi-object composition than the accepted single suitcase interior; a tropical beach
+  scene in Galle (CC BY-SA 4.0, Kalindu Kaveeshwara) — a destination photo, not an object a cutout
+  pipeline could isolate; a stack of vintage suitcases (CC BY-SA 2.0, theglobalpanorama) — read as
+  "luggage" generically rather than "a holiday," and the low resolution (428×640) limited quality.
+- **Sydney CBD apartment**: a wider street view showing the same building fragment behind parked
+  cars and other buildings (CC BY 2.0, flungabunga) — the intended subject was a small, cluttered
+  fraction of the frame; Horizon Apartments, Darlinghurst (CC BY 2.0, Alex Proimos) — a valid
+  alternative tower, but a more conventional straight-on angle judged less distinctive than the
+  accepted corner perspective.
+- **Major painting**: Monet's "The Red Kerchief" (Public Domain) and Bellini's "Dudley Madonna"
+  (CC BY 4.0, "GoldenArtists") — both viable, but the Van Eyck portrait's plain dark background and
+  single, centred, easily-isolated subject made for a cleaner cutout; two Van Gogh "Sunflowers"
+  reproductions from the Neue Pinakothek (CC BY 2.0, oliworx/Bien Stephenson) — both photographed at
+  a slight angle with visible frame glare.
+- **Superyacht**: a yacht at Saranda, Albania (CC BY-SA 4.0, BBB2021) — a much higher-resolution
+  photo but shot with a busy marina and hillside township filling the background, more cluttered
+  than the accepted open-water side profile; "Skat" at Gothenburg (CC BY-SA 4.0, LevandeMänniska)
+  and "Samsara" (CC0, Davidley) — both good alternatives, but the accepted Savannah photo's plain
+  side-on composition and clean waterline made for the simplest, sharpest segmentation.
+- **House / Sydney house**: see the paragraph above — every attempt that reached the cutout stage
+  is documented there rather than here, since for these two products the failure was in processing,
+  not in candidate selection; the source photos themselves (Lockleys, Adelaide/Fulham, Burswood,
+  and the Coogee/Randwick/terrace-row Sydney set) were all otherwise licence-clean and reasonably
+  composed.
+
+### Judgement calls
+
+- **Sydney CBD apartment "second building" check**: on first viewing the accepted cutout, a paler
+  section on the right of the tower looked like it might be a separate neighbouring building
+  bleeding into frame. Re-checking the cropped source photo directly (not just the cutout) confirmed
+  it is the same building's own corner/side facade catching different light, not a segmentation
+  defect — a reminder to verify against the source when a cutout result looks ambiguous, rather than
+  assume a flaw or accept it uncritically either way.
+- **Painting vs. frame**: the accepted Van Eyck photo includes its gold exhibition frame in the raw
+  source. rembg's segmentation isolated the painted panel and dropped the frame entirely, which was
+  accepted as-is (matching the iPad-and-pencil precedent from Batch A) since the result still reads
+  cleanly as "a painting" on its own.
+- **Architecture as a genuine tool limitation, not a sourcing failure**: rather than keep spending
+  iteration cycles on a category this pipeline is structurally unsuited to (four independent
+  failed attempts, two different buildings, with and without cropping, with and without alpha
+  matting), `house` and `sydneyhouse` were deliberately left as illustrations and the failure
+  pattern documented in full above, on the same footing as the `fish` and `deposit` unresolved
+  cases — an honest report of a limitation is preferred over a fifth attempt or a shipped
+  ghosted/translucent building.
+
 ## Iteration 2 — packshot standard (superseded for these eight ids)
 
 The first pass (iteration 1, commit `0e6fa0a`) accepted any real photograph
