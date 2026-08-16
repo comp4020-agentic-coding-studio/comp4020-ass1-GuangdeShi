@@ -1,149 +1,74 @@
 # Process
 
-The concept evaluation that closed the first direction, followed by the moments during its
-build where something went wrong or a rule changed.
+Four moments from building Life Cost — where an assumption was tested against a working build,
+and the harness or the code changed because of what the build showed.
 
 ---
 
-## Moment 1 — Interaction was not enough
+## Moment 1 — A successful prototype answered the wrong question
 
-My first direction for Assignment 1 was an interactive BaZi (Four Pillars of Destiny) prototype.
-The visitor entered their birth date and time, the system calculated the corresponding Eight
-Characters, and the interface returned a broad personality interpretation.
+The first direction was an interactive BaZi (Four Pillars of Destiny) explainer. It worked: the
+visitor entered a birth date and time, and the page returned the corresponding Eight Characters and
+a personality reading, correct against independently sourced anchors.
 
-I initially chose this concept because it had an obvious interaction: changing the user's birth
-information changed the result. However, after building the prototype and returning to the
-assignment brief, I realised that an interactive input-output system was not necessarily an
-effective interactive explainer.
+What it did not do was explain anything. A right answer from a birth moment needed Heavenly Stems,
+Earthly Branches, Five Elements and calendrical boundaries before the interaction meant anything —
+the input disappeared into a black box and a verdict came back. A technically successful
+implementation is not automatically a successful response to a brief that asks for an explainer,
+not a working oracle. I stopped polishing the BaZi build and pivoted to Life Cost, where the object
+being explained — money as exchanged time — needs no prior system to follow.
 
-BaZi depends on a much broader traditional Chinese cosmological and calendrical system. Explaining
-why a particular birth moment produces a particular interpretation would require introducing
-concepts such as the Five Elements, Heavenly Stems and Earthly Branches, calendrical boundaries,
-and the traditional logic connecting these classifications with personality and destiny.
-
-This made the project difficult to reduce to one clear idea and one mechanic. In the prototype, the
-user's birth information mostly entered a black box and produced a prediction. The interaction
-changed the output, but it did not help the visitor understand the mechanism behind it.
-
-I therefore decided to stop developing this direction. The prototype became an important early
-test: it showed me that interaction alone does not satisfy the brief. For the next iteration, I
-wanted the user's action itself to reveal the idea, rather than simply request a generated answer.
-
-**Evidence:** the initial BaZi prototype, preserved unrewritten on the `bazi-prototype` branch —
-[`0b38c37...f0a1874`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/compare/0b38c37...f0a1874),
-closing commit [`f0a1874`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/f0a1874).
+**Evidence:** the closed prototype, preserved unrewritten on `bazi-prototype` —
+[`0b38c37...f0a1874`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/compare/0b38c37...f0a1874).
 
 ---
 
-## Moment 2 — The repository I was told to use did not exist
+## Moment 2 — Familiar interface patterns pulled the agent toward a shop
 
-**Assumed.** The brief said to inspect *the existing repository* and push to its remote, so one
-must exist.
+Life Cost's first working build let the visitor flip a **MONEY ↔ TIME** toggle over the same fifty
+objects — plausible on its own, and also the shape of a shop's variant switcher. Once priced
+objects were on screen, the pull toward catalogue conventions kept surfacing; repeating "make it
+less like a shop" as a prompt was not going to hold against a pattern that familiar.
 
-**Went wrong.** It didn't. The only active repo was `comp4020-riff2-liuru-3` — a riff on another
-student's CBETA prototype, on a shared org remote. The obvious move (the working directory *was* a
-git repo, the topic even adjacent East Asian material) would have replaced classmate-derived work
-with an unrelated site. Adjacent is not related.
+Instead the toggle was removed outright: the page commits to one currency, time, stating the
+exchange rate once rather than offering a choice. The correction went into `CLAUDE.md` as a rule,
+not just a diff — "there is no MONEY/TIME choice" — alongside the out-of-scope list (no carts,
+checkout, quantity selectors, product cards), so the next drift toward a shop is rejected by the
+harness rather than caught by re-reading the page.
 
-**Changed.** I stopped and asked where the project should live, then wrote it into `CLAUDE.md` as a
-rule rather than trusting my memory: own path, never reuse a repository or remote, no remote at
-all until explicitly approved.
-
-**Verified.** Confirmed the riff repo untouched — clean tree, `HEAD` still `cad8082`. I audited the
-wrong-but-harmless directory I had scaffolded — only my files, zero commits — before deleting it.
-[`0b38c37`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/0b38c37)
-— the first commit of this project, in its own repository.
+**Evidence:** the toggle introduced, then removed for one currency —
+[`4f011de...7f8f50d`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/compare/4f011de...7f8f50d).
 
 ---
 
-## Moment 3 — A blocked postinstall broke every script, not just the build
+## Moment 3 — Correct numbers were not automatically good explanations
 
-**Assumed.** `Ignored build scripts: esbuild` looked like advisory noise.
+The unit ladder climbed minutes through working years, and the top of the product ladder walked
+past it: a private jet priced at "1,420 working years". The first response was a bigger unit,
+`working lifetimes` (45 working years), to keep the number small.
 
-**Went wrong.** `pnpm typecheck` failed with a pnpm stack trace, not a type error: pnpm 11 re-runs
-a dependency check before *every* script, and the unapproved build makes it exit non-zero. Worse,
-a stray `echo "TYPECHECK OK"` chained after a piped command printed anyway — the exit status came
-from `tail`, so the transcript briefly claimed a pass that had not happened.
+That was itself the wrong call. Naming a price as a count of whole human lives carries more
+judgement than a duration should. This is not an unresolved bug — the final decision keeps years as
+the top rung, uncapped, however large the number gets. "1,420 working years" is correct and
+intentional: the size of the number does the explanatory work, communicating that the object is out
+of reach of an ordinary working life by refusing to shrink into something smaller-sounding.
+`duration.test.ts` still pins every boundary below years and asserts no such value reaches four
+digits, so the decision costs nothing in arithmetic correctness.
 
-**Changed.** `allowBuilds: esbuild: true` in `pnpm-workspace.yaml`, taken from the course
-template, not invented. Two rules followed: the diagnosis lives in `CLAUDE.md`, and success
-is never announced by an `echo` — only by a check's own exit status.
-
-**Verified.** Re-ran the checks bare; `typecheck` then failed honestly on a real error (`status`
-collides with `window.status`). A red check that tells the truth is the point of having one.
-[`0b38c37`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/0b38c37)
-(`pnpm-workspace.yaml`, and the diagnosis written into `CLAUDE.md`).
-
----
-
-## Moment 4 — Two sources disagreed about a day pillar, and my code agreed with one of them
-
-**Assumed.** The day pillar is arithmetic on a day count — the least controversial of the four.
-
-**Went wrong.** For 1990-06-15 one source gave 己酉, another 辛亥. Mine produced 辛亥. The tempting
-move — cite the agreeing source and ship — is circularity with a footnote.
-
-**Changed.** I built an oracle sharing no code with the implementation: three independently
-sourced anchors (1949-10-01 = 甲子, 2019-01-27 = 甲子, 2000-03-01 = #55) plus elapsed-day
-arithmetic. All converge on 辛亥; 己酉 is off by twelve. Where sources genuinely conflict — the
-yin/yang of 子, 巳, 午, 亥 — `sexagenary.ts` stores both inputs, the page shows only what is
-uncontested, and `calculate.ts` names the fork. Six are labelled there.
-
-**Verified.** A permanent test block, with the disputed date asserted by name: *"settles the
-disputed date: 1990-06-15 is 辛亥, not 己酉"*.
-[`826ec47`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/826ec47).
+**Evidence:** the lifetimes tier added, then reverted for uncapped years —
+[`4f011de...38e0e6c`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/compare/4f011de...38e0e6c).
 
 ---
 
-## Moment 5 — One input does not mean one pillar
+## Moment 4 — Verification stopped the agent from fixing a false bug
 
-**Assumed.** Phase 2's change feedback looked mechanical: the visitor edits the hour, the Hour
-Pillar lights up.
+A 390×7000 headless screenshot, built to see the whole mobile product ladder in one capture,
+appeared to show several tiers with missing product images. The obvious move was to start
+adjusting image or grid CSS. Instead, the failure was reproduced under the actual marking viewport
+first: a real 390×844 capture, and a shorter tall capture around just the affected section, both
+rendered every image correctly. The gap was the headless shell's own image-decode budget outrun by
+an unrealistically tall capture, not the site. No product code changed; the trap went into
+`CLAUDE.md` so an unusual automated failure is reproduced under realistic conditions before it
+triggers an implementation change.
 
-**Went wrong.** The first test of a one-day change expected one moved pillar and got two — the
-hour *stem* is derived from the day stem (五鼠遁), so it moves when the clock is untouched. Then a
-one-year change contradicted me the other way: I expected all four to move, and the Hour Pillar
-sat still. Across a common year the day stem advances 5, and 2 × 5 ≡ 0 (mod 10), so the hour stem
-lands back on itself.
-
-**Changed.** The wrong model *was* the thing worth teaching. `describeChanges` now marks each
-moved pillar `inherited` or not, and the page says "moved into the 辰 hour" versus "the day stem
-moved, so the hour stem followed it (五鼠遁)" — the coupling is the explanation, not a footnote.
-
-**Verified.** Tests pin both couplings *and* the cancellation, which looks like an oversight until
-asserted. Rendering the page headless at 1280px and 320px caught what tests could not: the badge
-read "moved · moved 1 day", and 乙未 broke across two lines. The screenshot recipe went into
-`CLAUDE.md` so the next visual phase starts from a rendered page rather than an assumption.
-[`bc700b0...6e44db1`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/compare/bc700b0...6e44db1).
-
----
-
-## Moment 6 — The formatter met a price it could not say
-
-**Assumed.** Turning money into time was the easy half of the Life Cost concept: divide by an
-hourly rate and print the result in whatever unit keeps the number small.
-
-**Went wrong.** The unit ladder stopped at working years, and the top of the product ladder walked
-straight off it. A private jet printed **"1,420 working years"** — the exact unpicturable number
-the formatter exists to prevent, produced by the formatter itself. Two of my own expectations were
-wrong in the same test run, which is what surfaced it: I had asserted a laptop at 2.3 working
-weeks when the arithmetic says 2.0, and 4 working weeks for a part-timer when 81.8 hours is a
-whole month of a 20-hour week.
-
-**Changed.** Not a rounding tweak — a new unit. `working lifetimes` (45 working years, a
-twenty-to-sixty-five working life), because past a whole working life the honest answer stops
-being a duration a person could work and becomes a count of lives, which is precisely the point
-the top of the ladder is making. The rule went into `CLAUDE.md`: every tier eventually meets a
-price that overflows it, so if a new rung overflows the top, add a unit — do not shrink the
-ladder. A second overflow of the same shape appeared later at the other end of the tier: a car
-read "13 working months", longer than the year containing it, because a 4-week month and a
-52-week year do not tile. The month tier now hands over at twelve.
-
-**Verified.** `duration.test.ts` pins every boundary, both singular forms at exactly one unit, and
-sweeps the ladder asserting no printed value ever reaches four digits; `products.test.ts` asserts
-the whole dataset climbs through all seven units at the brief's example rate of $22.00 an hour.
-[`4f011de`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/4f011de).
-
----
-
-*Further moments are added as they occur, not reconstructed at the end.*
+**Evidence:** [`1b781b0`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/1b781b0).

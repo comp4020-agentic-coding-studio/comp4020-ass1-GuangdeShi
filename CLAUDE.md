@@ -22,7 +22,7 @@ arithmetic and the sourcing, but the visible ladder never states a dollar figure
 performs the translation once, in the exchange-rate section, and from there on speaks only in
 hours, days, months and years. (An earlier iteration let the visitor toggle MONEY ↔ TIME over the
 same objects; that toggle was removed so the page commits to one currency rather than offering a
-choice — see PROCESS.md if that moment is recorded there.)
+choice — PROCESS.md, moment 2.)
 
 The first concept, an interactive BaZi explainer, is **Prototype v0** — preserved unrewritten on
 `bazi-prototype`. It was closed deliberately: it had an interaction, but the interaction did not
@@ -323,7 +323,6 @@ These are part of the mark and are maintained *throughout*, never written at the
   ``[`f0a1874`](https://github.com/comp4020-agentic-coding-studio/comp4020-ass1-GuangdeShi/commit/f0a1874)``.
   A marker follows the citations and does not trawl the history for evidence we did not point at;
   `pnpm check:evidence` fails if a cited SHA does not resolve, or if none is cited at all.
-  *The file currently runs long, at six moments — a consolidation to four is outstanding.*
 - **`CLAUDE.md`** — this file. Grow it when a recurring constraint or mistake appears. The gap
   between the course boilerplate and this file is itself read as evidence.
 - **`reflections/assignment-1.md`** — the reflection, centred on the project's main
