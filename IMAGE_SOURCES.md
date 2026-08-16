@@ -12,7 +12,61 @@ surfaced through those two, and rawpixel's CC0 library were used instead —
 all keyless and reachable via plain HTTP. Every image below is filtered to
 `by`, `by-sa`, `cc0`, or `pdm` licenses.
 
-## Iteration 9 — house and Sydney house resolved (current)
+## Iteration 10 — fish resolved (current)
+
+**Why this exists:** iteration 6 left `fish.svg` as an illustration after two sourcing rounds (~35
+searches) turned up only cluttered or market-stall candidates for generic terms (salmon, snapper,
+trout, mackerel, tilapia, bream, pomfret, barramundi, carp). This iteration revisits it with a
+different tactic — the user asked specifically for a fish visually close to 东星斑 / coral trout /
+leopard coral grouper, so the search used the species' own scientific name (`Plectropomus
+leopardus`) via the Wikimedia Commons API rather than generic "whole fish" terms, which surfaced a
+dedicated set of diver/marine-life photographs iteration 6 never reached.
+
+| Product | File | Raw source | Original page | License / creator | Cutout applied |
+|---|---|---|---|---|---|
+| A whole fish | `fish.jpg` | Wikimedia Commons ("Plectropomus leopardus.jpg"), originally Flickr, Great Barrier Reef, Cairns, Australia | https://commons.wikimedia.org/wiki/File:Plectropomus_leopardus.jpg (Flickr original: https://www.flickr.com/photos/leonardlow/340767739/) | CC BY 2.0, Leonard Low | Yes — rembg (U2Net), alpha matting |
+
+Local file lives under `public/images/products-cutout/fish.jpg`. Same pipeline as prior
+iterations: `/tmp/cutout.py` — rembg U2Net segmentation with alpha-matting refinement
+(`alpha_matting_foreground_threshold=240`, `alpha_matting_background_threshold=10`,
+`alpha_matting_erode_size=8`), cropped to the alpha bounding box, resized so the long edge fills
+~78% of a 1000×1000 canvas, composited centred onto solid `rgb(255,255,255)`. The cutout output was
+viewed directly before acceptance: a clean, whole, single-fish silhouette with no bleed or halo.
+
+`products.json` now points `fish` at this cutout file and carries `"realPhoto": true`; its
+pre-existing `priceAUD` (52), `priceSourceLabel`, `priceSourceURL`, `priceCheckedDate`, `scale`
+("everyday") and `provisional` (true) were left untouched, since this iteration only changed the
+image, not the price or its sourcing. `public/images/products/fish.svg` was deleted as part of the
+replacement.
+
+### Rejected candidates
+
+- `australia.jpg`, "Plectropomus_leopardus_Australia.jpg" (CC BY 4.0, jpdandretta) — a genuine
+  single-fish shot of the same species, but this individual is in the dark/black colour morph
+  (leopard coral grouper has several natural colour morphs) rather than the bright orange-red form
+  the user asked to match, and it sits low-contrast against a similarly dark, busy coral-rock
+  background that would have risked a poor segmentation.
+- "Plectropomus_leopardus_Common_Coral_Trout_-_32368770977.jpg" (CC BY 2.0, Paul Asman and Jill
+  Lenoble) — high resolution and otherwise well-composed, but a second fish (a butterflyfish) is
+  clearly visible in the same frame, which fails the single-object requirement.
+- Three further Flickr-sourced candidates (`Plectropomus_leopardus_322401965.jpg`,
+  `_325460162.jpg`, `_326868772.jpg`) were downloaded but not needed once the accepted image was
+  found; not individually reviewed in detail.
+
+### Judgement calls
+
+- **Colour morph over first-found candidate**: the accepted photo was chosen specifically because
+  its bright orange-red body with pale-blue spots is the closest visual match to 东星斑/coral trout
+  as commonly pictured, over an otherwise-valid same-species candidate in a darker natural morph —
+  matching the user's stated visual intent mattered more than simply being the first CC-licensed
+  hit for the correct species.
+- **Scientific name unlocked candidates a generic-term search missed**: iteration 6's ~35 searches
+  used only common English terms for "fish" categories and never surfaced this species-specific
+  result set; searching Wikimedia Commons by binomial name (`Plectropomus leopardus`) is recorded
+  here as the technique that resolved a previously "no clean candidate exists" conclusion, in case a
+  future pass needs the same unstick for another species-specific product.
+
+## Iteration 9 — house and Sydney house resolved
 
 **Why this exists:** Iteration 8 left `house` and `sydneyhouse` as illustrations after four
 independent cutout attempts failed on architectural saliency grounds (a wheelie bin, a car, and a

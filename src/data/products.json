@@ -183,12 +183,13 @@
     "id": "fish",
     "name": "A whole fish",
     "priceAUD": 52,
-    "image": "./images/products/fish.svg",
+    "image": "./images/products-cutout/fish.jpg",
     "priceSourceLabel": "Indicative Australian seafood price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "everyday",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "mouse",
