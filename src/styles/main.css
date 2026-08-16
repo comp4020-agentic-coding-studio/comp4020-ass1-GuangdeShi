@@ -307,24 +307,25 @@ body {
   list-style: none;
 }
 
-/* Many small cards per row — cheap, forgettable, barely worth a glance. */
+/* Many small cards per row — cheap, forgettable, barely worth a glance, but
+   still large enough that the object itself is legible, not iconic. */
 .catalogue__group--everyday .catalogue__group-list {
-  grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
 }
 
 .catalogue__group--household .catalogue__group-list {
-  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr));
 }
 
 .catalogue__group--major .catalogue__group-list {
-  grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
 }
 
 /* Few, dominant blocks — the top of the ladder gets the most room, not the
    most decoration. */
 .catalogue__group--extraordinary .catalogue__group-list {
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-  max-width: 46rem;
+  grid-template-columns: repeat(auto-fit, minmax(21rem, 1fr));
+  max-width: 58rem;
 }
 
 .tile {
@@ -341,7 +342,7 @@ body {
   justify-content: center;
   width: 100%;
   aspect-ratio: 1;
-  padding: 12%;
+  padding: 6%;
   background: var(--paper-deep);
   border: 1px solid var(--rule);
 }
