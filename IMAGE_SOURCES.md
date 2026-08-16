@@ -12,7 +12,87 @@ surfaced through those two, and rawpixel's CC0 library were used instead —
 all keyless and reachable via plain HTTP. Every image below is filtered to
 `by`, `by-sa`, `cc0`, or `pdm` licenses.
 
-## Iteration 3 — cutout on pure white (current)
+## Iteration 9 — house and Sydney house resolved (current)
+
+**Why this exists:** Iteration 8 left `house` and `sydneyhouse` as illustrations after four
+independent cutout attempts failed on architectural saliency grounds (a wheelie bin, a car, and a
+dark roof each out-competing the house itself for the segmentation model's attention). This
+iteration revisits both with a different tactic — cropping the source photo tightly to the
+building's upper storeys *before* the cutout step, so no ground-level competing object (car, bin,
+fence, pedestrian) survives into the frame at all, rather than relying on the cutout step to
+discard it.
+
+Three new `house` candidates (Adelaide/Fulham weatherboard obscured by trees and a parked SUV;
+Burswood brick veneer with yard clutter and a visible identifiable person; the already-known
+Lockleys weatherboard) and three new `sydneyhouse` candidates (Randwick Federation bungalow with
+foreground shrubbery; Randwick Federation villa behind an ornate white iron fence; the
+already-known terrace row) were all re-examined pixel-by-pixel first. Every one of the three
+*new* candidates reproduced a documented failure pattern (competing foreground object closer to
+camera than the house) and was rejected without spending a cutout run on it — see "Rejected
+candidates" below. The two **already-downloaded** source photos from Iteration 8 turned out to be
+salvageable after all with a tighter crop:
+
+| Product | File | Raw source | Original page | License / creator | Cutout applied |
+|---|---|---|---|---|---|
+| An Australian house | `house.jpg` | Wikimedia Commons/Flickr, weatherboard house in Lockleys, SA (same source photo as Iteration 8's failed attempt) | https://commons.wikimedia.org/wiki/File:Weatherboard_house_in_Lockleys,_South_Australia.jpg | CC BY-SA 2.0, "pjf3984" (Flickr) | Yes — cropped to the upper-right single-storey gable/porch section (excludes the car, wheelie bins, driveway, and the second-storey wing that bled out under alpha matting), then rembg (U2Net), alpha matting |
+| A Sydney house | `sydneyhouse.jpg` | Flickr via Openverse, row of Victorian/Federation terrace houses, Sydney (same source photo as Iteration 8's rejected terrace-row candidate) | https://www.flickr.com/photos/63695861@N00/2270036965 | CC BY-SA 2.0, "CpILL" (Flickr) | Yes — cropped to exclude the parked cars at street level, keeping the full row of iron-lace balcony facades and the overhead power line (removed cleanly by the cutout itself), then rembg (U2Net), alpha matting |
+
+Local files live under `public/images/products-cutout/`, named by product id, using the same
+pipeline as prior iterations: `/tmp/cutout.py` — rembg U2Net segmentation with alpha-matting
+refinement (`alpha_matting_foreground_threshold=240`, `alpha_matting_background_threshold=10`,
+`alpha_matting_erode_size=8`), cropped to the alpha bounding box, resized so the long edge fills
+~78% of a 1000×1000 canvas, composited centred onto solid `rgb(255,255,255)`.
+
+**What changed from Iteration 8's failed attempts:** Iteration 8 cropped out only the single
+worst offending object (the car, or the bins) and left the rest of the frame — including other
+ground-level clutter and, for `house`, a second building wing — intact. This iteration instead
+crops well above the ground line entirely, so the frame going into the cutout pipeline contains
+*only* building and sky, no ground-level object of any kind for the saliency model to compete
+against. For `house`, a first attempt at a looser crop (excluding just the car/bins/driveway, but
+keeping the full two-storey facade) still bled the upper-left second-storey wing to near-invisible
+white — the same alpha-matting bleed-out documented in Iteration 8. A second, tighter crop that
+also excluded that fading wing and kept only the crisply-recovered single-storey gable, porch, and
+dormer window produced a clean result with no bleed anywhere in frame. For `sydneyhouse`, cropping
+out the cars alone (keeping the full three-terrace row and the overhead wire) was sufficient on the
+first attempt — the wire itself did not confuse the segmentation the way ground-level objects had.
+
+Both cutout outputs were viewed directly (not just assumed from a clean run) before acceptance.
+`products.json` now points `house` and `sydneyhouse` at these cutout files and both carry
+`"realPhoto": true`; `house`'s pre-existing `provisional: false` and checked date were left
+untouched, since this iteration only changed the image, not the price or its sourcing.
+
+### Rejected candidates
+
+- **House**: Adelaide/Fulham weatherboard house — parked SUV directly in the driveway, close
+  enough to the house that a crop excluding the car would also exclude most of the facade;
+  rejected without a cutout attempt. Burswood brick veneer house — yard cluttered with junk
+  (corrugated metal sheets, graffiti-like marks) and a chain-link fence in the foreground, plus a
+  visible identifiable person in frame; rejected on both technical and subject-suitability grounds
+  without a cutout attempt.
+- **Sydney house**: Randwick Federation bungalow — foreground shrubbery/potted plants directly
+  obscuring the porch, the same category of occlusion that sank the Coogee bungalow in Iteration 8;
+  rejected without a cutout attempt. Randwick Federation villa — an ornate white decorative
+  wrought-iron fence dominating the foreground in high contrast against the dark brick behind it,
+  closely analogous to the bins-as-subject failure mode already documented; rejected without a
+  cutout attempt.
+
+### Judgement calls
+
+- **Reusing an already-rejected source photo rather than sourcing a new one**: both accepted
+  photos here are the exact source images Iteration 8 tried and rejected — the fix was in how the
+  frame was cropped before the cutout step, not in finding a different building. Before accepting
+  either result, the pixel geometry of the original frame was checked directly to confirm no
+  crop could have salvaged the earlier, looser attempts without this tighter approach; this was
+  judged worth recording so a future pass doesn't waste a cycle re-downloading alternatives when
+  the existing candidate was never the problem.
+- **Partial facade is an acceptable trade for a clean cutout**: the accepted `house` cutout omits
+  part of the two-storey left wing that a wider crop would have included, showing a single-storey
+  gable, porch and dormer instead of the whole two-storey building. This was judged an acceptable
+  trade — a partial, crisply-cut house that reads clearly as "a house" beats a complete but
+  partially-ghosted one, consistent with the standing rule (Iteration 8) that a clean cutout result
+  is never optional regardless of licence or subject completeness.
+
+## Iteration 3 — cutout on pure white
 
 Iteration 2's packshot standard still let two real constraints through: a photo could only be
 "white background" if it was shot that way, and the two aircraft kept their natural sky instead.

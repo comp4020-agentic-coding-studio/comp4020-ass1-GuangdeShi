@@ -517,23 +517,25 @@
     "id": "house",
     "name": "An Australian house",
     "priceAUD": 1111100,
-    "image": "./images/products/house.svg",
+    "image": "./images/products-cutout/house.jpg",
     "priceSourceLabel": "ABS, mean price of residential dwellings, March quarter 2026",
     "priceSourceURL": null,
     "priceCheckedDate": "2026-08-13",
     "scale": "extraordinary",
-    "provisional": false
+    "provisional": false,
+    "realPhoto": true
   },
   {
     "id": "sydneyhouse",
     "name": "A Sydney house",
     "priceAUD": 1800000,
-    "image": "./images/products/sydneyhouse.svg",
+    "image": "./images/products-cutout/sydneyhouse.jpg",
     "priceSourceLabel": "Indicative Sydney median house price",
     "priceSourceURL": null,
     "priceCheckedDate": null,
     "scale": "extraordinary",
-    "provisional": true
+    "provisional": true,
+    "realPhoto": true
   },
   {
     "id": "beachhouse",
